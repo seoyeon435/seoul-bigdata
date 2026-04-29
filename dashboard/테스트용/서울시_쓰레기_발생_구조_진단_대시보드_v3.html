@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>서울시 자치구별 쓰레기 발생 구조 진단 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#07090e;--bg2:#0e1117;--bg3:#161b26;--bg4:#1e2535;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#dce3f0;--text2:#7a8499;--text3:#3d4559;
+  --teal:#00c896;--teal2:#00a07a;--teal-bg:rgba(0,200,150,0.08);
+  --amber:#f5a623;--amber-bg:rgba(245,166,35,0.08);
+  --red:#e84545;--red-bg:rgba(232,69,69,0.08);
+  --blue:#4a90d9;--blue-bg:rgba(74,144,217,0.08);
+  --purple:#9b6df0;--purple-bg:rgba(155,109,240,0.08);
+  --mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:14px;font-weight:700}
+.logo-sub{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:1px}
+.live-badge{font-size:10px;font-family:var(--mono);color:var(--teal);background:var(--teal-bg);border:1px solid rgba(0,200,150,.2);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* TABS - CHAPTER STYLE */
+.tabs{display:flex;gap:6px;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;flex-wrap:nowrap}
+.tab{padding:10px 18px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;border:1px solid transparent;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--text);background:var(--bg3)}
+.tab.active{color:var(--teal);background:var(--teal-bg);border-color:rgba(0,200,150,.25)}
+.tab.active.amber-tab{color:var(--amber);background:var(--amber-bg);border-color:rgba(245,166,35,.25)}
+.tab.active.red-tab{color:var(--red);background:var(--red-bg);border-color:rgba(232,69,69,.25)}
+.tab-num{font-family:var(--mono);font-size:10px;opacity:.6;font-weight:600;letter-spacing:.05em}
+.tab-label{font-size:13px;font-weight:600}
+.tab-desc{font-size:10px;color:var(--text3);font-family:var(--mono);margin-left:4px}
+
+.page{display:none;padding:18px 24px 60px;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHAPTER INTRO */
+.chap-intro{margin-bottom:18px;padding:14px 18px;background:linear-gradient(90deg,var(--bg2),transparent);border-left:3px solid var(--teal);border-radius:0 8px 8px 0}
+.chap-intro.amber{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(245,166,35,.06),transparent)}
+.chap-intro.red{border-left-color:var(--red);background:linear-gradient(90deg,rgba(232,69,69,.06),transparent)}
+.chap-num{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:.1em;margin-bottom:4px}
+.chap-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.chap-question{font-size:12px;color:var(--text2);font-style:italic}
+
+/* SECTION DIVIDER */
+.section-div{display:flex;align-items:center;gap:12px;margin:24px 0 12px;padding-top:8px;border-top:1px dashed var(--border)}
+.section-div:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.section-num{font-family:var(--mono);font-size:10px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:4px;letter-spacing:.05em}
+.section-title{font-size:13px;font-weight:600;color:var(--text)}
+.section-sub{font-size:11px;color:var(--text2);margin-left:auto;font-family:var(--mono)}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi-row.k5{grid-template-columns:repeat(5,1fr)}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.teal::before{background:var(--teal)}.kpi.amber::before{background:var(--amber)}.kpi.red::before{background:var(--red)}.kpi.blue::before{background:var(--blue)}.kpi.purple::before{background:var(--purple)}
+.kpi-label{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.kpi-val{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1.5px;line-height:1}
+.kpi-val.teal{color:var(--teal)}.kpi-val.amber{color:var(--amber)}.kpi-val.red{color:var(--red)}.kpi-val.blue{color:var(--blue)}.kpi-val.purple{color:var(--purple)}
+.kpi-unit{font-size:12px;font-weight:400;color:var(--text2);margin-left:2px}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:5px;font-family:var(--mono)}
+
+/* PANEL */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:hidden}
+.panel-title{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.panel-badge{font-size:9px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;color:var(--text2);font-family:var(--mono);text-transform:none;letter-spacing:0;white-space:nowrap}
+.panel-badge.est{color:var(--amber);background:var(--amber-bg);border-color:rgba(245,166,35,.25)}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-map{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-bottom:12px}
+.grid-ctrl{display:grid;grid-template-columns:280px 1fr;gap:12px;margin-bottom:12px}
+.grid-sim{display:grid;grid-template-columns:300px 1fr;gap:12px;margin-bottom:12px}
+.mb12{margin-bottom:12px}
+
+/* CHART */
+.chart-wrap{position:relative}.chart-wrap.h160{height:160px}.chart-wrap.h200{height:200px}.chart-wrap.h240{height:240px}.chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}.chart-wrap.h360{height:360px}
+
+/* TOGGLE PILLS */
+.toggle-group{display:flex;gap:4px;flex-wrap:wrap}
+.tgl{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);font-size:11px;font-weight:500;cursor:pointer;color:var(--text2);background:transparent;transition:all .15s;font-family:var(--sans)}
+.tgl:hover{color:var(--text)}
+.tgl.active{background:var(--teal-bg);color:var(--teal);border-color:rgba(0,200,150,.3)}
+.tgl.amber.active{background:var(--amber-bg);color:var(--amber);border-color:rgba(245,166,35,.3)}
+.tgl.red.active{background:var(--red-bg);color:var(--red);border-color:rgba(232,69,69,.3)}
+.tgl.blue.active{background:var(--blue-bg);color:var(--blue);border-color:rgba(74,144,217,.3)}
+.tgl.teal.active{background:var(--teal-bg);color:var(--teal);border-color:rgba(0,200,150,.3)}
+.tgl.purple.active{background:var(--purple-bg);color:var(--purple);border-color:rgba(155,109,240,.3)}
+
+/* SELECT */
+select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:12px;padding:7px 10px;outline:none}
+select:focus{border-color:var(--teal)}
+input[type=number]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none}
+input[type=number]:focus{border-color:var(--teal)}
+.ctrl-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.ctrl-group{margin-bottom:12px}
+
+/* RANGE */
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:var(--bg4);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--teal);cursor:pointer}
+.slider-val{font-size:11px;font-family:var(--mono);color:var(--teal);text-align:right;margin-top:3px}
+
+/* RANKING CARDS */
+.rank-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.rank-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.rank-card-title{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.rank-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.rank-item:last-child{border-bottom:none}
+.rank-num{font-family:var(--mono);font-size:11px;color:var(--text3);width:18px;flex-shrink:0}
+.rank-name{flex:1;font-size:12px;font-weight:500}
+.rank-val{font-family:var(--mono);font-size:11px;color:var(--teal)}
+
+/* CLUSTER */
+.cl-residential{color:#4a90d9}.cl-commercial{color:#e84545}.cl-transit{color:#f5a623}.cl-logistics{color:#00c896}.cl-mixed{color:#9b6df0}
+.cl-residential-bg{background:rgba(74,144,217,.15);border-color:rgba(74,144,217,.3)}
+.cl-commercial-bg{background:rgba(232,69,69,.15);border-color:rgba(232,69,69,.3)}
+.cl-transit-bg{background:rgba(245,166,35,.15);border-color:rgba(245,166,35,.3)}
+.cl-logistics-bg{background:rgba(0,200,150,.15);border-color:rgba(0,200,150,.3)}
+.cl-mixed-bg{background:rgba(155,109,240,.15);border-color:rgba(155,109,240,.3)}
+.cluster-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.cluster-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .15s}
+.cluster-card:hover{border-color:var(--border2)}
+.cluster-tag{display:inline-block;font-size:9px;font-family:var(--mono);font-weight:600;padding:2px 7px;border-radius:10px;margin-bottom:6px;border:1px solid}
+.cluster-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.cluster-districts{font-size:10px;color:var(--text2);line-height:1.6}
+.cluster-feat{font-size:9px;color:var(--text3);margin-top:6px;font-family:var(--mono)}
+
+/* HEATMAP */
+.heatmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.hm-cell{border-radius:4px;padding:8px 4px;text-align:center;cursor:pointer;transition:opacity .15s}
+.hm-cell:hover{opacity:.8}
+.hm-name{font-size:9px;color:rgba(255,255,255,.85);font-weight:500;margin-bottom:3px;line-height:1.2}
+.hm-val{font-size:10px;font-family:var(--mono);color:white;font-weight:600}
+
+/* SCATTER INFO */
+.scatter-info{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;font-size:11px;font-family:var(--mono);color:var(--text2);line-height:1.8;margin-top:8px}
+.sv{color:var(--teal)}
+
+/* TIMELINE */
+.timeline{position:relative;padding:16px 0 8px}
+.tl-axis{position:absolute;left:60px;right:20px;top:50%;height:2px;background:linear-gradient(90deg,rgba(74,144,217,.3),rgba(245,166,35,.5),rgba(232,69,69,.5));border-radius:2px}
+.tl-now{position:absolute;top:30%;bottom:30%;width:2px;background:var(--teal);left:0}
+.tl-now-label{position:absolute;top:-2px;font-size:9px;color:var(--teal);font-family:var(--mono);transform:translateX(-50%)}
+.tl-row{display:grid;grid-template-columns:80px 1fr 80px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.tl-row:last-child{border-bottom:none}
+.tl-name{font-size:11px;font-weight:600}
+.tl-cap{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:1px}
+.tl-bar-wrap{position:relative;height:18px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.tl-bar{position:absolute;height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:var(--mono);color:white;font-weight:500}
+.tl-status{font-size:9px;font-family:var(--mono);text-align:right}
+
+/* SIM CARDS (TOP3) */
+.sim-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.sim-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;transition:border-color .15s}
+.sim-card:hover{border-color:var(--teal)}
+.sim-rank{position:absolute;top:-8px;left:14px;background:var(--teal);color:var(--bg);font-family:var(--mono);font-weight:700;font-size:10px;padding:2px 8px;border-radius:4px}
+.sim-card.r2 .sim-rank{background:var(--blue)}
+.sim-card.r3 .sim-rank{background:var(--text2)}
+.sim-name{font-size:13px;font-weight:600;margin:4px 0 8px}
+.sim-meta{font-size:10px;color:var(--text2);margin-bottom:8px;font-family:var(--mono)}
+.sim-stat{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px dashed var(--border)}
+.sim-stat:last-child{border-bottom:none}
+.sim-stat-label{color:var(--text3)}
+.sim-stat-val{font-family:var(--mono);color:var(--text)}
+.flag-g{color:#22c55e}.flag-y{color:var(--amber)}.flag-r{color:var(--red)}
+
+/* CITIZEN CARD */
+.citizen-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border2);border-radius:12px;padding:18px;position:relative;overflow:hidden}
+.citizen-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,var(--teal-bg),transparent 70%);pointer-events:none}
+.cc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.cc-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.cc-select{max-width:160px}
+.cc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cc-stat{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px}
+.cc-stat-label{font-size:9px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;margin-bottom:4px}
+.cc-stat-val{font-size:18px;font-weight:600;font-family:var(--mono)}
+.cc-stat-rank{font-size:9px;font-family:var(--mono);color:var(--text2);margin-top:3px}
+.cc-msg{margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:11px;line-height:1.7;color:var(--text2);border-left:2px solid var(--teal)}
+
+/* GANGSEO CASE */
+.case-box{background:var(--bg2);border:1px solid var(--purple-bg);border-radius:10px;padding:16px;border-left:3px solid var(--purple)}
+.case-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.case-tag{font-size:9px;font-family:var(--mono);background:var(--purple-bg);color:var(--purple);padding:2px 8px;border-radius:10px;border:1px solid rgba(155,109,240,.3)}
+.case-title{font-size:13px;font-weight:600}
+.case-text{font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:10px}
+.case-text strong{color:var(--text);font-weight:600}
+
+/* TABLE */
+.gu-table{width:100%;border-collapse:collapse}
+.gu-table th{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.gu-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-size:11px;vertical-align:middle}
+.gu-table tr:last-child td{border-bottom:none}
+.gu-table tr:hover td{background:var(--bg3);cursor:pointer}
+.risk-bar{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;min-width:60px}
+.risk-fill{height:100%;border-radius:3px}
+
+/* TOOLTIP */
+.tooltip{position:fixed;background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:11px;pointer-events:none;z-index:999;display:none;min-width:170px}
+.tt-name{font-weight:700;margin-bottom:4px;font-size:12px}
+.tt-row{display:flex;justify-content:space-between;gap:16px;color:var(--text2);margin-bottom:2px}
+.tt-val{color:var(--text);font-family:var(--mono)}
+
+/* POPUP */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center}
+.popup-overlay.show{display:flex}
+.popup{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;width:680px;max-height:80vh;overflow-y:auto;position:relative}
+.popup-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.popup-stat{font-size:11px;color:var(--text2);margin-bottom:3px}
+.popup-val{font-size:18px;font-weight:600;font-family:var(--mono)}
+
+/* INFO BOX */
+.info-box{background:var(--bg3);border-radius:6px;padding:10px 12px;font-size:11px;font-family:var(--mono);color:var(--text2);line-height:1.8}
+.iv{color:var(--teal);font-weight:500}
+
+/* CRISIS BANNER */
+.crisis{background:linear-gradient(135deg,rgba(232,69,69,.08),rgba(245,166,35,.06));border:1px solid rgba(232,69,69,.2);border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.crisis-icon{font-size:24px}
+.crisis-title{font-size:13px;font-weight:700;color:var(--red);margin-bottom:3px}
+.crisis-text{font-size:11px;color:var(--text2);line-height:1.6}
+.crisis-text strong{color:var(--text)}
+.countdown{margin-left:auto;text-align:right;flex-shrink:0}
+.cd-num{font-size:24px;font-weight:700;font-family:var(--mono);color:var(--red);line-height:1}
+.cd-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;margin-top:3px}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--amber-bg);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.disc-icon{color:var(--amber);font-size:16px;flex-shrink:0}
+.disc-content{font-size:11px;color:var(--text2);line-height:1.7}
+.disc-content strong{color:var(--amber)}
+
+/* MINI BAR */
+.mini-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:3px}
+.mini-fill{height:100%;border-radius:2px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+/* LEAFLET DARK */
+.lmap{width:100%;height:320px;border-radius:6px;background:#0a0d12;cursor:pointer;z-index:1}
+.lmap.h280{height:280px}
+.lmap.h360{height:360px}
+.leaflet-container{background:#0a0d12 !important;font-family:var(--sans) !important;outline:none !important}
+.leaflet-control-attribution{background:rgba(7,9,14,.85) !important;color:var(--text3) !important;font-size:9px !important;padding:2px 6px !important}
+.leaflet-control-attribution a{color:var(--text2) !important}
+.leaflet-control-zoom a{background:var(--bg3) !important;color:var(--text) !important;border-color:var(--border2) !important;border-radius:4px !important;width:26px !important;height:26px !important;line-height:26px !important;font-size:14px !important}
+.leaflet-control-zoom a:hover{background:var(--bg4) !important;color:var(--teal) !important}
+.gu-tooltip{background:var(--bg4) !important;border:1px solid var(--border2) !important;color:var(--text) !important;font-family:var(--sans) !important;font-size:11px !important;padding:7px 10px !important;border-radius:6px !important;box-shadow:0 2px 12px rgba(0,0,0,.5) !important;line-height:1.5 !important}
+.gu-tooltip strong{color:var(--teal);font-size:12px}
+.gu-tooltip::before{display:none !important}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{display:none}
+.map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);font-family:var(--mono);background:var(--bg2);border-radius:6px;z-index:5;pointer-events:none}
+.map-loading.hide{display:none}
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(7,9,14,.85);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-size:9px;font-family:var(--mono);color:var(--text2);z-index:401;pointer-events:none}
+.map-legend-row{display:flex;align-items:center;gap:6px;margin:2px 0}
+.map-legend-dot{width:10px;height:10px;border-radius:2px}
+</style>
+<script src="data.js"></script>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-name" id="tt-n"></div>
+  <div class="tt-row"><span>발생량</span><span class="tt-val" id="tt-v1"></span></div>
+  <div class="tt-row"><span>1인당</span><span class="tt-val" id="tt-v2"></span></div>
+  <div class="tt-row"><span>유형</span><span class="tt-val" id="tt-v3"></span></div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay" onclick="if(event.target===this)closePopup()">
+  <div class="popup" id="popup-inner">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div id="popup-content"></div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">🗂️</div>
+    <div>
+      <div class="logo-text">서울시 자치구별 쓰레기 발생 구조 진단 대시보드</div>
+      <div class="logo-sub">25개 자치구 · 진단 → 분석 → 처방</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">데이터: 2018–2024</span>
+    <span class="live-badge"><span class="dot"></span>v3.0</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw(0)">
+    <span class="tab-num">CH.1</span>
+    <span class="tab-label">🔍 진단</span>
+    <span class="tab-desc">What — 지금 무슨 일이?</span>
+  </div>
+  <div class="tab amber-tab" onclick="sw(1)">
+    <span class="tab-num">CH.2</span>
+    <span class="tab-label">🧬 분석</span>
+    <span class="tab-desc">Why — 왜 구마다 다른가?</span>
+  </div>
+  <div class="tab red-tab" onclick="sw(2)">
+    <span class="tab-num">CH.3</span>
+    <span class="tab-label">💊 처방</span>
+    <span class="tab-desc">How — 공백기를 어떻게?</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--   CH.1 진단 (What's happening)                  -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page active" id="pg0">
+
+  <div class="chap-intro">
+    <div class="chap-num">CHAPTER 1 · DIAGNOSIS</div>
+    <div class="chap-title">🔍 진단 — 지금 서울에 무슨 일이 일어나고 있나</div>
+    <div class="chap-question">"어디서 얼마나 나오고 있는가? 시간은 얼마 남았는가?"</div>
+  </div>
+
+  <!-- 위기감 배너: 직매립 금지 카운트다운 -->
+  <div class="crisis">
+    <div class="crisis-icon">🚨</div>
+    <div style="flex:1">
+      <div class="crisis-title">2026년 수도권 생활폐기물 직매립 금지 시행</div>
+      <div class="crisis-text">종량제 쓰레기 단순 매립 불가 → <strong>반드시 소각 또는 재활용 필요</strong>. 서울시 공공 소각시설 4개소 설계용량 합계 <strong>2,850톤/일</strong> vs 현재 발생량 <strong>2,905톤/일</strong> → 정비 기간 중 <strong>약 625톤/일 부족분</strong> 발생 예상</div>
+    </div>
+    <div class="countdown">
+      <div class="cd-num" id="cd-days">-</div>
+      <div class="cd-label">DAYS LEFT</div>
+    </div>
+  </div>
+
+  <!-- 정비 타임라인 (NEW) -->
+  <div class="panel mb12">
+    <div class="panel-title">서울시 공공 소각시설 4개소 정비 타임라인 <span class="panel-badge">2025–2030</span></div>
+    <div id="facility-timeline"></div>
+    <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;background:rgba(74,144,217,.6);border-radius:2px"></div>정상 가동</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;background:rgba(245,166,35,.6);border-radius:2px"></div>정비 중 (용량 ↓)</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;background:rgba(232,69,69,.6);border-radius:2px"></div>가동 중단</div>
+    </div>
+  </div>
+
+  <!-- 핵심 KPI -->
+  <div class="section-div">
+    <span class="section-num">1.1</span>
+    <span class="section-title">서울시 전체 현황</span>
+    <span class="section-sub">2024년 기준 · 단위 토글 가능</span>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi teal"><div class="kpi-label">서울 연간 발생량 (2024)</div><div class="kpi-val teal">116.8<span class="kpi-unit">만톤</span></div><div class="kpi-sub">일평균 3,200톤/일</div></div>
+    <div class="kpi amber"><div class="kpi-label">1인당 배출량</div><div class="kpi-val amber">1.07<span class="kpi-unit">kg/일</span></div><div class="kpi-sub">전국 평균 0.94kg 대비 +14%</div></div>
+    <div class="kpi blue"><div class="kpi-label">전체 재활용률</div><div class="kpi-val blue">60.2<span class="kpi-unit">%</span></div><div class="kpi-sub">소각 35.1% · 매립 4.7%</div></div>
+    <div class="kpi red"><div class="kpi-label">최고 vs 최저 1인당</div><div class="kpi-val red">2.3<span class="kpi-unit">배</span></div><div class="kpi-sub">종로 1.38kg vs 도봉 0.60kg</div></div>
+  </div>
+
+  <!-- 토글 -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">폐기물 유형:</span>
+    <div class="toggle-group" id="type-toggle">
+      <button class="tgl active" onclick="setType('전체',this)">전체</button>
+      <button class="tgl" onclick="setType('생활계',this)">생활계</button>
+      <button class="tgl amber" onclick="setType('음식물',this)">음식물</button>
+      <button class="tgl blue" onclick="setType('재활용',this)">재활용</button>
+    </div>
+    <span style="margin-left:12px;font-size:10px;font-family:var(--mono);color:var(--text3)">지표:</span>
+    <div class="toggle-group" id="metric-toggle">
+      <button class="tgl active" onclick="setMetric('total',this)">총량</button>
+      <button class="tgl" onclick="setMetric('percap',this)">1인당</button>
+      <button class="tgl red" onclick="setMetric('growth',this)">증가율</button>
+    </div>
+  </div>
+
+  <div class="grid-map">
+    <div class="panel">
+      <div class="panel-title">자치구별 발생량 지도 <span class="panel-badge" id="map-badge-label">총량 기준</span></div>
+      <div style="position:relative">
+        <div id="map1" class="lmap"></div>
+        <div class="map-loading" id="map1-loading">서울 자치구 지도 로드 중...</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+        <span style="font-size:9px;font-family:var(--mono);color:var(--text3)">낮음</span>
+        <div id="map1-gradient" style="flex:1;height:5px;border-radius:3px;background:linear-gradient(to right,#0e4a38,#00c896)"></div>
+        <span style="font-size:9px;font-family:var(--mono);color:var(--text3)">높음</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="panel">
+        <div class="panel-title">연도 슬라이더 <span class="panel-badge">2018 → 2024</span></div>
+        <input type="range" id="year-slider" min="2018" max="2024" value="2024" oninput="onYearChange(this.value)">
+        <div class="slider-val" id="year-val">2024</div>
+        <div class="info-box" style="margin-top:8px;font-size:10px">
+          <div>2024년 서울 발생량: <span class="iv">116.8만톤</span></div>
+          <div>전년 대비: <span class="iv">+1.9%</span> (최저점 2022년 대비 +3.2%)</div>
+          <div>6년간 트렌드: <span class="iv">감소→반등 중</span></div>
+        </div>
+      </div>
+
+      <div class="rank-cards" style="margin-bottom:0">
+        <div class="rank-card">
+          <div class="rank-card-title">🏆 총량 TOP 5</div>
+          <div id="rank-total"></div>
+        </div>
+        <div class="rank-card">
+          <div class="rank-card-title">👤 1인당 TOP 5</div>
+          <div id="rank-percap"></div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--amber);background:var(--amber-bg);border:1px solid rgba(245,166,35,.2);border-radius:6px;padding:8px 10px;font-family:var(--mono)">
+        🆕 총량 ≠ 1인당 랭킹 불일치: <strong>종로·중구·영등포</strong> — 유동인구 집중 신호
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">연도별 발생량 추이 (2018–2024) <span class="panel-badge">만톤</span></div>
+      <div class="chart-wrap h200"><canvas id="trend1"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">처리 방법별 비율 (2024)</div>
+      <div class="chart-wrap h200"><canvas id="donut1"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 1.2 자치구별 배출 구조 -->
+  <div class="section-div">
+    <span class="section-num">1.2</span>
+    <span class="section-title">자치구별 배출 구조 비교</span>
+    <span class="section-sub">처리방식·음식물·재활용</span>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">정렬 기준:</span>
+    <div class="toggle-group" id="sort-toggle">
+      <button class="tgl active" onclick="setSortMode('total',this)">총량 순</button>
+      <button class="tgl amber" onclick="setSortMode('food',this)">음식물 비중 순</button>
+      <button class="tgl teal" onclick="setSortMode('recycle',this)">재활용률 순</button>
+    </div>
+  </div>
+
+  <div class="panel mb12">
+    <div class="panel-title">자치구별 처리방식 구성 (Stacked Bar) <span class="panel-badge">서울 평균선 포함</span></div>
+    <div class="chart-wrap h320"><canvas id="stacked2"></canvas></div>
+  </div>
+
+  <div class="grid-2 mb12">
+    <div class="panel">
+      <div class="panel-title">음식물 — 가정 vs 사업장 비중</div>
+      <div class="chart-wrap h240"><canvas id="food-split"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">재활용률 자치구 분포</div>
+      <div class="chart-wrap h240"><canvas id="recycle-dist"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 1.3 내 자치구 카드 (NEW · 주민용) -->
+  <div class="section-div">
+    <span class="section-num">1.3</span>
+    <span class="section-title">내 자치구 카드</span>
+    <span class="section-sub">우리 동네는 어떤 상황일까?</span>
+  </div>
+
+  <div class="citizen-card">
+    <div class="cc-header">
+      <div class="cc-title">🏘️ 내 자치구 검색</div>
+      <select class="cc-select" id="citizen-select" onchange="updateCitizenCard()">
+        <option value="">자치구 선택...</option>
+      </select>
+    </div>
+    <div id="citizen-content" style="font-size:12px;color:var(--text3);text-align:center;padding:20px">자치구를 선택하면 우리 동네 쓰레기 현황을 볼 수 있어요</div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--   CH.2 분석 (Why)                                -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page" id="pg1">
+
+  <div class="chap-intro amber">
+    <div class="chap-num">CHAPTER 2 · ANALYSIS</div>
+    <div class="chap-title">🧬 분석 — 왜 자치구마다 다른가</div>
+    <div class="chap-question">"같은 서울인데 왜 종로는 1.38kg, 도봉은 0.60kg을 배출할까?"</div>
+  </div>
+
+  <!-- 2.1 자치구 유형화 -->
+  <div class="section-div">
+    <span class="section-num">2.1</span>
+    <span class="section-title">자치구 유형화 (Clustering)</span>
+    <span class="section-sub">생활인구·카드소비·택배량 기반 5개 군집</span>
+  </div>
+
+  <div class="kpi-row k5">
+    <div class="kpi blue"><div class="kpi-label">🏠 주거형</div><div class="kpi-val blue" style="font-size:15px">6개구</div><div class="kpi-sub">노원·강서·도봉 등</div></div>
+    <div class="kpi red"><div class="kpi-label">🏢 상업형</div><div class="kpi-val red" style="font-size:15px">5개구</div><div class="kpi-sub">강남·중구·마포 등</div></div>
+    <div class="kpi amber"><div class="kpi-label">🚶 유동집중형</div><div class="kpi-val amber" style="font-size:15px">4개구</div><div class="kpi-sub">종로·중구·용산 등</div></div>
+    <div class="kpi teal"><div class="kpi-label">📦 물류소비형</div><div class="kpi-val teal" style="font-size:15px">5개구</div><div class="kpi-sub">송파·강동·광진 등</div></div>
+    <div class="kpi purple"><div class="kpi-label">🔀 혼합형</div><div class="kpi-val purple" style="font-size:15px">5개구</div><div class="kpi-sub">영등포·동대문 등</div></div>
+  </div>
+
+  <div class="cluster-cards">
+    <div class="cluster-card"><span class="cluster-tag cl-residential-bg cl-residential">🏠 주거형</span><div class="cluster-name">주거·가정형</div><div class="cluster-districts">노원·강서·도봉·은평·강북·성북</div><div class="cluster-feat">거주인구↑ 공동주택↑<br>음식물 가정배출 多</div></div>
+    <div class="cluster-card"><span class="cluster-tag cl-commercial-bg cl-commercial">🏢 상업형</span><div class="cluster-name">상업·사업장형</div><div class="cluster-districts">강남·서초·중구·마포·영등포</div><div class="cluster-feat">카드소비↑ 다량배출↑<br>사업장 음식물 多</div></div>
+    <div class="cluster-card"><span class="cluster-tag cl-transit-bg cl-transit">🚶 유동집중형</span><div class="cluster-name">유동인구 집중</div><div class="cluster-districts">종로·중구·용산·광진</div><div class="cluster-feat">생활인구÷거주 > 2<br>관광·숙박↑</div></div>
+    <div class="cluster-card"><span class="cluster-tag cl-logistics-bg cl-logistics">📦 물류소비형</span><div class="cluster-name">물류·포장재형</div><div class="cluster-districts">송파·강동·성동·동작·관악</div><div class="cluster-feat">택배량↑ 재활용 포장재↑<br>재활용 체계 필요</div></div>
+    <div class="cluster-card"><span class="cluster-tag cl-mixed-bg cl-mixed">🔀 혼합형</span><div class="cluster-name">복합 특성</div><div class="cluster-districts">영등포·동대문·구로·금천·중랑</div><div class="cluster-feat">2개 이상 조건 혼재<br>단계적 접근 필요</div></div>
+  </div>
+
+  <div class="grid-2 mb12">
+    <div class="panel">
+      <div class="panel-title">군집 결과 지도 <span class="panel-badge">색상별 유형 구분</span></div>
+      <div style="position:relative">
+        <div id="map4" class="lmap h280"></div>
+        <div class="map-loading" id="map4-loading">지도 로드 중...</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">유형별 레이더 차트 <span class="panel-badge">5개 특성 축</span></div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="radar-toggle">
+        <button class="tgl blue active" onclick="setRadarCluster(0,this)">🏠 주거형</button>
+        <button class="tgl red" onclick="setRadarCluster(1,this)">🏢 상업형</button>
+        <button class="tgl amber" onclick="setRadarCluster(2,this)">🚶 유동형</button>
+        <button class="tgl teal" onclick="setRadarCluster(3,this)">📦 물류형</button>
+        <button class="tgl purple" onclick="setRadarCluster(4,this)">🔀 혼합형</button>
+      </div>
+      <div class="chart-wrap h240"><canvas id="radar4"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 2.2 요인 분석 (회귀) -->
+  <div class="section-div">
+    <span class="section-num">2.2</span>
+    <span class="section-title">요인 분석 — 무엇이 발생량을 결정하나</span>
+    <span class="section-sub">상관·회귀 + 변수 중요도</span>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi blue"><div class="kpi-label">가장 강한 설명변수</div><div class="kpi-val blue" style="font-size:16px">생활인구</div><div class="kpi-sub">r = 0.87 (음식물)</div></div>
+    <div class="kpi amber"><div class="kpi-label">카드소비 상관계수</div><div class="kpi-val amber">0.79</div><div class="kpi-sub">소비↑ → 포장재·음식물↑</div></div>
+    <div class="kpi teal"><div class="kpi-label">택배량 상관계수</div><div class="kpi-val teal">0.71</div><div class="kpi-sub">재활용 비중과 연관↑</div></div>
+    <div class="kpi purple"><div class="kpi-label">인구갭 큰 자치구</div><div class="kpi-val purple" style="font-size:16px">종로·중구</div><div class="kpi-sub">생활÷거주 > 2.5</div></div>
+  </div>
+
+  <div class="grid-ctrl mb12">
+    <div class="panel">
+      <div class="panel-title">설명변수 선택</div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">X축 변수</div>
+        <select id="x-var" onchange="updateScatter()">
+          <option value="living_pop">생활인구 (만명)</option>
+          <option value="resident_pop">거주인구 (만명)</option>
+          <option value="pop_gap">인구갭 (생활/거주)</option>
+          <option value="card">카드소비 (억원)</option>
+          <option value="delivery">택배 물동량 (만건)</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">Y축 폐기물 유형</div>
+        <select id="y-var" onchange="updateScatter()">
+          <option value="total">총 발생량 (톤/일)</option>
+          <option value="food">음식물 (톤/일)</option>
+          <option value="recycle">재활용 (톤/일)</option>
+          <option value="incinerate">소각 (톤/일)</option>
+        </select>
+      </div>
+      <div class="scatter-info" id="scatter-info">
+        상관계수: <span class="sv" id="corr-val">-</span><br>
+        회귀식: y = <span class="sv" id="reg-eq">-</span><br>
+        해석: <span class="sv" id="reg-interp">변수를 선택하세요</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">산점도 + 회귀선 <span class="panel-badge">자치구 클릭시 팝업</span></div>
+      <div class="chart-wrap h280"><canvas id="scatter3" style="cursor:pointer"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2 mb12">
+    <div class="panel">
+      <div class="panel-title">변수 중요도 (Random Forest) <span class="panel-badge">음식물 폐기물 기준</span></div>
+      <div class="chart-wrap h200"><canvas id="rf-importance"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">자치구별 인구갭 <span class="panel-badge">생활인구 ÷ 거주인구</span></div>
+      <div class="chart-wrap h200"><canvas id="pop-gap-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 2.3 강서구 특이 케이스 (NEW) -->
+  <div class="section-div">
+    <span class="section-num">2.3</span>
+    <span class="section-title">특이 사례 분석</span>
+    <span class="section-sub">구별 특수성 반영 — 학회 피드백 반영</span>
+  </div>
+
+  <div class="grid-2 mb12">
+    <div class="case-box">
+      <div class="case-header">
+        <span class="case-tag">CASE STUDY</span>
+        <span class="case-title">🏭 강서구 — 사업장 폐기물이 범인</span>
+      </div>
+      <div class="case-text">
+        강서구는 <strong>마곡 사업단지</strong> 영향으로 사업장 폐기물 비중이 비정상적으로 높음. 가정 폐기물만 분리하면 일반적인 주거형 자치구와 비슷한 패턴.
+        → 단순 총량/1인당 지표만으로는 구의 실제 가정 배출 특성을 왜곡할 수 있음.
+      </div>
+      <div class="chart-wrap h160"><canvas id="gangseo-chart"></canvas></div>
+    </div>
+    <div class="case-box" style="border-left-color:var(--amber)">
+      <div class="case-header">
+        <span class="case-tag" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(245,166,35,.3)">CASE STUDY</span>
+        <span class="case-title">🚶 종로·중구 — 유동인구 폭주</span>
+      </div>
+      <div class="case-text">
+        거주인구 14만/12만에 불과하지만 생활인구는 <strong>2.5배 이상</strong>. 1인당 배출량이 기형적으로 높은 이유는 거주민이 아니라 <strong>관광객·근무자·상업시설</strong>의 배출이 주민 수로 나뉘기 때문.
+        → 이 두 구는 별도의 지표(예: 생활인구당 배출량) 적용 필요.
+      </div>
+      <div class="chart-wrap h160"><canvas id="jongno-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 2.4 발생량 예측 -->
+  <div class="section-div">
+    <span class="section-num">2.4</span>
+    <span class="section-title">자치구별 발생량 예측</span>
+    <span class="section-sub">SARIMA + 클러스터 기반</span>
+  </div>
+
+  <div class="kpi-row mb12">
+    <div class="kpi teal"><div class="kpi-label">2025 예측 발생량</div><div class="kpi-val teal">119.2<span class="kpi-unit">만톤</span></div><div class="kpi-sub">전년 대비 +2.1%</div></div>
+    <div class="kpi amber"><div class="kpi-label">여름 스파이크</div><div class="kpi-val amber">+14<span class="kpi-unit">%</span></div><div class="kpi-sub">7~8월 계절 급증</div></div>
+    <div class="kpi red"><div class="kpi-label">목표 초과 예상</div><div class="kpi-val red">7<span class="kpi-unit">개구</span></div><div class="kpi-sub">향후 3개월 기준</div></div>
+    <div class="kpi purple"><div class="kpi-label">예측 모델</div><div class="kpi-val purple" style="font-size:14px">SARIMA</div><div class="kpi-sub">생활인구·카드소비 포함</div></div>
+  </div>
+
+  <div class="grid-ctrl">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="panel">
+        <div class="panel-title">자치구 선택</div>
+        <div class="ctrl-group"><select id="pred-gu" onchange="updatePredChart()"></select></div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">예측 기간</div>
+          <select id="pred-period" onchange="updatePredChart()">
+            <option value="6">6개월</option>
+            <option value="12" selected>12개월</option>
+            <option value="24">24개월</option>
+          </select>
+        </div>
+        <div class="info-box" id="pred-info">자치구를 선택하세요</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">위험 자치구 <span class="panel-badge">목표 초과 예상</span></div>
+        <div id="risk-gu-list"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">월별 예측선 + 신뢰구간 <span class="panel-badge">목표 밴드 오버레이</span></div>
+      <div class="chart-wrap h320"><canvas id="pred-chart"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--   CH.3 처방 (How)                                -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page" id="pg2">
+
+  <div class="chap-intro red">
+    <div class="chap-num">CHAPTER 3 · PRESCRIPTION</div>
+    <div class="chap-title">💊 처방 — 공백기를 어떻게 메울까</div>
+    <div class="chap-question">"어디서 위급한가? 어디로 위탁할까? 비용·거리·환경 무엇을 우선할까?"</div>
+  </div>
+
+  <!-- 3.1 처리 리스크 -->
+  <div class="section-div">
+    <span class="section-num">3.1</span>
+    <span class="section-title">자치구별 처리 리스크 진단</span>
+    <span class="section-sub">발생량 × 증가율 × 소각 의존도</span>
+  </div>
+
+  <div class="kpi-row mb12">
+    <div class="kpi red"><div class="kpi-label">리스크 최상위</div><div class="kpi-val red" style="font-size:16px">송파·강남</div><div class="kpi-sub">발생량 × 증가율 × 예측 종합</div></div>
+    <div class="kpi amber"><div class="kpi-label">소각 의존도 1위</div><div class="kpi-val amber" style="font-size:16px">강남구</div><div class="kpi-sub">소각 필요량 42톤/일</div></div>
+    <div class="kpi purple"><div class="kpi-label">용량 초과 예상</div><div class="kpi-val purple">2026<span class="kpi-unit">년</span></div><div class="kpi-sub">현 추세 지속 시 상위 5구</div></div>
+    <div class="kpi teal"><div class="kpi-label">매칭 우선 대상</div><div class="kpi-val teal">8<span class="kpi-unit">개구</span></div><div class="kpi-sub">우선순위 매트릭스 기준</div></div>
+  </div>
+
+  <div class="grid-2 mb12">
+    <div class="panel">
+      <div class="panel-title">처리 리스크 히트맵 <span class="panel-badge">총량·증가율·예측 종합</span></div>
+      <div id="heatmap6" style="margin-top:4px"></div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+        <span style="font-size:9px;font-family:var(--mono);color:var(--text3)">낮음</span>
+        <div style="flex:1;height:5px;border-radius:3px;background:linear-gradient(to right,#1e2535,#e84545)"></div>
+        <span style="font-size:9px;font-family:var(--mono);color:var(--text3)">높음</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">우선순위 매트릭스 <span class="panel-badge">X: 현재량 / Y: 증가율 / 버블: 소각필요량</span></div>
+      <div class="chart-wrap h280"><canvas id="matrix6"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 3.2 매칭 시뮬레이터 (NEW · 핵심 신규 기능) -->
+  <div class="section-div">
+    <span class="section-num">3.2</span>
+    <span class="section-title">민간 소각장 매칭 시뮬레이터</span>
+    <span class="section-sub">자치구 × 위탁톤수 × 가중치 → TOP 3 추천</span>
+  </div>
+
+  <div class="grid-sim">
+    <div class="panel">
+      <div class="panel-title">시뮬레이터 입력 <span class="panel-badge est">⚠ 추정값 기반</span></div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label">① 자치구 선택</div>
+        <select id="sim-gu"></select>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label">② 위탁 물량 (톤/일)</div>
+        <input type="number" id="sim-tons" value="30" min="1" max="200" oninput="runSim()">
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label">③ 우선 순위 가중치</div>
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">💰 비용</span><span style="font-family:var(--mono);color:var(--teal)" id="w-cost-v">40%</span></div>
+          <input type="range" id="w-cost" min="0" max="100" value="40" oninput="updateWeights()">
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">📍 거리</span><span style="font-family:var(--mono);color:var(--teal)" id="w-dist-v">30%</span></div>
+          <input type="range" id="w-dist" min="0" max="100" value="30" oninput="updateWeights()">
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">🌱 CO₂</span><span style="font-family:var(--mono);color:var(--teal)" id="w-co2-v">30%</span></div>
+          <input type="range" id="w-co2" min="0" max="100" value="30" oninput="updateWeights()">
+        </div>
+      </div>
+
+      <button onclick="runSim()" style="width:100%;padding:9px;background:var(--teal-bg);border:1px solid rgba(0,200,150,.3);border-radius:6px;color:var(--teal);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">🔍 추천 실행</button>
+
+      <div style="margin-top:10px;font-size:10px;font-family:var(--mono);color:var(--text3);line-height:1.7">
+        반입 정책: <span class="flag-g">🟢 경기</span> · <span class="flag-y">🟡 인천</span> · <span class="flag-r">🔴 충남</span><br>
+        🔴 지역은 자동 제외됨
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">추천 결과 <span class="panel-badge" id="sim-target">자치구 선택 후 실행</span></div>
+      <div id="sim-results">
+        <div style="font-size:11px;color:var(--text3);text-align:center;padding:30px 0">자치구와 가중치를 설정한 후 추천 실행 버튼을 눌러주세요</div>
+      </div>
+      <div id="sim-map-wrap" style="position:relative;margin-top:12px;display:none">
+        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">▸ 출발지 → 추천 시설 경로</div>
+        <div id="sim-map" class="lmap h280"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 처리 부담 테이블 -->
+  <div class="section-div">
+    <span class="section-num">3.3</span>
+    <span class="section-title">자치구별 처리 부담 상세</span>
+    <span class="section-sub">전체 25개 자치구 — 클릭 시 상세 팝업</span>
+  </div>
+
+  <div class="panel mb12">
+    <div class="panel-title">소각 의존도 및 처리 부담 <span class="panel-badge">행 클릭 시 상세 + 매칭 시뮬레이터로 이동</span></div>
+    <div style="overflow-x:auto">
+      <table class="gu-table" id="risk-table">
+        <thead><tr>
+          <th>#</th><th>자치구</th><th>리스크점수</th><th>발생량(톤/일)</th><th>증가율</th><th>소각의존도</th><th>소각필요량</th><th>용량초과예상</th><th>대응</th>
+        </tr></thead>
+        <tbody id="risk-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3.4 데이터 한계 안내 (NEW · 학회 피드백 반영) -->
+  <div class="disclaimer">
+    <div class="disc-icon">ℹ️</div>
+    <div class="disc-content">
+      <strong>추정치 사용에 대한 안내</strong> — 본 시뮬레이터의 시설별 단가·잔여용량·CO₂는 실제 민간 소각장 데이터가 비공개이므로 <strong>설계용량 × 규모별 추정 가동률</strong>, <strong>거리비례 운송비</strong>, <strong>차량 CO₂ 계수</strong>를 활용한 추정값입니다. 실제 운영 시 ±15% 오차 가능. <code>config.json</code> 수정만으로 실데이터 교체 가능한 구조로 설계됨.
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════ */
+/* DATA                                              */
+/* ════════════════════════════════════════════════ */
+/* GU 데이터는 data.js에서 로드됨 */
+const CLUSTER_COLORS=['#4a90d9','#e84545','#f5a623','#00c896','#9b6df0'];
+const CLUSTER_NAMES=['🏠 주거형','🏢 상업형','🚶 유동집중형','📦 물류소비형','🔀 혼합형'];
+
+/* 정비 타임라인 데이터 (추정) */
+const FACILITIES=[
+  {name:'마포',cap:750,start:2025.5,end:2027.0,status:'정비중'},
+  {name:'강남',cap:900,start:2027.0,end:2028.5,status:'정상'},
+  {name:'노원',cap:800,start:2026.0,end:2028.0,status:'정상'},
+  {name:'양천',cap:400,start:2028.0,end:2029.5,status:'정상'},
+];
+
+/* 민간 소각장 후보 (추정 데이터) */
+const PRIVATE_FACILITIES=[
+  {name:'경기 양주 A시설',region:'경기',flag:'g',cap:120,remain:35,distance:32,unitCost:185000,co2:0.42,lat:37.785,lng:127.045},
+  {name:'경기 화성 B시설',region:'경기',flag:'g',cap:200,remain:48,distance:48,unitCost:172000,co2:0.65,lat:37.199,lng:126.831},
+  {name:'경기 평택 C시설',region:'경기',flag:'g',cap:180,remain:40,distance:62,unitCost:168000,co2:0.83,lat:36.992,lng:127.113},
+  {name:'경기 김포 D시설',region:'경기',flag:'g',cap:90,remain:22,distance:25,unitCost:195000,co2:0.34,lat:37.615,lng:126.715},
+  {name:'경기 안산 E시설',region:'경기',flag:'g',cap:150,remain:38,distance:38,unitCost:178000,co2:0.51,lat:37.322,lng:126.831},
+  {name:'인천 서구 F시설',region:'인천',flag:'y',cap:160,remain:30,distance:42,unitCost:182000,co2:0.56,lat:37.545,lng:126.676},
+  {name:'인천 남동 G시설',region:'인천',flag:'y',cap:110,remain:18,distance:38,unitCost:190000,co2:0.51,lat:37.448,lng:126.732},
+  {name:'충남 천안 H시설',region:'충남',flag:'r',cap:140,remain:42,distance:95,unitCost:155000,co2:1.27,lat:36.815,lng:127.114},
+  {name:'충남 아산 I시설',region:'충남',flag:'r',cap:100,remain:25,distance:108,unitCost:160000,co2:1.44,lat:36.789,lng:127.002},
+  {name:'경기 의정부 J시설',region:'경기',flag:'g',cap:80,remain:18,distance:28,unitCost:198000,co2:0.37,lat:37.738,lng:127.034},
+  {name:'경기 성남 K시설',region:'경기',flag:'g',cap:140,remain:32,distance:18,unitCost:205000,co2:0.24,lat:37.420,lng:127.126},
+  {name:'경기 부천 L시설',region:'경기',flag:'g',cap:130,remain:28,distance:22,unitCost:200000,co2:0.29,lat:37.503,lng:126.766},
+];
+
+let charts={};
+let currentType='전체',currentMetric='total',currentSort='total',currentFoodView='total';
+
+/* ════════ TABS ════════ */
+function sw(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  if(i===0&&!charts.trend1) initCh1();
+  if(i===1&&!charts.radar4) initCh2();
+  if(i===2&&!charts.matrix6) initCh3();
+  // 지도가 숨김 상태에서 보일 때 사이즈 재계산
+  setTimeout(()=>{
+    if(i===0&&map1Instance) map1Instance.invalidateSize();
+    if(i===1&&map4Instance) map4Instance.invalidateSize();
+    if(i===2&&simMapInstance) simMapInstance.invalidateSize();
+  },50);
+}
+
+/* ════════════════════════════════════════════════ */
+/* CHAPTER 1                                         */
+/* ════════════════════════════════════════════════ */
+function initCh1(){
+  initCountdown();
+  drawTimeline();
+  drawMap1();
+  renderRankCards();
+  initTrend1();
+  initDonut1();
+  renderStacked2();
+  initFoodSplit();
+  initRecycleDist();
+  initCitizenSelect();
+}
+
+/* 카운트다운 */
+function initCountdown(){
+  const target=new Date('2026-01-01').getTime();
+  const tick=()=>{
+    const diff=target-Date.now();
+    const days=Math.max(0,Math.floor(diff/(1000*60*60*24)));
+    const el=document.getElementById('cd-days');
+    if(el)el.textContent=days;
+  };
+  tick();setInterval(tick,60000);
+}
+
+/* 정비 타임라인 */
+function drawTimeline(){
+  const wrap=document.getElementById('facility-timeline');
+  if(!wrap)return;
+  const yearMin=2025,yearMax=2030;
+  const span=yearMax-yearMin;
+  const now=2026.3;
+  const nowPct=(now-yearMin)/span*100;
+
+  let html=`<div style="position:relative">
+    <div style="display:grid;grid-template-columns:80px 1fr 80px;gap:12px;padding:0 0 6px;border-bottom:1px solid var(--border);font-size:9px;font-family:var(--mono);color:var(--text3)">
+      <span>시설</span>
+      <div style="position:relative;display:flex;justify-content:space-between">
+        ${[2025,2026,2027,2028,2029,2030].map(y=>`<span>${y}</span>`).join('')}
+      </div>
+      <span style="text-align:right">상태</span>
+    </div>`;
+
+  FACILITIES.forEach(f=>{
+    const startPct=(f.start-yearMin)/span*100;
+    const endPct=(f.end-yearMin)/span*100;
+    const widthPct=endPct-startPct;
+    const color=f.status==='정비중'?'rgba(245,166,35,.7)':f.status==='가동중단'?'rgba(232,69,69,.7)':'rgba(74,144,217,.6)';
+    const statusColor=f.status==='정비중'?'var(--amber)':f.status==='가동중단'?'var(--red)':'var(--blue)';
+    html+=`<div class="tl-row">
+      <div>
+        <div class="tl-name">${f.name} 자원회수</div>
+        <div class="tl-cap">${f.cap}톤/일</div>
+      </div>
+      <div class="tl-bar-wrap">
+        <div class="tl-now" style="left:${nowPct}%"></div>
+        <div class="tl-bar" style="left:${startPct}%;width:${widthPct}%;background:${color}">${f.status}</div>
+      </div>
+      <div class="tl-status" style="color:${statusColor}">${f.start.toFixed(1)}<br>~${f.end.toFixed(1)}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  wrap.innerHTML=html;
+}
+
+/* ════════ LEAFLET MAPS ════════ */
+/* Seoul 25 districts GeoJSON — 인라인 (출처: github.com/southkorea/seoul-maps, MIT) */
+const SEOUL_GEO={"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"강동구"},"geometry":{"type":"Polygon","coordinates":[[[127.1152,37.5575],[127.1188,37.5572],[127.1215,37.5599],[127.1244,37.5614],[127.1359,37.5656],[127.1493,37.5689],[127.1551,37.5709],[127.1668,37.5767],[127.1704,37.5765],[127.1761,37.5768],[127.1791,37.5779],[127.1775,37.5745],[127.1782,37.5715],[127.18,37.5693],[127.1812,37.5664],[127.1817,37.5629],[127.1841,37.5581],[127.1835,37.5501],[127.1853,37.5489],[127.1848,37.5453],[127.1854,37.5426],[127.1836,37.5424],[127.1812,37.5438],[127.1777,37.5424],[127.1744,37.5428],[127.1683,37.5415],[127.1653,37.5422],[127.1557,37.5312],[127.1554,37.5265],[127.1515,37.5228],[127.1498,37.5193],[127.1479,37.5192],[127.1468,37.5166],[127.1467,37.5142],[127.1453,37.5146],[127.1212,37.5253],[127.1225,37.5275],[127.1253,37.5357],[127.1206,37.5381],[127.1117,37.5407],[127.1142,37.5447],[127.116,37.5505],[127.116,37.5558],[127.1152,37.5575]]]}},{"type":"Feature","properties":{"name":"송파구"},"geometry":{"type":"Polygon","coordinates":[[[127.0691,37.5223],[127.075,37.5209],[127.0797,37.5208],[127.0864,37.5216],[127.0944,37.524],[127.1009,37.5248],[127.1048,37.5312],[127.1117,37.5407],[127.1206,37.5381],[127.1253,37.5357],[127.1225,37.5275],[127.1212,37.5253],[127.1453,37.5146],[127.1467,37.5142],[127.1467,37.5128],[127.1446,37.5115],[127.1432,37.5095],[127.1421,37.5058],[127.1432,37.5026],[127.1474,37.5007],[127.1498,37.5005],[127.1522,37.5017],[127.154,37.5003],[127.1609,37.4989],[127.1635,37.4974],[127.162,37.494],[127.1622,37.4916],[127.1604,37.4878],[127.1589,37.4861],[127.1539,37.4848],[127.1515,37.4775],[127.1515,37.4756],[127.1486,37.4738],[127.1442,37.4737],[127.1411,37.4706],[127.1363,37.4721],[127.1328,37.4726],[127.1331,37.4689],[127.1375,37.4665],[127.1348,37.4651],[127.1308,37.4651],[127.1273,37.4667],[127.1273,37.4642],[127.1244,37.4624],[127.1244,37.4644],[127.1227,37.4676],[127.1138,37.4796],[127.1144,37.4807],[127.1112,37.4857],[127.1078,37.4886],[127.1043,37.4907],[127.0989,37.493],[127.0805,37.4978],[127.0765,37.4986],[127.0719,37.5022],[127.0693,37.5172],[127.0686,37.5181],[127.0691,37.5223]]]}},{"type":"Feature","properties":{"name":"강남구"},"geometry":{"type":"Polygon","coordinates":[[[127.0587,37.5263],[127.0691,37.5223],[127.0686,37.5181],[127.0693,37.5172],[127.0719,37.5022],[127.0765,37.4986],[127.0805,37.4978],[127.0989,37.493],[127.1043,37.4907],[127.1078,37.4886],[127.1112,37.4857],[127.1144,37.4807],[127.1138,37.4796],[127.1227,37.4676],[127.1244,37.4644],[127.1244,37.4624],[127.1196,37.4594],[127.1189,37.4558],[127.1154,37.4572],[127.1141,37.4588],[127.1084,37.4597],[127.1056,37.4568],[127.1003,37.456],[127.0984,37.4586],[127.0971,37.4608],[127.0904,37.4655],[127.0866,37.4701],[127.0864,37.4727],[127.0803,37.472],[127.076,37.4701],[127.0748,37.472],[127.0723,37.4723],[127.0714,37.4711],[127.0646,37.47],[127.0637,37.4662],[127.0589,37.4656],[127.0559,37.4659],[127.0471,37.4745],[127.0435,37.4828],[127.0362,37.4818],[127.0337,37.4867],[127.0227,37.51],[127.0204,37.5177],[127.0192,37.5201],[127.014,37.525],[127.023,37.5323],[127.027,37.5348],[127.032,37.5361],[127.0481,37.5297],[127.049,37.5314],[127.0512,37.5298],[127.0587,37.5263]]]}},{"type":"Feature","properties":{"name":"서초구"},"geometry":{"type":"Polygon","coordinates":[[[127.014,37.525],[127.0192,37.5201],[127.0204,37.5177],[127.0227,37.51],[127.0337,37.4867],[127.0362,37.4818],[127.0435,37.4828],[127.0471,37.4745],[127.0559,37.4659],[127.0589,37.4656],[127.0637,37.4662],[127.0646,37.47],[127.0714,37.4711],[127.0723,37.4723],[127.0748,37.472],[127.076,37.4701],[127.0803,37.472],[127.0864,37.4727],[127.0866,37.4701],[127.0904,37.4655],[127.0971,37.4608],[127.0984,37.4586],[127.0967,37.456],[127.0972,37.4537],[127.0958,37.4533],[127.0947,37.4509],[127.0929,37.45],[127.0905,37.4464],[127.0905,37.443],[127.0862,37.4412],[127.0844,37.4384],[127.0769,37.4396],[127.0738,37.439],[127.0741,37.4372],[127.0767,37.436],[127.076,37.4343],[127.0736,37.4332],[127.0727,37.4294],[127.0734,37.4281],[127.0689,37.4273],[127.0678,37.4262],[127.0632,37.4273],[127.06,37.4273],[127.0542,37.4257],[127.052,37.4275],[127.0496,37.428],[127.0485,37.4307],[127.0419,37.4357],[127.038,37.4363],[127.0375,37.4384],[127.0403,37.4419],[127.0396,37.4436],[127.0399,37.4466],[127.0383,37.4488],[127.0392,37.4518],[127.0388,37.4538],[127.037,37.4554],[127.0357,37.4587],[127.0368,37.461],[127.0334,37.463],[127.0282,37.4557],[127.0226,37.4534],[127.0183,37.4526],[127.0132,37.4526],[127.0111,37.4546],[127.0084,37.4594],[127.0074,37.4598],[127.0055,37.4645],[127.0001,37.4646],[126.9984,37.4639],[126.9993,37.4611],[126.9989,37.4594],[126.9953,37.4586],[126.9907,37.4553],[126.9896,37.4576],[126.9903,37.4627],[126.989,37.465],[126.9866,37.4669],[126.9846,37.47],[126.9837,37.4739],[126.985,37.4936],[126.9872,37.4972],[126.9832,37.4995],[126.9824,37.5012],[126.9822,37.5093],[126.9846,37.5107],[126.9895,37.5109],[126.9915,37.5099],[127.0001,37.5139],[127.0058,37.5169],[127.0082,37.5188],[127.0102,37.522],[127.014,37.525]]]}},{"type":"Feature","properties":{"name":"관악구"},"geometry":{"type":"Polygon","coordinates":[[[126.9837,37.4739],[126.9846,37.47],[126.9866,37.4669],[126.989,37.465],[126.9903,37.4627],[126.9896,37.4576],[126.9907,37.4553],[126.9848,37.4539],[126.9829,37.4502],[126.9784,37.4477],[126.9761,37.4448],[126.9731,37.4447],[126.9665,37.4428],[126.9662,37.4394],[126.9652,37.4382],[126.9615,37.438],[126.9605,37.4367],[126.9553,37.4367],[126.9474,37.4348],[126.9444,37.4348],[126.9415,37.4332],[126.9404,37.4346],[126.9406,37.4375],[126.9377,37.4404],[126.9331,37.4429],[126.9331,37.4453],[126.9308,37.4474],[126.9253,37.4516],[126.9245,37.4539],[126.9189,37.455],[126.9168,37.4549],[126.9164,37.4587],[126.915,37.4612],[126.9158,37.4625],[126.9137,37.4638],[126.9103,37.4698],[126.9128,37.4708],[126.9141,37.4742],[126.9116,37.4754],[126.9118,37.4781],[126.9028,37.4765],[126.9016,37.4775],[126.9053,37.4822],[126.9081,37.4822],[126.9153,37.4844],[126.9192,37.4866],[126.9264,37.4872],[126.9287,37.4913],[126.9298,37.4922],[126.9335,37.4904],[126.9367,37.4903],[126.9384,37.4894],[126.9437,37.4894],[126.9492,37.4913],[126.954,37.4896],[126.956,37.4882],[126.9588,37.4887],[126.9633,37.4906],[126.9629,37.488],[126.9644,37.4844],[126.9634,37.4807],[126.9726,37.4726],[126.979,37.4738],[126.9837,37.4739]]]}},{"type":"Feature","properties":{"name":"동작구"},"geometry":{"type":"Polygon","coordinates":[[[126.9822,37.5093],[126.9824,37.5012],[126.9832,37.4995],[126.9872,37.4972],[126.985,37.4936],[126.9837,37.4739],[126.979,37.4738],[126.9726,37.4726],[126.9634,37.4807],[126.9644,37.4844],[126.9629,37.488],[126.9633,37.4906],[126.9588,37.4887],[126.956,37.4882],[126.954,37.4896],[126.9492,37.4913],[126.9437,37.4894],[126.9384,37.4894],[126.9367,37.4903],[126.9335,37.4904],[126.9298,37.4922],[126.9287,37.4913],[126.9264,37.4872],[126.9192,37.4866],[126.9153,37.4844],[126.9081,37.4822],[126.9053,37.4822],[126.9146,37.4936],[126.9218,37.4949],[126.9232,37.4993],[126.9275,37.5099],[126.9292,37.5102],[126.9281,37.5133],[126.9345,37.5129],[126.9441,37.5146],[126.9525,37.5172],[126.9555,37.5147],[126.9595,37.5125],[126.9667,37.51],[126.9822,37.5093]]]}},{"type":"Feature","properties":{"name":"영등포구"},"geometry":{"type":"Polygon","coordinates":[[[126.8918,37.5474],[126.9028,37.5413],[126.9083,37.5392],[126.9313,37.5342],[126.9368,37.5334],[126.9457,37.5266],[126.9488,37.5242],[126.95,37.5208],[126.9525,37.5172],[126.9441,37.5146],[126.9345,37.5129],[126.9281,37.5133],[126.9292,37.5102],[126.9275,37.5099],[126.9232,37.4993],[126.9218,37.4949],[126.9146,37.4936],[126.9053,37.4822],[126.9026,37.4828],[126.8986,37.4863],[126.8958,37.4939],[126.8955,37.5003],[126.8959,37.5047],[126.8925,37.5088],[126.8816,37.514],[126.8819,37.5194],[126.8826,37.5224],[126.8838,37.5235],[126.889,37.5259],[126.8906,37.5279],[126.8921,37.5276],[126.8936,37.5303],[126.8934,37.533],[126.8894,37.5406],[126.8883,37.5408],[126.8874,37.5435],[126.8918,37.5474]]]}},{"type":"Feature","properties":{"name":"금천구"},"geometry":{"type":"Polygon","coordinates":[[[126.9016,37.4775],[126.9028,37.4765],[126.9118,37.4781],[126.9116,37.4754],[126.9141,37.4742],[126.9128,37.4708],[126.9103,37.4698],[126.9137,37.4638],[126.9158,37.4625],[126.915,37.4612],[126.9164,37.4587],[126.9168,37.4549],[126.9189,37.455],[126.9245,37.4539],[126.9253,37.4516],[126.9308,37.4474],[126.9256,37.4438],[126.9232,37.4413],[126.922,37.4385],[126.92,37.4371],[126.9164,37.4372],[126.9134,37.4347],[126.9108,37.431],[126.9049,37.4313],[126.9048,37.4331],[126.9015,37.4353],[126.9008,37.4365],[126.9011,37.4403],[126.9003,37.4418],[126.8977,37.4429],[126.8981,37.4455],[126.8962,37.4498],[126.8947,37.4491],[126.8916,37.4499],[126.8911,37.4524],[126.8883,37.4536],[126.8883,37.4566],[126.8907,37.4597],[126.882,37.47],[126.8787,37.4748],[126.8755,37.4819],[126.8768,37.4826],[126.8808,37.4838],[126.8827,37.4832],[126.888,37.4798],[126.8912,37.4768],[126.8969,37.4757],[126.901,37.4761],[126.9016,37.4775]]]}},{"type":"Feature","properties":{"name":"구로구"},"geometry":{"type":"Polygon","coordinates":[[[126.8269,37.5055],[126.8312,37.5054],[126.8342,37.5024],[126.8385,37.4997],[126.8427,37.5012],[126.8421,37.5027],[126.8469,37.5029],[126.8473,37.5052],[126.8508,37.506],[126.8522,37.5073],[126.855,37.5078],[126.8577,37.5064],[126.8602,37.5071],[126.8622,37.5039],[126.8645,37.5039],[126.8653,37.5024],[126.868,37.5028],[126.8711,37.502],[126.8743,37.5026],[126.8756,37.5057],[126.8805,37.5115],[126.8816,37.514],[126.8925,37.5088],[126.8959,37.5047],[126.8955,37.5003],[126.8958,37.4939],[126.8986,37.4863],[126.9026,37.4828],[126.9053,37.4822],[126.9016,37.4775],[126.901,37.4761],[126.8969,37.4757],[126.8912,37.4768],[126.888,37.4798],[126.8827,37.4832],[126.8808,37.4838],[126.8768,37.4826],[126.8793,37.4851],[126.8781,37.4862],[126.875,37.4855],[126.875,37.4872],[126.8699,37.491],[126.8669,37.4885],[126.8633,37.487],[126.8598,37.4831],[126.8572,37.4824],[126.8558,37.4801],[126.854,37.4788],[126.8491,37.4793],[126.848,37.4782],[126.8476,37.4715],[126.8415,37.4729],[126.8375,37.4725],[126.8339,37.4748],[126.8314,37.4734],[126.8266,37.4736],[126.8242,37.473],[126.8218,37.4752],[126.8221,37.4789],[126.8214,37.4814],[126.8221,37.483],[126.8256,37.485],[126.8248,37.4872],[126.8199,37.4888],[126.8165,37.4905],[126.8148,37.4934],[126.8152,37.4952],[126.8177,37.4947],[126.8208,37.4959],[126.822,37.4985],[126.8237,37.4993],[126.825,37.503],[126.8247,37.505],[126.8269,37.5055]]]}},{"type":"Feature","properties":{"name":"강서구"},"geometry":{"type":"Polygon","coordinates":[[[126.8598,37.5718],[126.8595,37.5683],[126.8605,37.5668],[126.8684,37.5631],[126.88,37.5551],[126.8918,37.5474],[126.8874,37.5435],[126.8883,37.5408],[126.8872,37.5408],[126.8828,37.5451],[126.8761,37.5441],[126.8728,37.5449],[126.8664,37.5486],[126.8643,37.5417],[126.8658,37.5382],[126.8655,37.5338],[126.8661,37.527],[126.851,37.5251],[126.8426,37.5237],[126.8366,37.5337],[126.8372,37.5349],[126.8352,37.539],[126.8325,37.539],[126.8319,37.5415],[126.8302,37.5426],[126.8289,37.5391],[126.8242,37.5379],[126.8167,37.5378],[126.8125,37.5388],[126.8114,37.5403],[126.8054,37.5401],[126.8019,37.5376],[126.8009,37.535],[126.7969,37.533],[126.7958,37.5366],[126.7969,37.5387],[126.7939,37.539],[126.7939,37.541],[126.7908,37.5417],[126.7888,37.5435],[126.782,37.5434],[126.7776,37.5461],[126.7732,37.5459],[126.7698,37.5505],[126.767,37.5528],[126.7707,37.553],[126.7715,37.5543],[126.7788,37.5592],[126.7789,37.5614],[126.7767,37.5645],[126.7799,37.5642],[126.7825,37.5654],[126.7847,37.5675],[126.784,37.5691],[126.785,37.5709],[126.7917,37.5747],[126.7954,37.5745],[126.7952,37.5776],[126.7959,37.5802],[126.798,37.5804],[126.8009,37.5854],[126.8029,37.5862],[126.8013,37.5884],[126.8015,37.5901],[126.7997,37.593],[126.7991,37.5957],[126.8005,37.5983],[126.802,37.5985],[126.8027,37.6013],[126.8039,37.6019],[126.8076,37.6009],[126.8181,37.5916],[126.8225,37.588],[126.8289,37.5856],[126.853,37.5728],[126.8598,37.5718]]]}},{"type":"Feature","properties":{"name":"양천구"},"geometry":{"type":"Polygon","coordinates":[[[126.8242,37.5379],[126.8289,37.5391],[126.8302,37.5426],[126.8319,37.5415],[126.8325,37.539],[126.8352,37.539],[126.8372,37.5349],[126.8366,37.5337],[126.8426,37.5237],[126.851,37.5251],[126.8661,37.527],[126.8655,37.5338],[126.8658,37.5382],[126.8643,37.5417],[126.8664,37.5486],[126.8728,37.5449],[126.8761,37.5441],[126.8828,37.5451],[126.8872,37.5408],[126.8883,37.5408],[126.8894,37.5406],[126.8934,37.533],[126.8936,37.5303],[126.8921,37.5276],[126.8906,37.5279],[126.889,37.5259],[126.8838,37.5235],[126.8826,37.5224],[126.8819,37.5194],[126.8816,37.514],[126.8805,37.5115],[126.8756,37.5057],[126.8743,37.5026],[126.8711,37.502],[126.868,37.5028],[126.8653,37.5024],[126.8645,37.5039],[126.8622,37.5039],[126.8602,37.5071],[126.8577,37.5064],[126.855,37.5078],[126.8522,37.5073],[126.8508,37.506],[126.8473,37.5052],[126.8469,37.5029],[126.8421,37.5027],[126.8427,37.5012],[126.8385,37.4997],[126.8342,37.5024],[126.8312,37.5054],[126.8269,37.5055],[126.8261,37.5078],[126.8267,37.5104],[126.8253,37.5134],[126.8276,37.5169],[126.8274,37.52],[126.8305,37.5239],[126.8294,37.5268],[126.8277,37.5271],[126.8239,37.532],[126.8242,37.5379]]]}},{"type":"Feature","properties":{"name":"마포구"},"geometry":{"type":"Polygon","coordinates":[[[126.9052,37.5741],[126.9037,37.5727],[126.9069,37.5706],[126.9219,37.5639],[126.9278,37.5625],[126.9303,37.5605],[126.9288,37.5582],[126.9287,37.556],[126.939,37.5523],[126.9431,37.5536],[126.9592,37.5547],[126.9608,37.5539],[126.9636,37.5561],[126.9652,37.5536],[126.9638,37.5525],[126.9645,37.5487],[126.966,37.5469],[126.964,37.5458],[126.9623,37.5435],[126.9606,37.5427],[126.9593,37.539],[126.9534,37.5335],[126.9472,37.5321],[126.9457,37.5266],[126.9368,37.5334],[126.9313,37.5342],[126.9083,37.5392],[126.9028,37.5413],[126.8918,37.5474],[126.88,37.5551],[126.8684,37.5631],[126.8605,37.5668],[126.8595,37.5683],[126.8598,37.5718],[126.8599,37.5728],[126.8638,37.5731],[126.8656,37.5739],[126.8677,37.5727],[126.8701,37.5746],[126.8728,37.575],[126.878,37.5768],[126.8792,37.5797],[126.8788,37.5813],[126.8811,37.5838],[126.8824,37.5868],[126.8843,37.5881],[126.8915,37.582],[126.8953,37.5794],[126.8974,37.5787],[126.9002,37.5755],[126.9037,37.5731],[126.9052,37.5741]]]}},{"type":"Feature","properties":{"name":"서대문구"},"geometry":{"type":"Polygon","coordinates":[[[126.9525,37.6051],[126.9548,37.6038],[126.9556,37.6018],[126.9548,37.5976],[126.9562,37.5958],[126.9592,37.5955],[126.9584,37.5924],[126.9604,37.5887],[126.9605,37.5872],[126.9588,37.5819],[126.9618,37.5797],[126.9579,37.5779],[126.9557,37.5761],[126.9687,37.5631],[126.9717,37.5592],[126.969,37.5585],[126.9657,37.5565],[126.9636,37.5561],[126.9608,37.5539],[126.9592,37.5547],[126.9431,37.5536],[126.939,37.5523],[126.9287,37.556],[126.9288,37.5582],[126.9303,37.5605],[126.9278,37.5625],[126.9219,37.5639],[126.9069,37.5706],[126.9037,37.5727],[126.9052,37.5741],[126.9146,37.5832],[126.9183,37.5828],[126.9179,37.5803],[126.9244,37.5812],[126.926,37.5844],[126.9282,37.5844],[126.9302,37.5856],[126.93,37.5877],[126.931,37.59],[126.9358,37.5936],[126.9428,37.5959],[126.9436,37.6003],[126.9445,37.602],[126.947,37.602],[126.9492,37.6051],[126.9525,37.6051]]]}},{"type":"Feature","properties":{"name":"은평구"},"geometry":{"type":"Polygon","coordinates":[[[126.9739,37.6295],[126.9714,37.6274],[126.9616,37.6257],[126.9589,37.6226],[126.9543,37.622],[126.9539,37.6188],[126.9528,37.6161],[126.9515,37.6149],[126.9525,37.6133],[126.9531,37.6093],[126.9519,37.606],[126.9525,37.6051],[126.9492,37.6051],[126.947,37.602],[126.9445,37.602],[126.9436,37.6003],[126.9428,37.5959],[126.9358,37.5936],[126.931,37.59],[126.93,37.5877],[126.9302,37.5856],[126.9282,37.5844],[126.926,37.5844],[126.9244,37.5812],[126.9179,37.5803],[126.9183,37.5828],[126.9146,37.5832],[126.9052,37.5741],[126.9037,37.5731],[126.9002,37.5755],[126.8974,37.5787],[126.8953,37.5794],[126.8915,37.582],[126.8843,37.5881],[126.8872,37.591],[126.8894,37.591],[126.8875,37.5883],[126.8894,37.5858],[126.8935,37.5857],[126.8953,37.5864],[126.8991,37.5858],[126.9019,37.5871],[126.9011,37.5899],[126.904,37.5923],[126.9032,37.5945],[126.9036,37.5966],[126.9024,37.6004],[126.9042,37.601],[126.904,37.6072],[126.903,37.61],[126.9055,37.616],[126.9072,37.6165],[126.9094,37.6191],[126.9085,37.6212],[126.9108,37.6234],[126.9112,37.6256],[126.9086,37.6297],[126.913,37.6331],[126.9123,37.6359],[126.9138,37.6382],[126.9146,37.6415],[126.9097,37.6435],[126.9104,37.6447],[126.916,37.6419],[126.9234,37.6428],[126.9275,37.6447],[126.931,37.6472],[126.9366,37.6478],[126.9391,37.6491],[126.9425,37.6538],[126.9457,37.6554],[126.9494,37.6561],[126.9498,37.6546],[126.9533,37.6522],[126.9565,37.6525],[126.9589,37.6499],[126.9597,37.6464],[126.9622,37.6455],[126.9642,37.6407],[126.9665,37.6403],[126.9709,37.6359],[126.9709,37.6337],[126.9739,37.6295]]]}},{"type":"Feature","properties":{"name":"노원구"},"geometry":{"type":"Polygon","coordinates":[[[127.1078,37.618],[127.1036,37.617],[127.1019,37.6153],[127.0983,37.6143],[127.0913,37.617],[127.088,37.6175],[127.0833,37.6163],[127.0735,37.6128],[127.0701,37.6128],[127.0673,37.6114],[127.0641,37.6116],[127.0563,37.6174],[127.0521,37.6216],[127.05,37.6241],[127.0436,37.6285],[127.046,37.6306],[127.0471,37.6341],[127.0523,37.642],[127.057,37.638],[127.058,37.6432],[127.0564,37.6481],[127.0562,37.653],[127.0537,37.6578],[127.0534,37.6609],[127.0509,37.6663],[127.0512,37.6703],[127.0526,37.6746],[127.054,37.682],[127.0529,37.6842],[127.0567,37.6865],[127.0589,37.6868],[127.0637,37.686],[127.0672,37.6871],[127.0715,37.6916],[127.075,37.6917],[127.0795,37.6936],[127.0839,37.6936],[127.0864,37.6912],[127.0883,37.6875],[127.0971,37.6864],[127.0984,37.683],[127.0948,37.6788],[127.0939,37.6764],[127.0957,37.6738],[127.0966,37.6707],[127.0977,37.67],[127.098,37.6674],[127.0962,37.6635],[127.0985,37.6591],[127.0979,37.6567],[127.0885,37.6527],[127.095,37.6521],[127.0962,37.65],[127.0944,37.6471],[127.0969,37.6428],[127.1002,37.6423],[127.1027,37.6429],[127.1101,37.6419],[127.1141,37.6374],[127.1145,37.6324],[127.1131,37.6278],[127.1074,37.6241],[127.1074,37.6224],[127.1056,37.6201],[127.1078,37.618]]]}},{"type":"Feature","properties":{"name":"도봉구"},"geometry":{"type":"Polygon","coordinates":[[[127.0529,37.6842],[127.054,37.682],[127.0526,37.6746],[127.0512,37.6703],[127.0509,37.6663],[127.0534,37.6609],[127.0537,37.6578],[127.0562,37.653],[127.0564,37.6481],[127.058,37.6432],[127.057,37.638],[127.0523,37.642],[127.0471,37.6341],[127.046,37.6306],[127.0436,37.6285],[127.0406,37.6311],[127.0391,37.634],[127.0366,37.6351],[127.0348,37.6388],[127.0295,37.6423],[127.0266,37.6447],[127.0223,37.6463],[127.0177,37.6463],[127.0153,37.6477],[127.0147,37.6494],[127.016,37.6562],[127.0173,37.6588],[127.0178,37.6639],[127.0206,37.6672],[127.0187,37.6699],[127.016,37.6726],[127.014,37.6765],[127.0107,37.6769],[127.0104,37.6819],[127.011,37.6844],[127.0102,37.6863],[127.011,37.6919],[127.0141,37.6955],[127.0165,37.6955],[127.018,37.6983],[127.0214,37.6986],[127.0242,37.6968],[127.027,37.6967],[127.0302,37.6978],[127.0313,37.6962],[127.0318,37.6934],[127.0333,37.6901],[127.0345,37.689],[127.0379,37.6894],[127.0438,37.6926],[127.0451,37.691],[127.0477,37.6896],[127.0511,37.6912],[127.0529,37.6842]]]}},{"type":"Feature","properties":{"name":"강북구"},"geometry":{"type":"Polygon","coordinates":[[[127.0104,37.6819],[127.0107,37.6769],[127.014,37.6765],[127.016,37.6726],[127.0187,37.6699],[127.0206,37.6672],[127.0178,37.6639],[127.0173,37.6588],[127.016,37.6562],[127.0147,37.6494],[127.0153,37.6477],[127.0177,37.6463],[127.0223,37.6463],[127.0266,37.6447],[127.0295,37.6423],[127.0348,37.6388],[127.0366,37.6351],[127.0391,37.634],[127.0406,37.6311],[127.0436,37.6285],[127.05,37.6241],[127.0521,37.6216],[127.0489,37.6197],[127.0461,37.6159],[127.042,37.6128],[127.0389,37.6097],[127.0325,37.6063],[127.0323,37.6095],[127.0285,37.6099],[127.0243,37.6085],[127.0214,37.611],[127.0169,37.6128],[127.0128,37.6137],[127.0106,37.6157],[127.0096,37.6182],[127.01,37.6211],[127.0021,37.623],[126.9987,37.6263],[126.9961,37.6272],[126.9953,37.6292],[126.9934,37.6292],[126.9877,37.6327],[126.9867,37.6338],[126.9883,37.6374],[126.9854,37.6408],[126.9871,37.6432],[126.9858,37.647],[126.9833,37.6495],[126.9817,37.6521],[126.9821,37.6538],[126.9871,37.6565],[126.9903,37.661],[126.9949,37.6622],[126.9958,37.6651],[126.9962,37.6694],[126.9951,37.6748],[126.9938,37.6767],[126.996,37.6775],[127,37.681],[127.0057,37.6823],[127.0104,37.6819]]]}},{"type":"Feature","properties":{"name":"성북구"},"geometry":{"type":"Polygon","coordinates":[[[126.9772,37.6286],[126.9794,37.6307],[126.9836,37.6319],[126.9867,37.6338],[126.9877,37.6327],[126.9934,37.6292],[126.9953,37.6292],[126.9961,37.6272],[126.9987,37.6263],[127.0021,37.623],[127.01,37.6211],[127.0096,37.6182],[127.0106,37.6157],[127.0128,37.6137],[127.0169,37.6128],[127.0214,37.611],[127.0243,37.6085],[127.0285,37.6099],[127.0323,37.6095],[127.0325,37.6063],[127.0389,37.6097],[127.042,37.6128],[127.0461,37.6159],[127.0489,37.6197],[127.0521,37.6216],[127.0563,37.6174],[127.0641,37.6116],[127.0673,37.6114],[127.0701,37.6128],[127.0735,37.6128],[127.0738,37.604],[127.0726,37.6065],[127.0707,37.6065],[127.0708,37.6041],[127.0675,37.6027],[127.0642,37.6023],[127.0613,37.5982],[127.0595,37.5987],[127.0541,37.5972],[127.0524,37.5983],[127.0498,37.5935],[127.0461,37.5935],[127.0427,37.5924],[127.0412,37.5885],[127.0385,37.5871],[127.0312,37.5796],[127.0253,37.5752],[127.024,37.5761],[127.0204,37.5758],[127.0185,37.579],[127.0168,37.5794],[127.0109,37.5777],[127.0091,37.5793],[127.009,37.5825],[127.008,37.5841],[127.0045,37.5863],[127.003,37.5896],[126.9977,37.5894],[126.9965,37.5885],[126.9935,37.5886],[126.9886,37.5897],[126.986,37.5911],[126.9841,37.5931],[126.9837,37.5964],[126.987,37.5966],[126.9898,37.5984],[126.988,37.6043],[126.9891,37.6078],[126.9888,37.6119],[126.9849,37.6139],[126.983,37.62],[126.9813,37.6218],[126.9816,37.6264],[126.9788,37.6261],[126.9772,37.6286]]]}},{"type":"Feature","properties":{"name":"중랑구"},"geometry":{"type":"Polygon","coordinates":[[[127.0735,37.6128],[127.0833,37.6163],[127.088,37.6175],[127.0913,37.617],[127.0983,37.6143],[127.1019,37.6153],[127.1036,37.617],[127.1078,37.618],[127.1135,37.6179],[127.1192,37.615],[127.1188,37.6134],[127.1197,37.6089],[127.1188,37.6061],[127.1204,37.6048],[127.1201,37.6018],[127.1159,37.5972],[127.1162,37.5962],[127.1205,37.5922],[127.1199,37.5912],[127.1155,37.5905],[127.1126,37.5864],[127.1114,37.5819],[127.1036,37.581],[127.1049,37.579],[127.1048,37.5755],[127.1032,37.5729],[127.103,37.5708],[127.1016,37.5697],[127.0933,37.5668],[127.0855,37.5686],[127.0807,37.5691],[127.0803,37.5752],[127.0791,37.5786],[127.0733,37.586],[127.0715,37.5934],[127.0722,37.5954],[127.0746,37.5983],[127.0748,37.6],[127.0738,37.604],[127.0735,37.6128]]]}},{"type":"Feature","properties":{"name":"동대문구"},"geometry":{"type":"Polygon","coordinates":[[[127.0253,37.5752],[127.0312,37.5796],[127.0385,37.5871],[127.0412,37.5885],[127.0427,37.5924],[127.0461,37.5935],[127.0498,37.5935],[127.0524,37.5983],[127.0541,37.5972],[127.0595,37.5987],[127.0613,37.5982],[127.0642,37.6023],[127.0675,37.6027],[127.0708,37.6041],[127.0707,37.6065],[127.0726,37.6065],[127.0738,37.604],[127.0748,37.6],[127.0746,37.5983],[127.0722,37.5954],[127.0715,37.5934],[127.0733,37.586],[127.0791,37.5786],[127.0803,37.5752],[127.0807,37.5691],[127.0742,37.5572],[127.0729,37.5578],[127.0615,37.5594],[127.0603,37.5599],[127.0501,37.5676],[127.0443,37.5702],[127.04,37.5701],[127.0348,37.5675],[127.0318,37.5671],[127.0255,37.5689],[127.0253,37.5752]]]}},{"type":"Feature","properties":{"name":"광진구"},"geometry":{"type":"Polygon","coordinates":[[[127.0807,37.5691],[127.0855,37.5686],[127.0933,37.5668],[127.1016,37.5697],[127.103,37.5708],[127.1063,37.5681],[127.1055,37.5669],[127.1041,37.5596],[127.1033,37.5572],[127.1127,37.557],[127.1152,37.5575],[127.116,37.5558],[127.116,37.5505],[127.1142,37.5447],[127.1117,37.5407],[127.1048,37.5312],[127.1009,37.5248],[127.0944,37.524],[127.0864,37.5216],[127.0797,37.5208],[127.075,37.5209],[127.0691,37.5223],[127.0587,37.5263],[127.069,37.5444],[127.0758,37.5566],[127.0742,37.5572],[127.0807,37.5691]]]}},{"type":"Feature","properties":{"name":"성동구"},"geometry":{"type":"Polygon","coordinates":[[[127.0255,37.5689],[127.0318,37.5671],[127.0348,37.5675],[127.04,37.5701],[127.0443,37.5702],[127.0501,37.5676],[127.0603,37.5599],[127.0615,37.5594],[127.0729,37.5578],[127.0742,37.5572],[127.0758,37.5566],[127.069,37.5444],[127.0587,37.5263],[127.0512,37.5298],[127.049,37.5314],[127.0481,37.5297],[127.032,37.5361],[127.027,37.5348],[127.023,37.5323],[127.0169,37.5361],[127.0116,37.5368],[127.0104,37.5391],[127.0107,37.5412],[127.0117,37.5453],[127.0138,37.5457],[127.0189,37.5506],[127.0195,37.5532],[127.0217,37.5547],[127.025,37.5551],[127.0258,37.5584],[127.0284,37.5602],[127.0288,37.5622],[127.0257,37.5624],[127.0255,37.5689]]]}},{"type":"Feature","properties":{"name":"용산구"},"geometry":{"type":"Polygon","coordinates":[[[127.0107,37.5412],[127.0104,37.5391],[127.0116,37.5368],[127.0169,37.5361],[127.023,37.5323],[127.014,37.525],[127.0102,37.522],[127.0082,37.5188],[127.0058,37.5169],[127.0001,37.5139],[126.9915,37.5099],[126.9895,37.5109],[126.9846,37.5107],[126.9822,37.5093],[126.9667,37.51],[126.9595,37.5125],[126.9555,37.5147],[126.9525,37.5172],[126.95,37.5208],[126.9488,37.5242],[126.9457,37.5266],[126.9472,37.5321],[126.9534,37.5335],[126.9593,37.539],[126.9606,37.5427],[126.9623,37.5435],[126.964,37.5458],[126.966,37.5469],[126.9645,37.5487],[126.9678,37.5513],[126.9743,37.5511],[126.9786,37.5503],[126.9793,37.5522],[126.9826,37.5506],[126.9858,37.5502],[126.9875,37.5509],[126.9899,37.5487],[126.9924,37.5486],[126.9974,37.5444],[127.0006,37.5471],[127.0048,37.5468],[127.0063,37.5476],[127.0069,37.5434],[127.0094,37.541],[127.0107,37.5412]]]}},{"type":"Feature","properties":{"name":"중구"},"geometry":{"type":"Polygon","coordinates":[[[127.0255,37.5689],[127.0257,37.5624],[127.0288,37.5622],[127.0284,37.5602],[127.0258,37.5584],[127.025,37.5551],[127.0217,37.5547],[127.0195,37.5532],[127.0189,37.5506],[127.0138,37.5457],[127.0117,37.5453],[127.0107,37.5412],[127.0094,37.541],[127.0069,37.5434],[127.0063,37.5476],[127.0048,37.5468],[127.0006,37.5471],[126.9974,37.5444],[126.9924,37.5486],[126.9899,37.5487],[126.9875,37.5509],[126.9858,37.5502],[126.9826,37.5506],[126.9793,37.5522],[126.9786,37.5503],[126.9743,37.5511],[126.9678,37.5513],[126.9645,37.5487],[126.9638,37.5525],[126.9652,37.5536],[126.9636,37.5561],[126.9657,37.5565],[126.969,37.5585],[126.9717,37.5592],[126.9687,37.5631],[126.9711,37.5654],[126.975,37.5664],[126.9799,37.5665],[126.991,37.5653],[126.9988,37.5659],[127.0037,37.5668],[127.0179,37.567],[127.0225,37.5689],[127.0255,37.5689]]]}},{"type":"Feature","properties":{"name":"종로구"},"geometry":{"type":"Polygon","coordinates":[[[126.9739,37.6295],[126.9772,37.6286],[126.9788,37.6261],[126.9816,37.6264],[126.9813,37.6218],[126.983,37.62],[126.9849,37.6139],[126.9888,37.6119],[126.9891,37.6078],[126.988,37.6043],[126.9898,37.5984],[126.987,37.5966],[126.9837,37.5964],[126.9841,37.5931],[126.986,37.5911],[126.9886,37.5897],[126.9935,37.5886],[126.9965,37.5885],[126.9977,37.5894],[127.003,37.5896],[127.0045,37.5863],[127.008,37.5841],[127.009,37.5825],[127.0091,37.5793],[127.0109,37.5777],[127.0168,37.5794],[127.0185,37.579],[127.0204,37.5758],[127.024,37.5761],[127.0253,37.5752],[127.0255,37.5689],[127.0225,37.5689],[127.0179,37.567],[127.0037,37.5668],[126.9988,37.5659],[126.991,37.5653],[126.9799,37.5665],[126.975,37.5664],[126.9711,37.5654],[126.9687,37.5631],[126.9557,37.5761],[126.9579,37.5779],[126.9618,37.5797],[126.9588,37.5819],[126.9605,37.5872],[126.9604,37.5887],[126.9584,37.5924],[126.9592,37.5955],[126.9562,37.5958],[126.9548,37.5976],[126.9556,37.6018],[126.9548,37.6038],[126.9525,37.6051],[126.9519,37.606],[126.9531,37.6093],[126.9525,37.6133],[126.9515,37.6149],[126.9528,37.6161],[126.9539,37.6188],[126.9543,37.622],[126.9589,37.6226],[126.9616,37.6257],[126.9714,37.6274],[126.9739,37.6295]]]}}]};
+async function loadSeoulGeo(){return SEOUL_GEO;}
+function getDistName(props){
+  return props.name||props.SIG_KOR_NM||props.sgg_nm||props.adm_nm||'';
+}
+
+let map1Instance=null,map1Layer=null;
+async function drawMap1(){
+  const container=document.getElementById('map1');
+  if(!container) return;
+  const loading=document.getElementById('map1-loading');
+
+  const geo=await loadSeoulGeo();
+  if(!geo){
+    if(loading) loading.textContent='⚠ 지도 로드 실패 - 인터넷 연결 확인';
+    return;
+  }
+  if(loading) loading.classList.add('hide');
+
+  if(!map1Instance){
+    map1Instance=L.map('map1',{
+      zoomControl:true,scrollWheelZoom:false,attributionControl:true,
+      zoomSnap:0.5,minZoom:10
+    }).setView([37.5665,126.9780],10.5);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{
+      attribution:'© OpenStreetMap © CARTO',maxZoom:18,subdomains:'abcd'
+    }).addTo(map1Instance);
+    setTimeout(()=>map1Instance.invalidateSize(),100);
+  }
+  if(map1Layer) map1Layer.remove();
+
+  const guByName=Object.fromEntries(GU.map(d=>[d.n,d]));
+  const valOf=d=>currentMetric==='percap'?d.daily*1000/d.pop/1000:currentMetric==='growth'?d.growth:d.daily;
+  const vals=GU.map(valOf);
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  const grad=document.getElementById('map1-gradient');
+  if(grad){
+    if(currentMetric==='growth') grad.style.background='linear-gradient(to right,#3a1a1a,#e84545)';
+    else grad.style.background='linear-gradient(to right,#0e4a38,#00c896)';
+  }
+
+  function colorFor(name){
+    const d=guByName[name];
+    if(!d) return '#1a1f2e';
+    const t=(valOf(d)-mn)/(mx-mn||1);
+    if(currentMetric==='growth') return `rgba(232,69,69,${.2+.7*t})`;
+    return `rgba(0,200,150,${.18+.72*t})`;
+  }
+
+  map1Layer=L.geoJSON(geo,{
+    style:f=>({
+      fillColor:colorFor(getDistName(f.properties)),
+      fillOpacity:.85,color:'rgba(255,255,255,.18)',weight:1
+    }),
+    onEachFeature:(feature,layer)=>{
+      const name=getDistName(feature.properties);
+      const d=guByName[name];
+      if(!d) return;
+      const perCap=(d.daily*1000/d.pop/1000).toFixed(2);
+      layer.bindTooltip(
+        `<strong>${d.n}</strong><br>발생량: ${d.daily}톤/일<br>1인당: ${perCap}kg/인<br>유형: ${CLUSTER_NAMES[d.cluster]}`,
+        {className:'gu-tooltip',sticky:true,direction:'top'}
+      );
+      layer.on('mouseover',e=>e.target.setStyle({weight:2.5,color:'#fff',fillOpacity:.95}));
+      layer.on('mouseout',e=>map1Layer.resetStyle(e.target));
+      layer.on('click',()=>{
+        const idx=GU.findIndex(x=>x.n===name);
+        if(idx>=0) openPopup(idx);
+      });
+    }
+  }).addTo(map1Instance);
+}
+
+function setType(t,el){currentType=t;document.querySelectorAll('#type-toggle .tgl').forEach(b=>b.classList.remove('active'));el.classList.add('active');drawMap1();}
+function setMetric(m,el){
+  currentMetric=m;
+  document.querySelectorAll('#metric-toggle .tgl').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  const labels={total:'총량 기준',percap:'1인당 기준',growth:'증가율 기준'};
+  document.getElementById('map-badge-label').textContent=labels[m];
+  drawMap1();renderRankCards();
+}
+function onYearChange(v){document.getElementById('year-val').textContent=v;}
+
+function renderRankCards(){
+  const byTotal=[...GU].sort((a,b)=>b.daily-a.daily).slice(0,5);
+  const byPer=[...GU].sort((a,b)=>(b.daily/b.pop)-(a.daily/a.pop)).slice(0,5);
+  const diffSet=new Set();
+  byTotal.forEach((d,i)=>{const j=byPer.findIndex(x=>x.n===d.n);if(i!==j)diffSet.add(d.n);});
+  document.getElementById('rank-total').innerHTML=byTotal.map((d,i)=>{
+    const isDiff=diffSet.has(d.n);
+    return `<div class="rank-item"><span class="rank-num">${i+1}</span><span class="rank-name">${d.n.replace('구','')}${isDiff?'<span style="color:var(--amber);font-size:9px;margin-left:3px">↕</span>':''}</span><span class="rank-val">${d.daily}t</span></div>`;
+  }).join('');
+  document.getElementById('rank-percap').innerHTML=byPer.map((d,i)=>{
+    const isDiff=diffSet.has(d.n);
+    return `<div class="rank-item"><span class="rank-num">${i+1}</span><span class="rank-name">${d.n.replace('구','')}${isDiff?'<span style="color:var(--amber);font-size:9px;margin-left:3px">↕</span>':''}</span><span class="rank-val">${(d.daily*1000/d.pop/1000).toFixed(2)}kg</span></div>`;
+  }).join('');
+}
+
+function initTrend1(){
+  const ctx=document.getElementById('trend1').getContext('2d');
+  const years=[2018,2019,2020,2021,2022,2023,2024];
+  const data=[130.2,128.5,126.8,124.1,113.2,114.6,116.8];
+  charts.trend1=new Chart(ctx,{type:'line',data:{labels:years,datasets:[
+    {label:'발생량(만톤)',data,borderColor:'#00c896',backgroundColor:'rgba(0,200,150,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#00c896',fill:true,tension:.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+    x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:10,family:'JetBrains Mono'}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:10,family:'JetBrains Mono'}},min:100}
+  }}});
+}
+function initDonut1(){
+  const ctx=document.getElementById('donut1').getContext('2d');
+  charts.donut1=new Chart(ctx,{type:'doughnut',data:{
+    labels:['재활용','소각','매립','기타'],
+    datasets:[{data:[60.2,35.1,4.7,0],backgroundColor:['#00c896','#e84545','#f5a623','#4a90d9'],borderWidth:0,hoverOffset:4}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{color:'#7a8499',font:{size:11,family:'JetBrains Mono'},padding:10}}}}});
+}
+
+let sortMode='total';
+function setSortMode(m,el){sortMode=m;document.querySelectorAll('#sort-toggle .tgl').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderStacked2();}
+
+function renderStacked2(){
+  let sorted=[...GU];
+  if(sortMode==='total') sorted.sort((a,b)=>b.daily-a.daily);
+  else if(sortMode==='food') sorted.sort((a,b)=>b.food-a.food);
+  else sorted.sort((a,b)=>b.recycle-a.recycle);
+  const labels=sorted.map(d=>d.n.replace('구',''));
+  const foodData=sorted.map(d=>+(d.daily*d.food/100).toFixed(1));
+  const recycleData=sorted.map(d=>+(d.daily*d.recycle/100).toFixed(1));
+  const incData=sorted.map(d=>+(d.daily*d.inc/100).toFixed(1));
+  const landData=sorted.map(d=>+(d.daily*d.land/100).toFixed(1));
+  if(charts.stacked2) charts.stacked2.destroy();
+  const ctx=document.getElementById('stacked2').getContext('2d');
+  charts.stacked2=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:'음식물',data:foodData,backgroundColor:'#f5a62388',borderWidth:0},
+    {label:'재활용',data:recycleData,backgroundColor:'#00c89688',borderWidth:0},
+    {label:'소각',data:incData,backgroundColor:'#e8454588',borderWidth:0},
+    {label:'매립',data:landData,backgroundColor:'#4a90d988',borderWidth:0},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{
+    legend:{labels:{color:'#7a8499',font:{size:10,family:'JetBrains Mono'},padding:12}}
+  },scales:{
+    x:{stacked:true,grid:{color:'transparent'},ticks:{color:'#3d4559',font:{size:9}}},
+    y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+function initFoodSplit(){
+  const sorted=[...GU].sort((a,b)=>b.food-a.food).slice(0,12);
+  const ctx=document.getElementById('food-split').getContext('2d');
+  charts.foodSplit=new Chart(ctx,{type:'bar',data:{labels:sorted.map(d=>d.n.replace('구','')),datasets:[
+    {label:'가정',data:sorted.map(d=>+(d.daily*d.food/100*0.66).toFixed(1)),backgroundColor:'rgba(0,200,150,.7)',borderWidth:0},
+    {label:'사업장',data:sorted.map(d=>+(d.daily*d.food/100*0.34).toFixed(1)),backgroundColor:'rgba(245,166,35,.7)',borderWidth:0},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8499',font:{size:10},padding:10}}},scales:{
+    x:{stacked:true,grid:{color:'transparent'},ticks:{color:'#3d4559',font:{size:9}}},
+    y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+function initRecycleDist(){
+  const sorted=[...GU].sort((a,b)=>b.recycle-a.recycle);
+  const ctx=document.getElementById('recycle-dist').getContext('2d');
+  charts.recycleDist=new Chart(ctx,{type:'bar',data:{labels:sorted.map(d=>d.n.replace('구','')),datasets:[
+    {label:'재활용률(%)',data:sorted.map(d=>d.recycle),backgroundColor:sorted.map(d=>d.recycle>=61?'rgba(0,200,150,.7)':d.recycle>=59?'rgba(74,144,217,.6)':'rgba(232,69,69,.6)'),borderWidth:0,borderRadius:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+    x:{grid:{color:'transparent'},ticks:{color:'#3d4559',font:{size:9}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}},min:54,max:66}
+  }}});
+}
+
+/* 내 자치구 카드 */
+function initCitizenSelect(){
+  const sel=document.getElementById('citizen-select');
+  GU.forEach((d,i)=>{const o=new Option(d.n,i);sel.add(o);});
+}
+function updateCitizenCard(){
+  const v=document.getElementById('citizen-select').value;
+  const wrap=document.getElementById('citizen-content');
+  if(v===''){wrap.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px">자치구를 선택하면 우리 동네 쓰레기 현황을 볼 수 있어요</div>';return;}
+  const d=GU[+v];
+  const perCap=(d.daily*1000/d.pop/1000).toFixed(2);
+  const totalRank=[...GU].sort((a,b)=>b.daily-a.daily).findIndex(x=>x.n===d.n)+1;
+  const perCapRank=[...GU].sort((a,b)=>(b.daily/b.pop)-(a.daily/a.pop)).findIndex(x=>x.n===d.n)+1;
+  const recycleRank=[...GU].sort((a,b)=>b.recycle-a.recycle).findIndex(x=>x.n===d.n)+1;
+  const seoulAvg=GU.reduce((s,x)=>s+x.daily*1000/x.pop/1000,0)/GU.length;
+  const vsAvg=((perCap-seoulAvg)/seoulAvg*100).toFixed(1);
+  const vsAvgColor=vsAvg>0?'var(--red)':'var(--teal)';
+
+  let msg='';
+  if(perCapRank<=5) msg=`🚨 우리 동네는 1인당 배출량이 서울 ${perCapRank}위로 많은 편이에요. 음식물 쓰레기 줄이기, 분리배출 정확도 높이기로 경각심을 가져보아요.`;
+  else if(d.recycle<=58) msg=`♻️ 우리 동네는 재활용률이 서울 평균보다 낮아요(${recycleRank}위/25). 재활용 가능한 품목을 더 분리해서 배출하면 도움이 됩니다.`;
+  else if(perCapRank>=20) msg=`👏 우리 동네는 1인당 배출량이 적은 편이에요(${perCapRank}위/25). 지금처럼 잘 유지해주세요.`;
+  else msg=`📊 우리 동네는 서울 평균과 비슷한 수준입니다. 음식물·재활용을 한 단계 더 신경쓰면 상위권 진입 가능!`;
+
+  wrap.innerHTML=`
+    <div class="cc-grid">
+      <div class="cc-stat"><div class="cc-stat-label">일일 발생량</div><div class="cc-stat-val" style="color:var(--teal)">${d.daily}<span style="font-size:11px;color:var(--text2)">t</span></div><div class="cc-stat-rank">총량 ${totalRank}위/25</div></div>
+      <div class="cc-stat"><div class="cc-stat-label">1인당 배출량</div><div class="cc-stat-val" style="color:${vsAvgColor}">${perCap}<span style="font-size:11px;color:var(--text2)">kg</span></div><div class="cc-stat-rank">서울평균 대비 ${vsAvg>0?'+':''}${vsAvg}%</div></div>
+      <div class="cc-stat"><div class="cc-stat-label">재활용률</div><div class="cc-stat-val" style="color:var(--blue)">${d.recycle}<span style="font-size:11px;color:var(--text2)">%</span></div><div class="cc-stat-rank">재활용 ${recycleRank}위/25</div></div>
+      <div class="cc-stat"><div class="cc-stat-label">우리구 유형</div><div class="cc-stat-val" style="font-size:13px">${CLUSTER_NAMES[d.cluster]}</div><div class="cc-stat-rank">${['주거형','상업형','유동형','물류형','혼합형'][d.cluster]} 특성</div></div>
+    </div>
+    <div class="cc-msg">${msg}</div>`;
+}
+
+/* ════════════════════════════════════════════════ */
+/* CHAPTER 2                                         */
+/* ════════════════════════════════════════════════ */
+function initCh2(){
+  drawMap4();
+  initRadar4(0);
+  updateScatter();
+  initRFImportance();
+  initPopGapChart();
+  initGangseoChart();
+  initJongnoChart();
+  initPredSelects();
+  updatePredChart();
+}
+
+const FACTOR_DATA={
+  living_pop:{label:'생활인구(만명)',fn:d=>d.livingPop,corr:{total:.85,food:.87,recycle:.81,incinerate:.76}},
+  resident_pop:{label:'거주인구(만명)',fn:d=>d.pop/10,corr:{total:.82,food:.72,recycle:.74,incinerate:.68}},
+  pop_gap:{label:'인구갭(생활÷거주)',fn:d=>+(d.livingPop/(d.pop/10)).toFixed(2),corr:{total:.61,food:.79,recycle:.52,incinerate:.64}},
+  card:{label:'카드소비(억원)',fn:d=>d.card,corr:{total:.80,food:.79,recycle:.73,incinerate:.72}},
+  delivery:{label:'택배물동량(만건)',fn:d=>d.delivery,corr:{total:.76,food:.65,recycle:.71,incinerate:.60}},
+};
+const YFACTOR={total:{fn:d=>d.daily,label:'총발생량(톤/일)'},food:{fn:d=>+(d.daily*d.food/100).toFixed(1),label:'음식물(톤/일)'},recycle:{fn:d=>+(d.daily*d.recycle/100).toFixed(1),label:'재활용(톤/일)'},incinerate:{fn:d=>+(d.daily*d.inc/100).toFixed(1),label:'소각(톤/일)'}};
+
+function updateScatter(){
+  const xk=document.getElementById('x-var').value;
+  const yk=document.getElementById('y-var').value;
+  const xF=FACTOR_DATA[xk],yF=YFACTOR[yk];
+  const xs=GU.map(xF.fn),ys=GU.map(yF.fn);
+  const r=FACTOR_DATA[xk].corr[yk];
+  const n=xs.length,sx=xs.reduce((a,b)=>a+b)/n,sy=ys.reduce((a,b)=>a+b)/n;
+  const ssxy=xs.reduce((a,v,i)=>a+(v-sx)*(ys[i]-sy),0);
+  const ssx=xs.reduce((a,v)=>a+(v-sx)**2,0);
+  const slope=ssxy/ssx,intercept=sy-slope*sx;
+  document.getElementById('corr-val').textContent=r.toFixed(2);
+  document.getElementById('reg-eq').textContent=`${slope.toFixed(2)}x + ${intercept.toFixed(1)}`;
+  document.getElementById('reg-interp').textContent=`${xF.label} 1단위↑ → 폐기물 ${slope.toFixed(1)}톤 변화`;
+  if(charts.scatter3) charts.scatter3.destroy();
+  const ctx=document.getElementById('scatter3').getContext('2d');
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const regLine=[{x:minX,y:slope*minX+intercept},{x:maxX,y:slope*maxX+intercept}];
+  charts.scatter3=new Chart(ctx,{type:'scatter',data:{datasets:[
+    {label:'자치구',data:GU.map((d,i)=>({x:xs[i],y:ys[i],n:d.n,c:d.cluster})),
+     backgroundColor:GU.map(d=>CLUSTER_COLORS[d.cluster]+'bb'),pointRadius:7,pointHoverRadius:9},
+    {label:'회귀선',data:regLine,type:'line',borderColor:'rgba(255,255,255,.4)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{
+    legend:{display:false},
+    tooltip:{callbacks:{label:ctx=>{const raw=ctx.raw;return raw.n?` ${raw.n}  (${raw.x}, ${raw.y})`:'';}}}
+  },scales:{
+    x:{grid:{color:'rgba(255,255,255,.04)'},title:{display:true,text:xF.label,color:'#3d4559',font:{size:10}},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},title:{display:true,text:yF.label,color:'#3d4559',font:{size:10}},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+  charts.scatter3.canvas.onclick=e=>{
+    const pts=charts.scatter3.getElementsAtEventForMode(e,'nearest',{intersect:true},false);
+    if(pts.length&&pts[0].datasetIndex===0){const idx=pts[0].index;openPopup(idx);}
+  };
+}
+
+function initRFImportance(){
+  const ctx=document.getElementById('rf-importance').getContext('2d');
+  const vars=['생활인구','카드소비','외식소비','택배량','거주인구','인구갭','기온·강수'];
+  const imp=[0.24,0.21,0.18,0.15,0.11,0.07,0.04];
+  charts.rfImp=new Chart(ctx,{type:'bar',data:{labels:vars,datasets:[
+    {label:'중요도',data:imp,backgroundColor:imp.map(v=>v>=.18?'rgba(0,200,150,.8)':v>=.12?'rgba(74,144,217,.7)':'rgba(100,120,150,.5)'),borderWidth:0,borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{
+    x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}},
+    y:{grid:{color:'transparent'},ticks:{color:'#7a8499',font:{size:10}}}
+  }}});
+}
+
+function initPopGapChart(){
+  const sorted=[...GU].sort((a,b)=>(b.livingPop/(b.pop/10))-(a.livingPop/(a.pop/10))).slice(0,15);
+  const ctx=document.getElementById('pop-gap-chart').getContext('2d');
+  charts.popGap=new Chart(ctx,{type:'bar',data:{labels:sorted.map(d=>d.n.replace('구','')),datasets:[
+    {label:'인구갭',data:sorted.map(d=>+(d.livingPop/(d.pop/10)).toFixed(2)),
+     backgroundColor:sorted.map(d=>{const g=d.livingPop/(d.pop/10);return g>=2?'rgba(232,69,69,.8)':g>=1.5?'rgba(245,166,35,.7)':'rgba(74,144,217,.6)';}),
+     borderWidth:0,borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+    x:{grid:{color:'transparent'},ticks:{color:'#3d4559',font:{size:9}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+/* 강서구 케이스 차트 */
+function initGangseoChart(){
+  const ctx=document.getElementById('gangseo-chart').getContext('2d');
+  charts.gangseo=new Chart(ctx,{type:'bar',data:{labels:['강서구','서울 평균(주거형)'],datasets:[
+    {label:'생활계',data:[55,72],backgroundColor:'rgba(74,144,217,.7)',borderWidth:0},
+    {label:'사업장',data:[32,12],backgroundColor:'rgba(155,109,240,.85)',borderWidth:0},
+    {label:'건설',data:[10,12],backgroundColor:'rgba(245,166,35,.5)',borderWidth:0},
+    {label:'지정',data:[3,4],backgroundColor:'rgba(100,120,150,.5)',borderWidth:0},
+  ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#7a8499',font:{size:9},padding:6,boxWidth:10}}},scales:{
+    x:{stacked:true,grid:{color:'transparent'},ticks:{color:'#3d4559',font:{size:9},callback:v=>v+'%'},max:100},
+    y:{stacked:true,grid:{color:'transparent'},ticks:{color:'#7a8499',font:{size:10}}}
+  }}});
+}
+
+/* 종로/중구 케이스 차트 */
+function initJongnoChart(){
+  const ctx=document.getElementById('jongno-chart').getContext('2d');
+  charts.jongno=new Chart(ctx,{type:'bar',data:{labels:['종로','중구','용산','광진','서울평균'],datasets:[
+    {label:'거주인구당(kg)',data:[1.38,1.32,0.82,0.68,1.07],backgroundColor:'rgba(232,69,69,.8)',borderWidth:0,borderRadius:3},
+    {label:'생활인구당(kg)',data:[0.39,0.34,0.45,0.52,0.85],backgroundColor:'rgba(0,200,150,.8)',borderWidth:0,borderRadius:3},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8499',font:{size:9},padding:6,boxWidth:10}}},scales:{
+    x:{grid:{color:'transparent'},ticks:{color:'#7a8499',font:{size:10}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+/* 클러스터 지도 (Leaflet) */
+let map4Instance=null,map4Layer=null;
+async function drawMap4(){
+  const container=document.getElementById('map4');
+  if(!container) return;
+  const loading=document.getElementById('map4-loading');
+
+  const geo=await loadSeoulGeo();
+  if(!geo){
+    if(loading) loading.textContent='⚠ 지도 로드 실패';
+    return;
+  }
+  if(loading) loading.classList.add('hide');
+
+  if(!map4Instance){
+    map4Instance=L.map('map4',{
+      zoomControl:true,scrollWheelZoom:false,attributionControl:true,
+      zoomSnap:0.5,minZoom:10
+    }).setView([37.5665,126.9780],10.5);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{
+      attribution:'© OpenStreetMap © CARTO',maxZoom:18,subdomains:'abcd'
+    }).addTo(map4Instance);
+    setTimeout(()=>map4Instance.invalidateSize(),100);
+
+    // 범례
+    const legend=L.control({position:'bottomleft'});
+    legend.onAdd=()=>{
+      const div=L.DomUtil.create('div','map-legend');
+      div.innerHTML=CLUSTER_NAMES.map((nm,i)=>`<div class="map-legend-row"><div class="map-legend-dot" style="background:${CLUSTER_COLORS[i]}"></div>${nm}</div>`).join('');
+      return div;
+    };
+    legend.addTo(map4Instance);
+  }
+  if(map4Layer) map4Layer.remove();
+
+  const guByName=Object.fromEntries(GU.map(d=>[d.n,d]));
+  map4Layer=L.geoJSON(geo,{
+    style:f=>{
+      const d=guByName[getDistName(f.properties)];
+      const clr=d?CLUSTER_COLORS[d.cluster]:'#333';
+      return {fillColor:clr,fillOpacity:.6,color:'rgba(255,255,255,.25)',weight:1};
+    },
+    onEachFeature:(feature,layer)=>{
+      const name=getDistName(feature.properties);
+      const d=guByName[name];
+      if(!d) return;
+      layer.bindTooltip(
+        `<strong>${d.n}</strong><br>${CLUSTER_NAMES[d.cluster]}<br>발생량: ${d.daily}톤/일`,
+        {className:'gu-tooltip',sticky:true,direction:'top'}
+      );
+      layer.on('mouseover',e=>e.target.setStyle({weight:2.5,color:'#fff',fillOpacity:.85}));
+      layer.on('mouseout',e=>map4Layer.resetStyle(e.target));
+      layer.on('click',()=>{
+        const idx=GU.findIndex(x=>x.n===name);
+        if(idx>=0) openPopup(idx);
+      });
+    }
+  }).addTo(map4Instance);
+}
+
+const RADAR_DATA=[[45,30,20,55,70],[80,85,40,35,60],[55,75,90,30,45],[50,40,35,80,65],[65,60,55,50,55]];
+function setRadarCluster(i,el){
+  document.querySelectorAll('#radar-toggle .tgl').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  if(charts.radar4)charts.radar4.destroy();
+  initRadar4(i);
+}
+function initRadar4(ci){
+  const ctx=document.getElementById('radar4').getContext('2d');
+  charts.radar4=new Chart(ctx,{type:'radar',data:{
+    labels:['음식물비중','재활용률','생활인구갭','택배량','대형폐기물'],
+    datasets:[
+      {label:CLUSTER_NAMES[ci],data:RADAR_DATA[ci],backgroundColor:CLUSTER_COLORS[ci]+'33',borderColor:CLUSTER_COLORS[ci],borderWidth:2,pointBackgroundColor:CLUSTER_COLORS[ci],pointRadius:4},
+      {label:'서울 평균',data:[50,50,50,50,50],backgroundColor:'rgba(255,255,255,.04)',borderColor:'rgba(255,255,255,.2)',borderWidth:1,borderDash:[4,3],pointRadius:2,pointBackgroundColor:'rgba(255,255,255,.3)'},
+    ]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8499',font:{size:10},padding:10}}},scales:{r:{min:0,max:100,grid:{color:'rgba(255,255,255,.06)'},ticks:{display:false},pointLabels:{color:'#7a8499',font:{size:10}},angleLines:{color:'rgba(255,255,255,.06)'}}}}});
+}
+
+/* 예측 */
+function initPredSelects(){
+  const sel=document.getElementById('pred-gu');
+  if(sel.children.length>0)return;
+  GU.forEach((d,i)=>{const o=new Option(d.n,i);sel.add(o);});
+  renderRiskGuList();
+}
+
+function updatePredChart(){
+  const gi=+document.getElementById('pred-gu').value||0;
+  const d=GU[gi];
+  const months=+document.getElementById('pred-period').value||12;
+  const hist=[];
+  for(let m=0;m<24;m++){
+    const season=Math.sin((m+3)*Math.PI/6)*0.08;
+    hist.push({x:`${2023+Math.floor(m/12)}-${String((m%12)+1).padStart(2,'0')}`,y:+(d.daily*(1+season)+Math.random()*4-2).toFixed(1)});
+  }
+  const pred=[];
+  for(let m=0;m<months;m++){
+    const season=Math.sin((m+3+24)*Math.PI/6)*0.08;
+    const growth=(1+d.growth/100/12)**m;
+    pred.push({x:`${2025+Math.floor(m/12)}-${String((m%12)+1).padStart(2,'0')}`,y:+(d.daily*growth*(1+season)).toFixed(1)});
+  }
+  const upper=pred.map(p=>({x:p.x,y:+(p.y*1.08).toFixed(1)}));
+  const lower=pred.map(p=>({x:p.x,y:+(p.y*0.92).toFixed(1)}));
+  document.getElementById('pred-info').innerHTML=
+    `구: <span class="iv">${d.n}</span>\n유형: <span class="iv">${CLUSTER_NAMES[d.cluster]}</span>\n현재 일일발생: <span class="iv">${d.daily}톤</span>\n예측 증가율: <span class="iv">+${d.growth}%/년</span>\n12개월 예측: <span class="iv">${pred[11]?.y||'-'}톤/일</span>`;
+  if(charts.predChart) charts.predChart.destroy();
+  const ctx=document.getElementById('pred-chart').getContext('2d');
+  charts.predChart=new Chart(ctx,{type:'line',data:{datasets:[
+    {label:'신뢰구간 상단',data:upper,borderColor:'transparent',backgroundColor:'rgba(0,200,150,.08)',fill:'+1',pointRadius:0},
+    {label:'신뢰구간 하단',data:lower,borderColor:'transparent',backgroundColor:'rgba(0,200,150,.08)',fill:false,pointRadius:0},
+    {label:'예측',data:pred,borderColor:'rgba(0,200,150,.5)',borderDash:[5,3],borderWidth:1.5,pointRadius:2,fill:false},
+    {label:'실제',data:hist,borderColor:'#00c896',backgroundColor:'rgba(0,200,150,.12)',borderWidth:2,pointRadius:2,fill:false},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8499',font:{size:9},padding:8,filter:i=>i.text!=='신뢰구간 상단'&&i.text!=='신뢰구간 하단'}}},scales:{
+    x:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'},maxTicksLimit:12}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+function renderRiskGuList(){
+  const risky=[...GU].sort((a,b)=>b.growth-a.growth).slice(0,5);
+  document.getElementById('risk-gu-list').innerHTML=risky.map(d=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:11px;font-weight:500;flex:1">${d.n}</span>
+      <span style="font-size:10px;font-family:var(--mono);color:var(--red)">+${d.growth}%/년</span>
+      <span style="font-size:9px;background:var(--red-bg);color:var(--red);border:1px solid rgba(232,69,69,.2);border-radius:4px;padding:1px 5px;font-family:var(--mono)">위험</span>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════ */
+/* CHAPTER 3                                         */
+/* ════════════════════════════════════════════════ */
+function initCh3(){
+  renderHeatmap6();
+  initMatrix6();
+  renderRiskTable();
+  initSimSelect();
+}
+
+function riskScore(d){return Math.round(d.daily/1.2+d.growth*15+(d.inc/40)*30);}
+
+function renderHeatmap6(){
+  const sorted=[...GU].sort((a,b)=>riskScore(b)-riskScore(a));
+  const maxR=riskScore(sorted[0]),minR=riskScore(sorted[sorted.length-1]);
+  const wrap=document.getElementById('heatmap6');
+  wrap.innerHTML=`<div class="heatmap-grid">${sorted.map(d=>{
+    const s=riskScore(d),t=(s-minR)/(maxR-minR||1);
+    const r=Math.round(14+214*t),g=Math.round(69*(1-t)),b=Math.round(69*(1-t*.7));
+    return `<div class="hm-cell" style="background:rgb(${r},${g},${b})" onclick="openPopup(${GU.indexOf(d)})">
+      <div class="hm-name">${d.n.replace('구','')}</div>
+      <div class="hm-val">${s}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function initMatrix6(){
+  const ctx=document.getElementById('matrix6').getContext('2d');
+  charts.matrix6=new Chart(ctx,{type:'bubble',data:{datasets:[
+    ...Object.entries({0:'#4a90d9',1:'#e84545',2:'#f5a623',3:'#00c896',4:'#9b6df0'}).map(([ci,clr])=>({
+      label:CLUSTER_NAMES[+ci],
+      data:GU.filter(d=>d.cluster===+ci).map(d=>({x:d.daily,y:d.growth,r:Math.sqrt(d.daily*d.inc/100)*0.6,n:d.n})),
+      backgroundColor:clr+'77',borderColor:clr+'aa',borderWidth:1,
+    }))
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{
+    legend:{labels:{color:'#7a8499',font:{size:10},padding:8}},
+    tooltip:{callbacks:{label:c=>{const r=c.raw;return r.n?` ${r.n} (발생${r.x}t · 증가${r.y}%)`:'';}}}
+  },scales:{
+    x:{grid:{color:'rgba(255,255,255,.04)'},title:{display:true,text:'현재 발생량(톤/일)',color:'#3d4559',font:{size:10}},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}},
+    y:{grid:{color:'rgba(255,255,255,.04)'},title:{display:true,text:'증가율(%/년)',color:'#3d4559',font:{size:10}},ticks:{color:'#3d4559',font:{size:9,family:'JetBrains Mono'}}}
+  }}});
+}
+
+function renderRiskTable(){
+  const sorted=[...GU].sort((a,b)=>riskScore(b)-riskScore(a));
+  const maxR=riskScore(sorted[0]);
+  document.getElementById('risk-tbody').innerHTML=sorted.slice(0,15).map((d,i)=>{
+    const rs=riskScore(d),pct=Math.round(rs/maxR*100);
+    const incTon=+(d.daily*d.inc/100).toFixed(0);
+    const lvl=rs>=100?'<span style="color:var(--red);font-family:var(--mono);font-size:10px">위험</span>':rs>=75?'<span style="color:var(--amber);font-family:var(--mono);font-size:10px">주의</span>':'<span style="color:var(--teal);font-family:var(--mono);font-size:10px">관찰</span>';
+    return `<tr onclick="openPopup(${GU.indexOf(d)})">
+      <td style="font-family:var(--mono);color:var(--text3)">${i+1}</td>
+      <td style="font-weight:500">${d.n}</td>
+      <td><div>${rs}<div class="risk-bar" style="margin-top:2px"><div class="risk-fill" style="width:${pct}%;background:${pct>80?'var(--red)':pct>60?'var(--amber)':'var(--teal)'}"></div></div></div></td>
+      <td style="font-family:var(--mono)">${d.daily}</td>
+      <td style="font-family:var(--mono);color:${d.growth>=2?'var(--red)':'var(--amber)'}">+${d.growth}%</td>
+      <td style="font-family:var(--mono)">${d.inc}%</td>
+      <td style="font-family:var(--mono)">${incTon}톤/일</td>
+      <td style="font-family:var(--mono);color:${rs>=100?'var(--red)':'var(--text2)'}">${rs>=100?'2026년':'2027년+'}</td>
+      <td>${lvl}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* 매칭 시뮬레이터 */
+function initSimSelect(){
+  const sel=document.getElementById('sim-gu');
+  if(sel.children.length>0)return;
+  GU.forEach((d,i)=>{const o=new Option(d.n,i);sel.add(o);});
+  sel.value=0;
+  runSim();
+}
+
+function updateWeights(){
+  const c=+document.getElementById('w-cost').value;
+  const d=+document.getElementById('w-dist').value;
+  const e=+document.getElementById('w-co2').value;
+  const sum=c+d+e||1;
+  document.getElementById('w-cost-v').textContent=Math.round(c/sum*100)+'%';
+  document.getElementById('w-dist-v').textContent=Math.round(d/sum*100)+'%';
+  document.getElementById('w-co2-v').textContent=Math.round(e/sum*100)+'%';
+  runSim();
+}
+
+function runSim(){
+  const gi=+document.getElementById('sim-gu').value||0;
+  const tons=+document.getElementById('sim-tons').value||30;
+  const wc=+document.getElementById('w-cost').value;
+  const wd=+document.getElementById('w-dist').value;
+  const we=+document.getElementById('w-co2').value;
+  const sumW=wc+wd+we||1;
+  const wCost=wc/sumW,wDist=wd/sumW,wCO2=we/sumW;
+
+  const gu=GU[gi];
+  document.getElementById('sim-target').textContent=`${gu.n} · ${tons}톤/일 위탁`;
+
+  // 1. 필터링: 잔여용량 < 위탁물량 + 🔴 지역 제외
+  const candidates=PRIVATE_FACILITIES.filter(f=>f.remain>=tons && f.flag!=='r');
+
+  if(candidates.length===0){
+    document.getElementById('sim-results').innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:20px">⚠️ 조건을 만족하는 시설이 없습니다.<br>위탁 물량을 줄이거나 충남 제외 정책을 재검토해주세요.</div>`;
+    document.getElementById('sim-map-wrap').style.display='none';
+    return;
+  }
+
+  // 2. Min-Max 정규화 (작을수록 좋음 → 1-x로 점수화)
+  const costs=candidates.map(f=>f.unitCost);
+  const dists=candidates.map(f=>f.distance);
+  const co2s=candidates.map(f=>f.co2);
+  const cMin=Math.min(...costs),cMax=Math.max(...costs);
+  const dMin=Math.min(...dists),dMax=Math.max(...dists);
+  const eMin=Math.min(...co2s),eMax=Math.max(...co2s);
+
+  const scored=candidates.map(f=>{
+    const sCost=1-(f.unitCost-cMin)/(cMax-cMin||1);
+    const sDist=1-(f.distance-dMin)/(dMax-dMin||1);
+    const sCO2=1-(f.co2-eMin)/(eMax-eMin||1);
+    const total=sCost*wCost+sDist*wDist+sCO2*wCO2;
+    return {...f,score:total,scores:{cost:sCost,dist:sDist,co2:sCO2}};
+  }).sort((a,b)=>b.score-a.score);
+
+  const top3=scored.slice(0,3);
+
+  document.getElementById('sim-results').innerHTML=`
+    <div class="sim-cards">
+      ${top3.map((f,i)=>{
+        const flagIcon=f.flag==='g'?'🟢':f.flag==='y'?'🟡':'🔴';
+        const dailyCost=(tons*f.unitCost/10000).toFixed(1);
+        const dailyCO2=(tons*f.co2).toFixed(1);
+        return `<div class="sim-card${i===1?' r2':i===2?' r3':''}">
+          <span class="sim-rank">#${i+1}</span>
+          <div class="sim-name">${f.name}</div>
+          <div class="sim-meta">${flagIcon} ${f.region} · 종합점수 ${(f.score*100).toFixed(1)}점</div>
+          <div class="sim-stat"><span class="sim-stat-label">📍 거리</span><span class="sim-stat-val">${f.distance}km</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">💰 단가</span><span class="sim-stat-val">${(f.unitCost/1000).toFixed(0)}천원/t</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">📦 잔여용량</span><span class="sim-stat-val">${f.remain}톤/일</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">🌱 CO₂</span><span class="sim-stat-val">${f.co2}t-CO₂/t</span></div>
+          <div style="border-top:1px dashed var(--border);margin-top:8px;padding-top:8px">
+            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--teal)">▸ 일일 비용</span><span class="sim-stat-val" style="color:var(--teal)">${dailyCost}만원/일</span></div>
+            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--amber)">▸ 일일 CO₂</span><span class="sim-stat-val" style="color:var(--amber)">${dailyCO2}t/일</span></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;font-size:10px;font-family:var(--mono);color:var(--text3);text-align:right">
+      후보 ${candidates.length}개 시설 중 상위 3개 표시 · 정규화: Min-Max
+    </div>`;
+
+  document.getElementById('sim-map-wrap').style.display='block';
+  drawSimMap(gu,top3);
+}
+
+/* 매칭 경로 지도 (Leaflet) */
+let simMapInstance=null,simMapLayers=[];
+function drawSimMap(gu,top3){
+  const container=document.getElementById('sim-map');
+  if(!container) return;
+  if(!simMapInstance){
+    simMapInstance=L.map('sim-map',{
+      zoomControl:true,scrollWheelZoom:false,attributionControl:true,zoomSnap:0.5
+    }).setView([37.4,127.0],8.5);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{
+      attribution:'© OSM © CARTO',maxZoom:18,subdomains:'abcd'
+    }).addTo(simMapInstance);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{
+      maxZoom:18,subdomains:'abcd',pane:'shadowPane',opacity:.7
+    }).addTo(simMapInstance);
+    setTimeout(()=>simMapInstance.invalidateSize(),100);
+  }
+  // 기존 레이어 제거
+  simMapLayers.forEach(l=>l.remove());
+  simMapLayers=[];
+
+  // 출발지 마커 (자치구)
+  const srcMarker=L.circleMarker([gu.lat,gu.lng],{
+    radius:11,fillColor:'#00c896',color:'#fff',weight:2.5,fillOpacity:.95
+  }).bindTooltip(`<strong>${gu.n}</strong><br>출발지 · ${document.getElementById('sim-tons').value}톤/일`,
+    {className:'gu-tooltip',permanent:true,direction:'top',offset:[0,-12]}
+  ).addTo(simMapInstance);
+  simMapLayers.push(srcMarker);
+
+  // 시설 마커 + 경로
+  const rankColors=['#00c896','#4a90d9','#9b6df0'];
+  top3.forEach((f,i)=>{
+    const line=L.polyline([[gu.lat,gu.lng],[f.lat,f.lng]],{
+      color:rankColors[i],weight:i===0?3:2,opacity:i===0?.85:.55,
+      dashArray:i===0?null:'6,5'
+    }).addTo(simMapInstance);
+    const marker=L.circleMarker([f.lat,f.lng],{
+      radius:9-i,fillColor:rankColors[i],color:'#fff',weight:2,fillOpacity:.9
+    }).bindTooltip(
+      `<strong>#${i+1} ${f.name}</strong><br>거리: ${f.distance}km<br>단가: ${(f.unitCost/1000).toFixed(0)}천원/t<br>점수: ${(f.score*100).toFixed(1)}점`,
+      {className:'gu-tooltip',sticky:true,direction:'top'}
+    ).addTo(simMapInstance);
+    // 순위 라벨
+    const labelIcon=L.divIcon({
+      className:'',
+      html:`<div style="background:${rankColors[i]};color:#fff;font-family:JetBrains Mono;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;border:1px solid rgba(255,255,255,.3)">#${i+1} ${f.name.replace(/^[가-힣]+ /,'')}</div>`,
+      iconSize:[80,16],iconAnchor:[40,-8]
+    });
+    const lbl=L.marker([f.lat,f.lng],{icon:labelIcon,interactive:false}).addTo(simMapInstance);
+    simMapLayers.push(line,marker,lbl);
+  });
+
+  // 모든 점이 보이도록 fit
+  const bounds=L.latLngBounds([[gu.lat,gu.lng],...top3.map(f=>[f.lat,f.lng])]);
+  simMapInstance.fitBounds(bounds,{padding:[40,40],maxZoom:10});
+}
+
+document.getElementById('sim-gu').addEventListener('change',runSim);
+
+/* ════════════════════════════════════════════════ */
+/* POPUP                                             */
+/* ════════════════════════════════════════════════ */
+function openPopup(gi){
+  const d=GU[gi];
+  const perCap=(d.daily*1000/d.pop/1000).toFixed(2);
+  const incTon=+(d.daily*d.inc/100).toFixed(0);
+  const rs=riskScore(d);
+  document.getElementById('popup-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+      <div style="font-size:20px;font-weight:700">${d.n}</div>
+      <span class="cluster-tag cl-${['residential','commercial','transit','logistics','mixed'][d.cluster]}-bg cl-${['residential','commercial','transit','logistics','mixed'][d.cluster]}" style="font-size:11px;padding:3px 10px;border-radius:10px;border:1px solid">${CLUSTER_NAMES[d.cluster]}</span>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:12px">인구 ${(d.pop/10).toFixed(0)}만명 · 생활인구 ${d.livingPop}만명 · 인구갭 ${(d.livingPop/(d.pop/10)).toFixed(1)}배</div>
+    <div class="popup-grid">
+      <div class="panel"><div class="popup-stat">일일 발생량</div><div class="popup-val" style="color:var(--teal)">${d.daily}톤/일</div></div>
+      <div class="panel"><div class="popup-stat">1인당 배출량</div><div class="popup-val" style="color:var(--amber)">${perCap}kg/일</div></div>
+      <div class="panel"><div class="popup-stat">재활용률</div><div class="popup-val" style="color:var(--blue)">${d.recycle}%</div></div>
+      <div class="panel"><div class="popup-stat">처리 리스크</div><div class="popup-val" style="color:${rs>=100?'var(--red)':'var(--amber)'}">${rs}점</div></div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:8px">폐기물 구조 — 서울 평균 대비</div>
+      ${[['음식물',d.food,28.4,'var(--amber)'],['재활용',d.recycle,60.2,'var(--teal)'],['소각',d.inc,35.1,'var(--red)']].map(([lbl,v,avg,clr])=>`
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);color:var(--text2);margin-bottom:3px">
+            <span>${lbl}</span><span style="color:${clr}">${v}% <span style="color:${v>avg?'var(--red)':'var(--teal)'}">(${v>avg?'+':''}${(v-avg).toFixed(1)}%p vs 평균)</span></span>
+          </div>
+          <div class="mini-bar"><div class="mini-fill" style="width:${Math.min(100,v/.65)}%;background:${clr}"></div></div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button style="flex:1;padding:8px;background:var(--amber-bg);border:1px solid rgba(245,166,35,.3);border-radius:6px;color:var(--amber);font-size:11px;cursor:pointer;font-family:var(--sans)" onclick="closePopup();sw(1);setTimeout(()=>{const s=document.getElementById('pred-gu');if(s){s.value=${gi};updatePredChart();}},150)">📈 예측 보기</button>
+      <button style="flex:1;padding:8px;background:var(--red-bg);border:1px solid rgba(232,69,69,.3);border-radius:6px;color:var(--red);font-size:11px;cursor:pointer;font-family:var(--sans)" onclick="closePopup();sw(2);setTimeout(()=>{const s=document.getElementById('sim-gu');if(s){s.value=${gi};runSim();}},150)">💊 매칭 시뮬레이터</button>
+    </div>`;
+  document.getElementById('popup-overlay').classList.add('show');
+}
+function closePopup(){document.getElementById('popup-overlay').classList.remove('show');}
+
+/* ════════ INIT ════════ */
+window.addEventListener('load',()=>initCh1());
+window.addEventListener('resize',()=>{
+  if(map1Instance) map1Instance.invalidateSize();
+  if(map4Instance) map4Instance.invalidateSize();
+  if(simMapInstance) simMapInstance.invalidateSize();
+});
+</script>
+</body>
+</html>
