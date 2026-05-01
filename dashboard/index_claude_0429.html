@@ -284,6 +284,119 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
 .donut-center-val{font-size:24px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1}
 .donut-center-label{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px}
+
+/* ════════════════════════════════════════════════ */
+/*  ⚠ 더미/추정 데이터 시각 마커                       */
+/*  - .fake-full     완전 더미 (빨강)                  */
+/*  - .fake-partial  일부 더미 (주황, livingPop 등)     */
+/*  - .fake-weight   임의 가중치 (회색)                */
+/* ════════════════════════════════════════════════ */
+.fake-full{
+  border:2px dashed #dc2626 !important;
+  background:repeating-linear-gradient(45deg,#fef2f2,#fef2f2 10px,#fff 10px,#fff 20px) !important;
+  position:relative;
+  box-shadow:0 0 0 4px rgba(220,38,38,.08) !important;
+}
+.fake-full::before{
+  content:'🔴 완전 더미 데이터';
+  position:absolute;top:-12px;left:14px;
+  background:#dc2626;color:#fff;
+  font-size:11px;font-weight:800;font-family:var(--mono);
+  padding:3px 10px;border-radius:4px;letter-spacing:.04em;
+  z-index:10;box-shadow:0 2px 6px rgba(220,38,38,.4);
+}
+.fake-partial{
+  border:2px dashed #d97706 !important;
+  background:repeating-linear-gradient(45deg,#fffbeb,#fffbeb 10px,#fff 10px,#fff 20px) !important;
+  position:relative;
+  box-shadow:0 0 0 4px rgba(217,119,6,.08) !important;
+}
+.fake-partial::before{
+  content:'🟡 일부 더미 (livingPop)';
+  position:absolute;top:-12px;left:14px;
+  background:#d97706;color:#fff;
+  font-size:11px;font-weight:800;font-family:var(--mono);
+  padding:3px 10px;border-radius:4px;letter-spacing:.04em;
+  z-index:10;box-shadow:0 2px 6px rgba(217,119,6,.4);
+}
+.fake-weight{
+  outline:2px dashed #6b7280 !important;
+  outline-offset:2px;
+  position:relative;
+}
+.fake-weight::after{
+  content:'⚙ 임의 가중치';
+  background:#6b7280;color:#fff;
+  font-size:10px;font-weight:800;font-family:var(--mono);
+  padding:2px 7px;border-radius:3px;margin-left:6px;
+  vertical-align:middle;
+}
+/* 인라인 텍스트 뱃지 (KPI 숫자 옆 등) */
+.dummy-tag{
+  display:inline-block;
+  background:#dc2626;color:#fff;
+  font-size:10px;font-weight:800;font-family:var(--mono);
+  padding:2px 7px;border-radius:4px;margin-left:6px;
+  vertical-align:middle;letter-spacing:.04em;
+  animation:dummyPulse 2.4s ease-in-out infinite;
+}
+.dummy-tag.partial{background:#d97706}
+.dummy-tag.weight{background:#6b7280}
+@keyframes dummyPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}
+  50%{box-shadow:0 0 0 6px rgba(220,38,38,0)}
+}
+/* KPI 값 빨갛게 강조 (실데이터와 구분) */
+.kpi-val.is-fake{
+  color:#dc2626 !important;
+  text-decoration:underline wavy #dc2626;
+  text-underline-offset:4px;
+}
+.kpi-val.is-fake-partial{
+  color:#d97706 !important;
+  text-decoration:underline wavy #d97706;
+  text-underline-offset:4px;
+}
+/* gap-banner 셀 가짜 스타일 */
+.gap-stat.is-fake .gap-val{
+  color:#dc2626 !important;
+  background:#fef2f2;
+  border-radius:4px;
+  padding:2px 6px;
+}
+.gap-stat.is-fake::before{
+  content:'🔴 추정';
+  display:inline-block;
+  background:#dc2626;color:#fff;
+  font-size:9px;font-weight:800;font-family:var(--mono);
+  padding:1px 6px;border-radius:3px;
+  margin-bottom:4px;
+}
+/* 토글 버튼 가짜 마커 */
+.tgl.is-fake{
+  position:relative;
+  color:#dc2626 !important;
+  border-color:#dc2626 !important;
+}
+.tgl.is-fake::after{
+  content:'⚙';
+  margin-left:4px;
+  font-weight:900;
+}
+/* 상단 안내 배너 */
+.fake-legend{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:12px 24px 0;padding:10px 16px;
+  background:linear-gradient(90deg,#fef2f2 0%,#fffbeb 50%,#f3f4f6 100%);
+  border:1px solid #fecaca;border-radius:8px;
+  font-size:11px;font-family:var(--mono);color:var(--text2);
+}
+.fake-legend strong{color:var(--text);font-weight:800;margin-right:4px}
+.fake-legend .lg-item{display:flex;align-items:center;gap:6px}
+.fake-legend .lg-dot{width:14px;height:14px;border-radius:3px;display:inline-block}
+.fake-legend .lg-red{background:#dc2626}
+.fake-legend .lg-amber{background:#d97706}
+.fake-legend .lg-gray{background:#6b7280}
 </style>
 </head>
 <body>
@@ -313,6 +426,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   <div style="display:flex;align-items:center;gap:8px">
     <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">데이터: 2018–2024</span>
   </div>
+</div>
+
+<!-- ⚠ 더미/추정 데이터 범례 배너 -->
+<div class="fake-legend">
+  <strong>⚠ 데이터 신뢰도 표기</strong>
+  <span class="lg-item"><span class="lg-dot lg-red"></span><b>🔴 완전 더미</b> — 하드코딩/추정값</span>
+  <span class="lg-item"><span class="lg-dot lg-amber"></span><b>🟡 일부 더미</b> — livingPop 더미가 영향</span>
+  <span class="lg-item"><span class="lg-dot lg-gray"></span><b>⚙ 임의 가중치</b> — 0.75 등 추정 계수</span>
+  <span style="margin-left:auto;color:var(--text3)">실데이터: 자치구 발생량·인구·재활용/소각/매립률·음식물 비중·KMeans 클러스터</span>
 </div>
 
 <div class="tabs">
@@ -363,31 +485,31 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <span class="section-sub">2025–2030</span>
   </div>
 
-  <!-- 초과분/여력 배너 (NEW) -->
-  <div class="gap-banner">
-    <div class="gap-stat">
+  <!-- 초과분/여력 배너 (NEW) — ⚠ 3개 숫자 모두 HTML 하드코딩, JS 갱신 안 됨 -->
+  <div class="gap-banner fake-full">
+    <div class="gap-stat is-fake">
       <span class="gap-label">현재 발생량</span>
       <span class="gap-val" id="gap-demand">2,905<span style="font-size:13px;color:var(--text2)">톤/일</span></span>
-      <span class="gap-sub">2024년 기준</span>
+      <span class="gap-sub">2024년 기준 <span class="dummy-tag">하드코딩</span></span>
     </div>
-    <div class="gap-stat">
+    <div class="gap-stat is-fake">
       <span class="gap-label">현재 가용 용량</span>
       <span class="gap-val" id="gap-supply" style="color:var(--blue)">2,850<span style="font-size:13px;color:var(--text2)">톤/일</span></span>
-      <span class="gap-sub">정상 가동 시</span>
+      <span class="gap-sub">정상 가동 시 <span class="dummy-tag">하드코딩</span></span>
     </div>
-    <div class="gap-stat">
+    <div class="gap-stat is-fake">
       <span class="gap-label">현재 부족분 / 정비 시 부족분</span>
       <span class="gap-val shortage" id="gap-shortage">-55 / -805<span style="font-size:13px;color:var(--text2)">톤/일</span></span>
-      <span class="gap-sub">마포 정비기간 중 최대</span>
+      <span class="gap-sub">마포 정비기간 중 최대 <span class="dummy-tag">하드코딩</span></span>
     </div>
   </div>
 
-  <div class="panel mb12">
-    <div class="panel-title">서울시 공공 소각시설 4개소 정비 타임라인 + 가용 용량 추이</div>
+  <div class="panel mb12 fake-full">
+    <div class="panel-title">서울시 공공 소각시설 4개소 정비 타임라인 + 가용 용량 추이 <span class="dummy-tag">정비기간·시뮬</span></div>
     <div class="grid-2">
       <div id="facility-timeline"></div>
       <div>
-        <div style="font-size:11px;font-weight:600;margin-bottom:6px">월별 가용 용량 vs 발생량</div>
+        <div style="font-size:11px;font-weight:600;margin-bottom:6px">월별 가용 용량 vs 발생량 <span class="dummy-tag">전체 시뮬</span></div>
         <div class="chart-wrap h200"><canvas id="capacity-chart"></canvas></div>
       </div>
     </div>
@@ -406,10 +528,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 
   <div class="kpi-row">
-    <div class="kpi teal"><div class="kpi-label">서울 연간 발생량 (2024)</div><div class="kpi-val teal" id="kpi-total">116.8<span class="kpi-unit">만톤</span></div><div class="kpi-sub">일평균 3,200톤/일</div></div>
-    <div class="kpi amber"><div class="kpi-label">평균 1인당 배출량</div><div class="kpi-val amber" id="kpi-percap">1.07<span class="kpi-unit">kg/일</span></div><div class="kpi-sub">전국 평균 0.94kg 대비</div></div>
-    <div class="kpi blue"><div class="kpi-label">평균 재활용률</div><div class="kpi-val blue" id="kpi-recycle">60.2<span class="kpi-unit">%</span></div><div class="kpi-sub">소각 35.1% · 매립 4.7%</div></div>
-    <div class="kpi red"><div class="kpi-label">최고 vs 최저 1인당</div><div class="kpi-val red" id="kpi-gap">2.3<span class="kpi-unit">배</span></div><div class="kpi-sub" id="kpi-gap-sub">종로 vs 도봉</div></div>
+    <div class="kpi teal"><div class="kpi-label">서울 연간 발생량 (2024) <span class="dummy-tag">하드코딩</span></div><div class="kpi-val teal is-fake" id="kpi-total">116.8<span class="kpi-unit">만톤</span></div><div class="kpi-sub">일평균 3,200톤/일 — yearTotals 객체 4개 값 하드코딩</div></div>
+    <div class="kpi amber"><div class="kpi-label">평균 1인당 배출량 <span class="dummy-tag">하드코딩</span></div><div class="kpi-val amber is-fake" id="kpi-percap">1.07<span class="kpi-unit">kg/일</span></div><div class="kpi-sub">yearAvgPerCap 객체 4개 값 하드코딩</div></div>
+    <div class="kpi blue"><div class="kpi-label">평균 재활용률 ✅</div><div class="kpi-val blue" id="kpi-recycle">60.2<span class="kpi-unit">%</span></div><div class="kpi-sub">실데이터 (GU.recycle 평균)</div></div>
+    <div class="kpi red"><div class="kpi-label">최고 vs 최저 1인당 ✅</div><div class="kpi-val red" id="kpi-gap">2.3<span class="kpi-unit">배</span></div><div class="kpi-sub" id="kpi-gap-sub">종로 vs 도봉 (실데이터)</div></div>
   </div>
 
   <!-- 토글 -->
@@ -425,7 +547,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <span style="margin-left:14px;font-size:11px;font-family:var(--mono);color:var(--text3);font-weight:600">분류:</span>
     <div class="toggle-group" id="type-toggle">
       <button class="tgl active" onclick="setType('전체',this)">전체</button>
-      <button class="tgl" onclick="setType('생활계',this)">생활계 (인구비례 추정)</button>
+      <button class="tgl is-fake" onclick="setType('생활계',this)" title="d.daily * 0.75 임의 가중치">생활계 (×0.75 추정)</button>
       <button class="tgl amber" onclick="setType('음식물',this)">음식물</button>
       <button class="tgl teal" onclick="setType('재활용',this)">재활용</button>
     </div>
@@ -446,8 +568,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="panel">
-        <div class="panel-title">연도 슬라이더 <span class="panel-badge">2021 → 2024</span></div>
+      <div class="panel fake-full">
+        <div class="panel-title">연도 슬라이더 <span class="panel-badge">2021 → 2024</span> <span class="dummy-tag">4년치 하드코딩</span></div>
         <input type="range" id="year-slider" min="2021" max="2024" value="2024" oninput="onYearChange(this.value)">
         <div class="slider-val" id="year-val">2024</div>
         <div class="info-box" id="year-info" style="margin-top:8px;font-size:10px"></div>
@@ -467,12 +589,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 
   <div class="grid-2">
-    <div class="panel">
-      <div class="panel-title">연도별 발생량 추이 (2021–2024) <span class="panel-badge">총량 / 재활용 / 소각 / 매립 다중선</span></div>
+    <div class="panel fake-full">
+      <div class="panel-title">연도별 발생량 추이 (2021–2024) <span class="panel-badge">총량 / 재활용 / 소각 / 매립 다중선</span> <span class="dummy-tag">4시리즈 모두 하드코딩</span></div>
       <div class="chart-wrap h240"><canvas id="trend1"></canvas></div>
     </div>
-    <div class="panel">
-      <div class="panel-title">처리 방법별 비율 <span class="panel-badge" id="donut-year">2024</span></div>
+    <div class="panel fake-full">
+      <div class="panel-title">처리 방법별 비율 <span class="panel-badge" id="donut-year">2024</span> <span class="dummy-tag">[60.2,28.0,6.5,5.3] 하드코딩</span></div>
       <div class="chart-wrap h240" style="position:relative">
         <canvas id="donut1"></canvas>
         <div class="donut-center">
@@ -548,8 +670,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 
   <!-- 레이더 차트를 위로 -->
   <div class="grid-2 mb12">
-    <div class="panel">
-      <div class="panel-title">유형별 특성 레이더 차트 <span class="panel-badge">5개 축</span></div>
+    <div class="panel fake-full">
+      <div class="panel-title">유형별 특성 레이더 차트 <span class="panel-badge">5개 축</span> <span class="dummy-tag">RADAR_DATA 4×5=20개 값 전부 하드코딩</span></div>
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="radar-toggle">
         <button class="tgl blue active" onclick="setRadarCluster(0,this)">🏠 주거형</button>
         <button class="tgl red" onclick="setRadarCluster(1,this)">🏢 상업형</button>
@@ -605,10 +727,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
       <div class="chart-wrap h180"><canvas id="gangseo-chart"></canvas></div>
     </div>
-    <div class="case-box" style="border-left-color:var(--amber)">
+    <div class="case-box fake-partial" style="border-left-color:var(--amber)">
       <div class="case-header">
         <span class="case-tag" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(217,119,6,.3)">CASE STUDY</span>
-        <span class="case-title">🚶 종로·중구 — 유동인구 폭주</span>
+        <span class="case-title">🚶 종로·중구 — 유동인구 폭주 <span class="dummy-tag partial">livingPop 더미</span></span>
       </div>
       <div class="case-text">
         거주인구 14만/12만에 불과하지만 생활인구는 <strong>2.5배 이상</strong>. 1인당 배출량이 기형적으로 높은 이유는 거주민이 아니라 <strong>관광객·근무자·상업시설</strong>의 배출이 주민 수로 나뉘기 때문.
@@ -626,8 +748,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
       <div id="factor-result" style="font-size:11px;color:var(--text3);text-align:center;padding:20px">자치구를 선택하면 해당 자치구의 발생량을 결정하는 요인이 표시됩니다</div>
     </div>
-    <div class="panel">
-      <div class="panel-title">조정지표 비교 <span class="panel-badge">생활인구당 / 거주인구당</span></div>
+    <div class="panel fake-partial">
+      <div class="panel-title">조정지표 비교 <span class="panel-badge">생활인구당 / 거주인구당</span> <span class="dummy-tag partial">livingPop 더미</span></div>
       <div class="chart-wrap h240"><canvas id="adjusted-chart"></canvas></div>
       <div style="font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:8px;line-height:1.6;background:var(--bg3);border-radius:6px;padding:8px 10px">
         📊 <strong style="color:var(--text)">조정지표</strong> = 거주인구 대신 <strong style="color:var(--teal)">생활인구</strong>로 1인당 배출량 재계산.<br>
@@ -650,8 +772,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 
   <div class="grid-sim">
-    <div class="panel">
-      <div class="panel-title">시뮬레이터 입력 <span class="panel-badge est">⚠ 추정값 기반</span></div>
+    <div class="panel fake-full">
+      <div class="panel-title">시뮬레이터 입력 <span class="panel-badge est">⚠ 추정값 기반</span> <span class="dummy-tag">민간시설 12개 전부 추정</span></div>
 
       <div class="ctrl-group">
         <div class="ctrl-label">① 자치구 선택</div>
@@ -687,13 +809,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
     </div>
 
-    <div class="panel">
-      <div class="panel-title">추천 결과 <span class="panel-badge" id="sim-target">자치구 선택 후 실행</span></div>
+    <div class="panel fake-full">
+      <div class="panel-title">추천 결과 <span class="panel-badge" id="sim-target">자치구 선택 후 실행</span> <span class="dummy-tag">시설 단가·거리·CO₂ 모두 추정</span></div>
       <div id="sim-results">
         <div style="font-size:12px;color:var(--text3);text-align:center;padding:30px 0">자치구와 가중치를 설정한 후 추천 실행 버튼을 눌러주세요</div>
       </div>
       <div id="sim-map-wrap" style="position:relative;margin-top:12px;display:none">
-        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">▸ 출발지 → 추천 시설 경로</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">▸ 출발지 → 추천 시설 경로 <span class="dummy-tag">시설 좌표 추정</span></div>
         <div id="sim-map" class="lmap h280"></div>
       </div>
     </div>
