@@ -1,0 +1,20 @@
+# 로컬 작업 영역 (브랜치 병합 시 사용한 임시 파일)
+_merge_work/
+
+# 환경 파일·시크릿
+.env
+.env.local
+
+# 캐시·로그
+*.log
+__pycache__/
+*.pyc
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 실패한 merge 시도 잔재 (dashboard/final/ 로 대체됨)
+dashboard/0508/index_merged.html
