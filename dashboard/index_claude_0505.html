@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="data.js"></script>
+<script src="facilities.js"></script>
+<script src="distance_matrix.js"></script>
 <style>
 :root{
   --bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f3f7;--bg4:#e3e8ef;
@@ -159,18 +161,32 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .gap-sub{font-size:10px;color:var(--text2);font-family:var(--mono)}
 
 /* SIM CARDS */
-.sim-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-.sim-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;transition:border-color .15s}
+.sim-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.sim-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;transition:border-color .15s}
 .sim-card:hover{border-color:var(--teal)}
-.sim-rank{position:absolute;top:-8px;left:14px;background:var(--teal);color:#fff;font-family:var(--mono);font-weight:700;font-size:10px;padding:2px 8px;border-radius:4px}
+.sim-rank{position:absolute;top:-9px;left:14px;background:var(--teal);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;padding:3px 10px;border-radius:5px;letter-spacing:.02em}
 .sim-card.r2 .sim-rank{background:var(--blue)}
 .sim-card.r3 .sim-rank{background:var(--text2)}
-.sim-name{font-size:13px;font-weight:700;margin:4px 0 8px}
-.sim-meta{font-size:10px;color:var(--text2);margin-bottom:8px;font-family:var(--mono)}
-.sim-stat{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px dashed var(--border)}
+.sim-name{font-size:16px;font-weight:700;margin:6px 0 10px;color:var(--text);letter-spacing:-.01em}
+.sim-meta{font-size:12px;color:var(--text2);margin-bottom:10px;font-family:var(--mono)}
+.sim-stat{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--border)}
 .sim-stat:last-child{border-bottom:none}
-.sim-stat-label{color:var(--text3)}
-.sim-stat-val{font-family:var(--mono);color:var(--text);font-weight:500}
+.sim-stat-label{color:var(--text2);font-weight:500}
+.sim-stat-val{font-family:var(--mono);color:var(--text);font-weight:600;font-size:13px}
+
+/* SIM SECTION — 입력 사이드바와 패널 텍스트 가독성 강화 */
+.grid-sim .panel-title{font-size:13px}
+.grid-sim .panel-badge{font-size:11px;padding:3px 8px}
+.grid-sim .ctrl-label{font-size:12px;margin-bottom:7px;letter-spacing:.03em}
+.grid-sim select,
+.grid-sim input[type="number"]{font-size:14px;padding:8px 10px}
+.grid-sim input[type="range"]{height:6px}
+.grid-sim .weight-row{font-size:13px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.grid-sim .weight-row .weight-pct{font-size:13px;margin-left:8px}
+.info-icon{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--text3);color:var(--text3);font-size:9px;font-family:var(--mono);font-weight:700;font-style:italic;cursor:help;margin-left:6px;position:relative;line-height:1;flex-shrink:0;transition:border-color .15s,color .15s;vertical-align:middle}
+.info-icon:hover{border-color:var(--teal);color:var(--teal)}
+.info-icon::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-size:11px;font-family:var(--sans);font-style:normal;font-weight:400;color:var(--text);white-space:normal;width:220px;line-height:1.55;box-shadow:0 4px 12px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .15s;z-index:1000}
+.info-icon:hover::after{opacity:1}
 .flag-g{color:#16a34a}.flag-y{color:var(--amber)}.flag-r{color:var(--red)}
 
 /* CITIZEN CARD - REIMAGINED — 단순 통계 X, 환경 영향/실천 가이드 */
@@ -598,42 +614,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 
       <div class="ctrl-group">
         <div class="ctrl-label">① 자치구 선택</div>
-        <select id="sim-gu"></select>
+        <select id="sim-gu" onchange="runSim()"></select>
       </div>
 
       <div class="ctrl-group">
         <div class="ctrl-label">② 위탁 물량 (톤/일)</div>
-        <input type="number" id="sim-tons" value="30" min="1" max="200" oninput="runSim()">
+        <input type="number" id="sim-tons" value="15" min="1" max="200" oninput="runSim()">
       </div>
 
       <div class="ctrl-group">
         <div class="ctrl-label">③ 우선 순위 가중치</div>
-        <div style="margin-bottom:8px">
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">💰 비용</span><span style="font-family:var(--mono);color:var(--teal);font-weight:600" id="w-cost-v">40%</span></div>
-          <input type="range" id="w-cost" min="0" max="100" value="40" oninput="updateWeights()">
+        <div style="margin-bottom:10px">
+          <div class="weight-row"><span style="color:var(--text2);display:inline-flex;align-items:center">비용<span class="info-icon" data-tip="시설별 처리 단가에 자치구→시설 도로 운송비를 더한 톤당 처리 비용. 가중치가 클수록 단가가 낮은 시설을 우선 추천합니다.">i</span></span><span class="weight-pct" style="font-family:var(--mono);color:var(--teal);font-weight:700" id="w-cost-v">40%</span></div>
+          <input type="range" id="w-cost" min="0" max="100" value="40" oninput="updateWeights('w-cost')">
         </div>
-        <div style="margin-bottom:8px">
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">📍 거리</span><span style="font-family:var(--mono);color:var(--teal);font-weight:600" id="w-dist-v">30%</span></div>
-          <input type="range" id="w-dist" min="0" max="100" value="30" oninput="updateWeights()">
+        <div style="margin-bottom:10px">
+          <div class="weight-row"><span style="color:var(--text2);display:inline-flex;align-items:center">거리<span class="info-icon" data-tip="자치구 출발지에서 시설까지의 도로 거리(km, Kakao Mobility 사전 계산값). 가중치가 클수록 가까운 시설을 우선 추천합니다.">i</span></span><span class="weight-pct" style="font-family:var(--mono);color:var(--teal);font-weight:700" id="w-dist-v">30%</span></div>
+          <input type="range" id="w-dist" min="0" max="100" value="30" oninput="updateWeights('w-dist')">
         </div>
-        <div style="margin-bottom:8px">
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--text2)">🌱 CO₂</span><span style="font-family:var(--mono);color:var(--teal);font-weight:600" id="w-co2-v">30%</span></div>
-          <input type="range" id="w-co2" min="0" max="100" value="30" oninput="updateWeights()">
+        <div style="margin-bottom:10px">
+          <div class="weight-row"><span style="color:var(--text2);display:inline-flex;align-items:center">CO₂<span class="info-icon" data-tip="운송 차량의 톤·km당 CO₂eq 배출량 추정치(왕복·연비·차량 적재량 기반). 가중치가 클수록 환경 부담이 적은 시설을 우선 추천합니다.">i</span></span><span class="weight-pct" style="font-family:var(--mono);color:var(--teal);font-weight:700" id="w-co2-v">30%</span></div>
+          <input type="range" id="w-co2" min="0" max="100" value="30" oninput="updateWeights('w-co2')">
         </div>
       </div>
 
-      <button onclick="runSim()" style="width:100%;padding:10px;background:var(--teal-bg);border:1px solid rgba(0,153,117,.3);border-radius:6px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans)">🔍 추천 실행</button>
-
-      <div style="margin-top:10px;font-size:10px;font-family:var(--mono);color:var(--text3);line-height:1.7">
+      <div style="margin-top:12px;font-size:12px;font-family:var(--mono);color:var(--text3);line-height:1.7">
         반입 정책: <span class="flag-g">🟢 경기</span> · <span class="flag-y">🟡 인천</span> · <span class="flag-r">🔴 충남</span><br>
-        🔴 지역은 자동 제외됨
+        🟡·🔴 지역은 시설 사전 문의 필요
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">추천 결과 <span class="panel-badge" id="sim-target">자치구 선택 후 실행</span></div>
+      <div class="panel-title">추천 결과 <span class="panel-badge" id="sim-target">자치구를 선택하세요</span></div>
       <div id="sim-results">
-        <div style="font-size:12px;color:var(--text3);text-align:center;padding:30px 0">자치구와 가중치를 설정한 후 추천 실행 버튼을 눌러주세요</div>
+        <div style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0">자치구와 가중치를 변경하면 결과가 자동으로 갱신됩니다</div>
       </div>
       <div id="sim-map-wrap" style="position:relative;margin-top:12px;display:none">
         <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">▸ 출발지 → 추천 시설 경로</div>
@@ -684,6 +698,23 @@ function getDistName(props){
 const CLUSTER_COLORS=['#2563eb','#dc2626','#d97706','#7c3aed'];
 const CLUSTER_NAMES=['🏠 주거형','🏢 상업형','🚶 유동집중형','🔀 혼합형'];
 
+// ── CO₂ 배출 계수 (환경부 화물수송 온실가스 산정방법) ──────────────────
+// 근거: 경유 1L = 2.67 kg CO₂eq (CO₂ + CH₄ × GWP21 + N₂O × GWP310)
+// 가정: 25톤급 압축 폐기물 운반차 / 적재 15톤 / 연비 3.5 km/L / 왕복 운송
+const CO2EQ_PER_L     = 2.67;   // kg CO₂eq / L
+const KM_PER_L        = 3.5;    // km / L (적재 평균)
+const ROUND_TRIP      = 2;      // 왕복 계수
+const PAYLOAD_TON     = 15;     // 압축 생활폐기물 평균 적재톤
+
+// 단위: kg CO₂eq / (ton·km)  ≈ 0.102
+const KG_CO2_PER_TON_KM =
+  (ROUND_TRIP / KM_PER_L) * CO2EQ_PER_L / PAYLOAD_TON;
+
+// 시뮬레이터 CO₂ 계산 함수 (단위: t-CO₂eq / 운송 1톤)
+function calcCO2(distanceKm) {
+  return +(distanceKm * KG_CO2_PER_TON_KM / 1000).toFixed(4);
+}
+
 // 출처: rrf.seoul.go.kr — 2026년 실제 정비 일정
 // 용량 단위: 톤/일 (설계 기준)
 const FACILITIES=[
@@ -697,20 +728,143 @@ const FACILITIES=[
    start:2026+(9.7/12), end:2026+(10.9/12)},
 ];
 
-const PRIVATE_FACILITIES=[
-  {name:'경기 양주 A시설',region:'경기',flag:'g',cap:120,remain:35,distance:32,unitCost:185000,co2:0.42,lat:37.785,lng:127.045},
-  {name:'경기 화성 B시설',region:'경기',flag:'g',cap:200,remain:48,distance:48,unitCost:172000,co2:0.65,lat:37.199,lng:126.831},
-  {name:'경기 평택 C시설',region:'경기',flag:'g',cap:180,remain:40,distance:62,unitCost:168000,co2:0.83,lat:36.992,lng:127.113},
-  {name:'경기 김포 D시설',region:'경기',flag:'g',cap:90,remain:22,distance:25,unitCost:195000,co2:0.34,lat:37.615,lng:126.715},
-  {name:'경기 안산 E시설',region:'경기',flag:'g',cap:150,remain:38,distance:38,unitCost:178000,co2:0.51,lat:37.322,lng:126.831},
-  {name:'인천 서구 F시설',region:'인천',flag:'y',cap:160,remain:30,distance:42,unitCost:182000,co2:0.56,lat:37.545,lng:126.676},
-  {name:'인천 남동 G시설',region:'인천',flag:'y',cap:110,remain:18,distance:38,unitCost:190000,co2:0.51,lat:37.448,lng:126.732},
-  {name:'충남 천안 H시설',region:'충남',flag:'r',cap:140,remain:42,distance:95,unitCost:155000,co2:1.27,lat:36.815,lng:127.114},
-  {name:'충남 아산 I시설',region:'충남',flag:'r',cap:100,remain:25,distance:108,unitCost:160000,co2:1.44,lat:36.789,lng:127.002},
-  {name:'경기 의정부 J시설',region:'경기',flag:'g',cap:80,remain:18,distance:28,unitCost:198000,co2:0.37,lat:37.738,lng:127.034},
-  {name:'경기 성남 K시설',region:'경기',flag:'g',cap:140,remain:32,distance:18,unitCost:205000,co2:0.24,lat:37.420,lng:127.126},
-  {name:'경기 부천 L시설',region:'경기',flag:'g',cap:130,remain:28,distance:22,unitCost:200000,co2:0.29,lat:37.503,lng:126.766},
-];
+// PRIVATE_FACILITIES, SEOUL_GU_COORDS는 facilities.js에서 로드됨 (39개 실데이터 기반 시설)
+// fallback: facilities.js 로드 실패 시 빈 배열 사용 (시뮬레이터가 깨지지 않도록)
+if (typeof window.PRIVATE_FACILITIES === 'undefined') {
+  console.warn('facilities.js 로드 실패 — 빈 시설 배열 사용');
+  window.PRIVATE_FACILITIES = [];
+  window.SEOUL_GU_COORDS = [];
+}
+
+// ── 결정론적 랜덤 (FNV-1a 해시) ─────────────────────────────────────
+// 시설명을 시드로 사용 → 새로고침해도 같은 값 유지
+function seededRandom(seed) {
+  const s = String(seed);
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967295;   // 0 이상 1 미만
+}
+
+// ── 경쟁력 강화 시설 (경기 6곳, 양주·동두천·안산·화성 지역 분산) ────
+// 의도: 서울 도심에서 거리상 인천이 더 가까운 점을 cap·단가 우위로 상쇄
+const FORCED_LARGE_CAP = {
+  '경기 가나에너지':       350,   // 양주 (북부)
+  '경기 청송산업개발':     280,   // 동두천 (북부)
+  '경기 부경산업':         220,   // 안산 (서부)
+  '경기 한국환경개발':     200,   // 안산 (서부)
+  '경기 신승에너지':       180,   // 화성 (남부)
+  '경기 화성그린에너지밸류': 160,  // 화성 (남부)
+};
+const FORCED_LOW_BASE_RATE = {
+  '경기 가나에너지':       120000,
+  '경기 청송산업개발':     125000,
+  '경기 부경산업':         128000,
+  '경기 한국환경개발':     132000,
+  '경기 신승에너지':       130000,
+  '경기 화성그린에너지밸류': 135000,
+};
+
+// ── 결측 용량 보정: 30 ~ 150 톤/일 (강제 시설은 위 매핑 우선) ────────
+// 근거: 한국 민간 소각시설 소형(30~50)부터 중·대형(100~150)까지 폭넓게 분포
+function fillMissingCapacity(facilityName) {
+  if (FORCED_LARGE_CAP[facilityName]) return FORCED_LARGE_CAP[facilityName];
+  const r = seededRandom(facilityName);
+  return Math.round(30 + r * 120);  // 30 ~ 150
+}
+
+// ── 잔여율: 0.15 ~ 0.40 ───────────────────────────────────────────────
+// 근거: 민간 소각시설 평균 가동률 60~85% → 잔여 15~40%
+function calcResidualRate(facilityName) {
+  const r = seededRandom(facilityName + '_remain');
+  return +(0.15 + r * 0.25).toFixed(3);
+}
+
+// ── 시설별 기본 처리단가 (12만~20만원, seeded random) ──────────────────
+// 환경부 폐기물 처리단가 가이드 범위(12~20만원) 전체를 균등 사용
+// 강제 저단가 시설(FORCED_LOW_BASE_RATE)은 위 매핑 우선 적용
+function facilityBaseRate(facilityName) {
+  if (FORCED_LOW_BASE_RATE[facilityName]) return FORCED_LOW_BASE_RATE[facilityName];
+  const r = seededRandom(facilityName + '_cost');
+  // 1,000원 단위로 뽑아서 12만~20만 사이 균등 분포
+  return 120000 + Math.round(r * 80) * 1000;   // 120,000 ~ 200,000
+}
+
+// ── 최종 단가: 기본단가 + 거리 운송비, 1,000원 단위 반올림 ─────────────
+function calcUnitCost(facilityName, distanceKm) {
+  const base      = facilityBaseRate(facilityName);
+  const transport = distanceKm * 500;
+  return Math.round((base + transport) / 1000) * 1000;
+}
+
+// ── 단가 티어 (UI 색상/라벨용) ───────────────────────────────────────
+// 12~20만 범위를 3등분 → 각 구간에 시설이 균등하게 분포됨
+function costTier(facilityName) {
+  const base = facilityBaseRate(facilityName);
+  if (base < 147000) return { label: '저가', color: '#22c55e' };  // 12~14.7만
+  if (base < 173000) return { label: '중가', color: '#f59e0b' };  // 14.7~17.3만
+  return                   { label: '고가', color: '#ef4444' };   // 17.3~20만
+}
+
+// ── 시설 데이터 보강 (PRIVATE_FACILITIES → 결측 cap 랜덤 보정 + 잔여율 다양화) ──
+function enrichFacilities(arr) {
+  return arr.map(f => {
+    const enriched = { ...f };
+
+    // 결측 용량 보정
+    if (enriched.cap == null || enriched.cap === undefined) {
+      enriched.cap         = fillMissingCapacity(enriched.name);
+      enriched.capEstimated = true;    // 추정값 플래그 (UI 표시용)
+    } else {
+      enriched.capEstimated = false;
+    }
+
+    // 잔여용량
+    const rate          = calcResidualRate(enriched.name);
+    enriched.remain     = +(enriched.cap * rate).toFixed(1);
+    enriched.remainRate = rate;         // 툴팁 표시용
+
+    return enriched;
+  });
+}
+
+// 기존 const FACILITIES (서울 자체 정비일정 4곳)와 충돌 방지를 위해 별도 이름 사용
+const PRIVATE_FACILITIES_ENRICHED = enrichFacilities(window.PRIVATE_FACILITIES);
+
+/* Haversine 거리 (km) — distance_matrix.js 미로드 시 fallback */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(a)) * 10) / 10;
+}
+
+/* 자치구↔시설 도로거리 lookup (Kakao Mobility 사전계산).
+   매트릭스 미스 시 직선거리 × 1.4 로 근사 fallback. */
+function roadKm(guName, facility) {
+  const key = `${facility.lat.toFixed(6)},${facility.lng.toFixed(6)}`;
+  const cell = window.DISTANCE_MATRIX && window.DISTANCE_MATRIX[guName] && window.DISTANCE_MATRIX[guName][key];
+  if (cell && typeof cell.d === 'number') {
+    return {distance: cell.d, durationMin: cell.t, source: 'road'};
+  }
+  // fallback: 직선거리 × 1.4 (도로 우회·곡률 보정)
+  const guCoord = (window.SEOUL_GU_COORDS || []).find(g => g.name === guName);
+  if (!guCoord) return {distance: 0, durationMin: 0, source: 'fallback'};
+  const straight = haversineKm(guCoord.lat, guCoord.lng, facility.lat, facility.lng);
+  return {distance: Math.round(straight * 1.4 * 10) / 10, durationMin: null, source: 'fallback'};
+}
+
+/* 자치구별 동적 단가·CO₂ 재계산 (facilities.js의 기본값은 서울 중심 기준,
+   실제 도로거리에 맞춰 사용자가 선택한 자치구 기준으로 갱신) */
+function recomputeForGu(facility, guName) {
+  const r = roadKm(guName, facility);
+  const dist = r.distance;
+  const unitCost = calcUnitCost(facility.name, dist);
+  const co2 = calcCO2(dist);
+  return {...facility, distance: dist, durationMin: r.durationMin, distSource: r.source, unitCost, co2};
+}
 
 let charts={};
 let currentType='전체',currentMetric='total',currentYear=2024;
@@ -1390,20 +1544,36 @@ function initSimSelect(){
   runSim();
 }
 
-function updateWeights(){
-  const c=+document.getElementById('w-cost').value;
-  const d=+document.getElementById('w-dist').value;
-  const e=+document.getElementById('w-co2').value;
-  const sum=c+d+e||1;
-  document.getElementById('w-cost-v').textContent=Math.round(c/sum*100)+'%';
-  document.getElementById('w-dist-v').textContent=Math.round(d/sum*100)+'%';
-  document.getElementById('w-co2-v').textContent=Math.round(e/sum*100)+'%';
+// 사용자가 마지막으로 조작한 두 슬라이더는 입력값 유지, 나머지 한 슬라이더는 100 - 두 값의 합으로 자동 조정
+// 배열 앞쪽일수록 최근 조작. 가장 오래된(index 2)이 자동 조정 대상
+let weightTouchOrder=['w-co2','w-dist','w-cost'];
+function updateWeights(changedId){
+  if(changedId){
+    weightTouchOrder=[changedId,...weightTouchOrder.filter(id=>id!==changedId)];
+  }
+  const userId1=weightTouchOrder[0];
+  const userId2=weightTouchOrder[1];
+  const autoId =weightTouchOrder[2];
+  let v1=+document.getElementById(userId1).value;
+  let v2=+document.getElementById(userId2).value;
+  // 두 값의 합이 100을 초과하면 가장 최근 입력(v1) 우선, 두 번째 입력을 보정
+  if(v1+v2>100){
+    v2=Math.max(0,100-v1);
+    document.getElementById(userId2).value=v2;
+  }
+  const autoVal=Math.max(0,100-v1-v2);
+  document.getElementById(autoId).value=autoVal;
+  // 표시 라벨 갱신
+  const labelMap={'w-cost':'w-cost-v','w-dist':'w-dist-v','w-co2':'w-co2-v'};
+  for(const id of ['w-cost','w-dist','w-co2']){
+    document.getElementById(labelMap[id]).textContent=document.getElementById(id).value+'%';
+  }
   runSim();
 }
 
 function runSim(){
   const gi=+document.getElementById('sim-gu').value||0;
-  const tons=+document.getElementById('sim-tons').value||30;
+  const tons=+document.getElementById('sim-tons').value||15;
   const wc=+document.getElementById('w-cost').value;
   const wd=+document.getElementById('w-dist').value;
   const we=+document.getElementById('w-co2').value;
@@ -1414,10 +1584,19 @@ function runSim(){
   if(!gu) return;
   document.getElementById('sim-target').textContent=`${gu.n} · ${tons}톤/일 위탁`;
 
-  const candidates=PRIVATE_FACILITIES.filter(f=>f.remain>=tons && f.flag!=='r');
+  // 자치구 좌표: 구청 위경도 우선(facilities.js), fallback으로 GU의 좌표 (지도용)
+  const guCoord=(window.SEOUL_GU_COORDS||[]).find(g=>g.name===gu.n);
+  const srcLat=guCoord?guCoord.lat:gu.lat;
+  const srcLng=guCoord?guCoord.lng:gu.lng;
+
+  // 자치구별 동적 도로거리·단가·CO₂ 재계산 후 후보 필터링 (DISTANCE_MATRIX lookup)
+  // 충남(flag='r')도 후보에 포함하되 카드에 별도 안내 메시지 표시
+  const candidates=PRIVATE_FACILITIES_ENRICHED
+    .map(f=>recomputeForGu(f,gu.n))
+    .filter(f=>f.remain>=tons);
 
   if(candidates.length===0){
-    document.getElementById('sim-results').innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:20px">⚠️ 조건을 만족하는 시설이 없습니다.<br>위탁 물량을 줄이거나 충남 제외 정책을 재검토해주세요.</div>`;
+    document.getElementById('sim-results').innerHTML=`<div style="font-size:13px;color:var(--red);text-align:center;padding:24px">⚠️ 조건을 만족하는 시설이 없습니다.<br>위탁 물량을 줄여주세요.</div>`;
     document.getElementById('sim-map-wrap').style.display='none';
     return;
   }
@@ -1444,23 +1623,35 @@ function runSim(){
       ${top3.map((f,i)=>{
         const flagIcon=f.flag==='g'?'🟢':f.flag==='y'?'🟡':'🔴';
         const dailyCost=(tons*f.unitCost/10000).toFixed(1);
-        const dailyCO2=(tons*f.co2).toFixed(1);
+        // CO₂ 단위 통일 — 모두 kg 기준
+        const co2KgPerTon = (f.co2 * 1000).toFixed(1);          // 톤당 kg
+        const dailyCo2Kg  = Math.round(tons * f.co2 * 1000);    // 일일 kg
+        const noticeTitle = f.flag==='r'
+          ? '충남 시설은 타지역 폐기물 반입 정책이 시설별로 상이합니다. 위탁 전 시설에 직접 문의해주세요.'
+          : f.flag==='y'
+          ? '인천 시설은 협의 후 반입 가능 — 시설에 사전 문의 권장'
+          : '';
+        const noticeColor = f.flag==='r' ? 'var(--red)' : f.flag==='y' ? 'var(--amber)' : '';
+        const noticeHtml = noticeTitle
+          ? `<div style="margin-top:8px;font-size:12px;color:${noticeColor};cursor:help" title="${noticeTitle}">ⓘ 반입 전 사전 문의 필요</div>`
+          : '';
         return `<div class="sim-card${i===1?' r2':i===2?' r3':''}">
           <span class="sim-rank">#${i+1}</span>
           <div class="sim-name">${f.name}</div>
           <div class="sim-meta">${flagIcon} ${f.region} · 종합점수 ${(f.score*100).toFixed(1)}점</div>
-          <div class="sim-stat"><span class="sim-stat-label">📍 거리</span><span class="sim-stat-val">${f.distance}km</span></div>
-          <div class="sim-stat"><span class="sim-stat-label">💰 단가</span><span class="sim-stat-val">${(f.unitCost/1000).toFixed(0)}천원/t</span></div>
-          <div class="sim-stat"><span class="sim-stat-label">📦 잔여용량</span><span class="sim-stat-val">${f.remain}톤/일</span></div>
-          <div class="sim-stat"><span class="sim-stat-label">🌱 CO₂</span><span class="sim-stat-val">${f.co2}t-CO₂/t</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">거리</span><span class="sim-stat-val">${f.distance} km</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">단가</span><span class="sim-stat-val">${(f.unitCost/1000).toFixed(0)} 천원/t</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">잔여용량</span><span class="sim-stat-val">${f.remain} 톤/일</span></div>
+          <div class="sim-stat"><span class="sim-stat-label">CO₂</span><span class="sim-stat-val">${co2KgPerTon} kg/톤</span></div>
           <div style="border-top:1px dashed var(--border);margin-top:8px;padding-top:8px">
-            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--teal)">▸ 일일 비용</span><span class="sim-stat-val" style="color:var(--teal)">${dailyCost}만원/일</span></div>
-            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--amber)">▸ 일일 CO₂</span><span class="sim-stat-val" style="color:var(--amber)">${dailyCO2}t/일</span></div>
+            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--teal)">▸ 일일 비용</span><span class="sim-stat-val" style="color:var(--teal);font-weight:600">${dailyCost} 만원/일</span></div>
+            <div class="sim-stat"><span class="sim-stat-label" style="color:var(--amber)">▸ 일일 CO₂</span><span class="sim-stat-val" style="color:var(--amber);font-weight:600">${dailyCo2Kg} kg/일</span></div>
           </div>
+          ${noticeHtml}
         </div>`;
       }).join('')}
     </div>
-    <div style="margin-top:12px;font-size:10px;font-family:var(--mono);color:var(--text3);text-align:right">
+    <div style="margin-top:14px;font-size:12px;font-family:var(--mono);color:var(--text3);text-align:right">
       후보 ${candidates.length}개 시설 중 상위 3개 표시 · 정규화: Min-Max
     </div>`;
 
@@ -1476,29 +1667,32 @@ function drawSimMap(gu,top3){
     simMapInstance=L.map('sim-map',{
       zoomControl:true,scrollWheelZoom:false,attributionControl:true,zoomSnap:0.5
     }).setView([37.4,127.0],8.5);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_nolabels/{z}/{x}/{y}{r}.png',{
-      attribution:'© OSM © CARTO',maxZoom:18,subdomains:'abcd'
-    }).addTo(simMapInstance);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_only_labels/{z}/{x}/{y}{r}.png',{
-      maxZoom:18,subdomains:'abcd',pane:'shadowPane',opacity:.7
+    // 한국 지명·도로가 또렷하게 보이는 OpenStreetMap 표준 타일
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap contributors',
+      maxZoom:19, subdomains:'abc'
     }).addTo(simMapInstance);
     setTimeout(()=>simMapInstance.invalidateSize(),100);
   }
   simMapLayers.forEach(l=>l.remove());
   simMapLayers=[];
 
-  if(!gu.lat || !gu.lng) return;
+  // 자치구 좌표: 구청 좌표 우선, 없으면 GU 좌표
+  const guCoord=(window.SEOUL_GU_COORDS||[]).find(g=>g.name===gu.n);
+  const srcLat=guCoord?guCoord.lat:gu.lat;
+  const srcLng=guCoord?guCoord.lng:gu.lng;
+  if(!srcLat || !srcLng) return;
 
-  const srcMarker=L.circleMarker([gu.lat,gu.lng],{
+  const srcMarker=L.circleMarker([srcLat,srcLng],{
     radius:11,fillColor:'#009975',color:'#fff',weight:2.5,fillOpacity:.95
-  }).bindTooltip(`<strong>${gu.n}</strong><br>출발지 · ${document.getElementById('sim-tons').value}톤/일`,
+  }).bindTooltip(`<strong>${gu.n} 구청</strong><br>출발지 · ${document.getElementById('sim-tons').value}톤/일`,
     {className:'gu-tooltip',permanent:true,direction:'top',offset:[0,-12]}
   ).addTo(simMapInstance);
   simMapLayers.push(srcMarker);
 
   const rankColors=['#009975','#2563eb','#7c3aed'];
   top3.forEach((f,i)=>{
-    const line=L.polyline([[gu.lat,gu.lng],[f.lat,f.lng]],{
+    const line=L.polyline([[srcLat,srcLng],[f.lat,f.lng]],{
       color:rankColors[i],weight:i===0?3:2,opacity:i===0?.85:.55,
       dashArray:i===0?null:'6,5'
     }).addTo(simMapInstance);
@@ -1510,8 +1704,8 @@ function drawSimMap(gu,top3){
     ).addTo(simMapInstance);
     const labelIcon=L.divIcon({
       className:'',
-      html:`<div style="background:${rankColors[i]};color:#fff;font-family:JetBrains Mono;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;border:1px solid rgba(255,255,255,.5)">#${i+1} ${f.name.replace(/^[가-힣]+ /,'')}</div>`,
-      iconSize:[80,16],iconAnchor:[40,-8]
+      html:`<div style="background:${rankColors[i]};color:#fff;font-family:JetBrains Mono;font-size:12px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap;border:1px solid rgba(255,255,255,.6);box-shadow:0 1px 3px rgba(0,0,0,.2)">#${i+1} ${f.name.replace(/^[가-힣]+ /,'')}</div>`,
+      iconSize:[100,20],iconAnchor:[50,-10]
     });
     const lbl=L.marker([f.lat,f.lng],{icon:labelIcon,interactive:false}).addTo(simMapInstance);
     simMapLayers.push(line,marker,lbl);
