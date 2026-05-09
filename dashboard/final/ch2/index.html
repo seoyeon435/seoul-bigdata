@@ -486,23 +486,100 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .finance-map-card .gu-label{font-size:8px}
 .finance-map-card .map-legend{display:none}
 @media(max-width:1280px){.finance-combined-grid{grid-template-columns:1fr}.finance-detail-wide{grid-column:1}.finance-map-card .lmap,.finance-combined-grid .chart-wrap.h400,.finance-combined-grid .scenario-matrix-scroll{height:280px}}
-/* ════════════ ch2/2.4 레이아웃 override: 지도 위로(full-width), 산점도+매트릭스 아래 ════════════ */
+/* ════════════ ch2/2.4 재디자인: 지도·산점도·매트릭스 가로 배치 + 선택 패널 ════════════ */
 .finance-combined-grid{
-  grid-template-columns: 1fr 1fr !important;
+  grid-template-columns:.18fr .34fr .48fr !important;
+  gap:10px;
+  align-items:stretch;
+  width:100%;
+  justify-content:stretch;
+  transition:grid-template-columns .26s ease;
 }
-.finance-combined-grid > .finance-map-card{
-  grid-column: 1 / -1 !important;
+.finance-combined-grid.has-gu-selection{
+  grid-template-columns:.15fr .28fr .34fr .23fr !important;
+  width:100%;
+  justify-content:stretch;
 }
-.finance-map-card .lmap{
-  height: 380px !important;
+.finance-combined-grid > .finance-map-card{grid-column:auto !important;}
+.finance-map-card .lmap{height:300px !important;}
+.finance-combined-grid .chart-wrap.h400{height:340px !important;}
+.finance-combined-grid .scenario-matrix-scroll{height:320px !important;display:flex;align-items:stretch;overflow:hidden;}
+.finance-combined-grid .scenario-matrix{width:100%;min-width:0;}
+.finance-combined-grid .matrix-plot-table{
+  height:320px;
+  grid-template-columns:72px repeat(4,minmax(86px,1fr));
+  grid-template-rows:32px repeat(4,64px) 30px;
 }
+.finance-combined-grid .matrix-col-head{font-size:8.5px;padding:4px 2px;}
+.finance-combined-grid .matrix-row-head{font-size:9.5px;}
+.finance-combined-grid .matrix-x-label{font-size:8.5px;padding:3px 2px;}
+.finance-combined-grid .matrix-point{font-size:8px;line-height:1.05;padding:1px;cursor:pointer;overflow:hidden;white-space:nowrap;}
+.finance-combined-grid .matrix-point.finance-muted-point{
+  color:#cbd5e1 !important;
+  background:#cbd5e1 !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:none;
+  opacity:.85;
+}
+.finance-combined-grid .matrix-point.finance-muted-point span{display:block;color:#94a3b8;font-weight:900;letter-spacing:-.02em;}
+.finance-combined-grid .matrix-point.finance-selected-point{
+  color:#dc2626 !important;
+  background:#fff !important;
+  border-color:#dc2626 !important;
+  border-width:2.5px;
+  z-index:8;
+  box-shadow:0 4px 10px rgba(220,38,38,.22);
+}
+.finance-combined-grid .matrix-point.finance-selected-point span{display:block;color:#dc2626;font-weight:900;}
+.finance-combined-grid .matrix-scenario-no{font-size:7.5px;left:5px;top:4px;}
 .finance-detail-wide{
-  grid-column: 1 / -1 !important;
+  display:none;
+  justify-self:stretch;
+  width:100%;
+  grid-column:auto !important;
+  background:var(--bg2);
+  border:1px solid rgba(220,38,38,.18);
+  border-left:4px solid var(--red);
+  border-radius:10px;
+  padding:14px;
+  min-height:320px;
+  box-shadow:0 8px 22px rgba(15,23,42,.06);
+  overflow:hidden;
 }
-@media(max-width:1100px){
-  .finance-combined-grid{
-    grid-template-columns: 1fr !important;
-  }
+.finance-combined-grid.has-gu-selection .finance-detail-wide{display:block;animation:slidePanelIn .24s ease;}
+@keyframes slidePanelIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+.finance-selection-guide{margin:0 0 10px 0;padding:9px 12px;border-radius:9px;background:#f8fafc;border:1px dashed rgba(37,99,235,.22);font-size:11px;color:#475569;line-height:1.55;}
+.finance-selection-guide strong{color:#1e3a8a;}
+.finance-selected-summary{margin-top:6px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:6px;}
+.finance-selected-summary.empty{color:var(--text3);font-size:10.5px;line-height:1.5;text-align:center;}
+.finance-selected-name{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:var(--text);}
+.finance-selected-dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+.finance-selected-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:stretch;}
+.finance-selected-stat{background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 8px;min-width:0;}
+.finance-selected-stat-label{font-size:8px;color:var(--text3);font-family:var(--mono);margin-bottom:2px;line-height:1.25;white-space:normal;word-break:keep-all;}
+.finance-selected-stat-val{font-family:var(--mono);font-size:12px;font-weight:900;color:var(--text);}
+.finance-side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.finance-side-title{font-size:18px;font-weight:900;line-height:1.25;}
+.finance-side-sub{font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:3px;}
+.finance-gu-reset{border:0;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(220,38,38,.18);}
+.finance-gu-reset:hover{filter:brightness(1.04);transform:translateY(-1px);}
+.finance-type-definition{background:linear-gradient(135deg,rgba(220,38,38,.055),#fff);border:1px solid rgba(220,38,38,.15);border-radius:9px;padding:10px 11px;margin-bottom:9px;}
+.finance-type-definition-label{font-size:9px;font-family:var(--mono);color:var(--text3);margin-bottom:4px;font-weight:800;}
+.finance-type-definition-main{font-size:13px;font-weight:900;color:var(--red);margin-bottom:4px;}
+.finance-type-definition-desc{font-size:11px;line-height:1.55;color:var(--text2);}
+.finance-type-cards{display:grid;grid-template-columns:1fr;gap:7px;margin-top:9px;}
+.finance-type-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 10px;min-height:54px;}
+.finance-type-card-title{font-size:11px;font-weight:900;margin-bottom:4px;color:var(--text);display:flex;align-items:center;gap:5px;}
+.finance-type-card-text{font-size:10.5px;color:var(--text2);line-height:1.52;}
+.finance-policy-cards{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;}
+.finance-policy-card{background:#fff;border:1px solid rgba(220,38,38,.18);border-radius:8px;padding:10px 11px;min-height:92px;box-shadow:0 3px 10px rgba(15,23,42,.04);}
+.finance-policy-card-title{font-size:10px;font-family:var(--mono);font-weight:900;color:var(--red);margin-bottom:4px;}
+.finance-policy-card-text{font-size:10.5px;color:var(--text);line-height:1.65;font-weight:700;}
+.finance-matrix-guide{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:6px;line-height:1.45;}
+@media(max-width:1280px){
+  .finance-combined-grid,.finance-combined-grid.has-gu-selection{grid-template-columns:1fr !important;}
+  .finance-detail-wide{grid-column:1 !important;}
+  .finance-map-card .lmap,.finance-combined-grid .chart-wrap.h400,.finance-combined-grid .scenario-matrix-scroll{height:300px !important;}
 }
 </style>
 </head>
@@ -882,7 +959,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 
   <div class="panel mb12">
-    <div class="panel-title">일반/음식물 주민부담 원인분해 <span class="panel-badge">지도:산점도:매트릭스 = 0.6:1:1</span></div>
+    <div class="panel-title">일반/음식물 주민부담 원인분해 <span class="panel-badge">지도 · 산점도 · 매트릭스 가로 배치</span></div>
 
     <div class="finance-analysis-target">
       <div class="toggle-group" id="finance-target-toggle">
@@ -891,6 +968,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
       <div class="finance-note" id="finance-target-note">일반 기준: 분자=1인당 일반 봉투 판매액 · 분모=1인당 일반 처리비용 · 점 크기=일반 주민부담률</div>
     </div>
+
+    <div class="finance-selection-guide">💡 <strong>자치구를 클릭하면 자세히 볼 수 있어요.</strong> 지도뿐 아니라 <strong>산점도 점</strong>, <strong>매트릭스 점</strong>을 눌러도 해당 자치구만 강조되고 상세 패널이 열립니다.</div>
 
     <div id="finance-combined-view" class="finance-combined-grid">
       <div class="panel finance-map-card" style="padding:12px">
@@ -903,6 +982,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
           <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">낮음</span>
           <div style="flex:1;height:6px;border-radius:3px;background:linear-gradient(to right,#dbeafe,#fee2e2,#dc2626)"></div>
           <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">높음</span>
+        </div>
+        <div id="finance-selected-map-summary" class="finance-selected-summary empty">
+          지도·산점도·매트릭스에서 자치구를 클릭하면 주민부담률과 재정자립도가 표시됩니다.
         </div>
       </div>
 
@@ -923,9 +1005,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
 
       <div class="finance-detail-wide" id="finance-matrix-detail">
-        <div class="scenario-detail-title">칸을 선택하면 유형 설명이 표시됩니다</div>
-        <div class="scenario-detail-sub">예: 주거형 × 재정부담형</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.7">선택한 분석 대상의 주민부담 구조, 자치구 목록, 추천 정책 방향을 확인할 수 있습니다.</div>
+        <div class="finance-side-head">
+          <div>
+            <div class="finance-side-title">자치구를 선택하세요</div>
+            <div class="finance-side-sub">지도·산점도·매트릭스에서 클릭 시 상세 패널이 열립니다</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.7">선택한 자치구의 유형 정의와 해석이 이 영역에 표시됩니다.</div>
       </div>
     </div>
   </div>
@@ -2645,6 +2731,31 @@ function clusterPolicyText(clusterName){
   if(clusterName.includes('유동')) return '등록인구보다 생활·방문 인구 영향이 커 역사·상권 주변 분리배출함, 가로청소, 무단투기 단속이 중요합니다.';
   return '주거·상업·업무 기능이 섞여 있어 권역별로 수수료, 감량, 처리비 절감 정책을 조합하는 방식이 적합합니다.';
 }
+function clusterShortText(clusterName){
+  if(clusterName.includes('상업')) return '상권·업무 배출이 많아 사업장 관리와 거리 배출 관리가 중요합니다.';
+  if(clusterName.includes('주거')) return '가정 배출 비중이 커 주민 참여형 감량 정책이 잘 맞습니다.';
+  if(clusterName.includes('유동')) return '방문·생활인구 영향이 커 역세권·상권 주변 관리가 중요합니다.';
+  return '주거·상업 기능이 섞여 있어 권역별로 다른 처방을 조합해야 합니다.';
+}
+function financeStructureShortText(type){
+  if(type==='분자↑·분모↑' || type==='고수입 고비용') return '수입은 회수되지만 처리비도 커 비용 효율화가 우선인 구조입니다.';
+  if(type==='분자↑·분모↓' || type==='고수입 저비용') return '비용 대비 회수력이 좋아 현재 구조를 유지하며 감량 유인을 더하면 좋습니다.';
+  if(type==='분자↓·분모↑' || type==='저수입 고비용') return '비용은 높은데 수입 회수는 약해 재정 부담이 큰 구조입니다.';
+  return '수입과 비용이 모두 낮아 급격한 요금 조정보다 기반 개선이 적합합니다.';
+}
+function financeFriendlySummary(row,target=financeTarget){
+  const rows=financeRows(target);
+  const avgSales=mean(rows.map(r=>r.salesPerCap));
+  const avgCost=mean(rows.map(r=>r.costPerCap));
+  const avgFiscal=mean(rows.map(r=>r.fiscal));
+  const costTxt=row.costPerCap>=avgCost?'처리비가 평균보다 높은 편이라 예산이 더 빨리 소모됩니다.':'처리비는 평균보다 낮은 편이라 비용 압박은 상대적으로 덜합니다.';
+  const incomeTxt=row.salesPerCap>=avgSales?'수입 회수는 비교적 잘 되는 편입니다.':'수입 회수는 평균보다 약한 편입니다.';
+  const fiscalTxt=row.fiscal>=avgFiscal?'청소예산 자립 여력은 상대적으로 안정적입니다.':'청소예산 자립 여력은 상대적으로 약합니다.';
+  if(row.type==='고수입 고비용' || row.type==='분자↑·분모↑') return `${costTxt} 다만 ${incomeTxt} 그래서 요금 인상보다 비용 효율화가 먼저 필요한 구조입니다. ${fiscalTxt}`;
+  if(row.type==='고수입 저비용' || row.type==='분자↑·분모↓') return `${incomeTxt} 그리고 ${costTxt} 현재 구조를 유지하면서 감량 유인을 더하는 쪽이 자연스럽습니다. ${fiscalTxt}`;
+  if(row.type==='저수입 고비용' || row.type==='분자↓·분모↑') return `${costTxt} 반면 ${incomeTxt} 그래서 예산 부담이 체감되기 쉬운 구조입니다. 비용 절감과 회수 보강을 같이 보는 것이 좋습니다. ${fiscalTxt}`;
+  return `${incomeTxt} 그리고 ${costTxt} 급격한 가격 조정보다 분리배출·RFID·주민 참여형 감량 정책으로 기반을 다지는 것이 더 잘 맞습니다. ${fiscalTxt}`;
+}
 
 const FINANCE_TYPE_ORDER = ['분자↑·분모↑','분자↑·분모↓','분자↓·분모↑','분자↓·분모↓'];
 const FINANCE_TYPE_META = {
@@ -2669,6 +2780,7 @@ let financeView='matrix';
 let financeLayout='structure';
 let financeTarget='general';
 let selectedFinanceCellKey='';
+let selectedFinanceGu='';
 let financeBurdenMapInstance=null, financeBurdenLayer=null, financeBurdenLabels=[];
 
 const financeQuadrantPlugin = {
@@ -2681,12 +2793,47 @@ const financeQuadrantPlugin = {
     const y=scales.y.getPixelForValue(opts.avgY);
     ctx.save();
     const rects=[
-      {x:left,y:top,w:x-left,h:y-top,c:'rgba(220,38,38,.045)',t:'저수입·고비용',tx:left+10,ty:top+16,col:'#dc2626'},
-      {x:x,y:top,w:right-x,h:y-top,c:'rgba(0,153,117,.045)',t:'고수입·고비용',tx:x+10,ty:top+16,col:'#009975'},
-      {x:left,y:y,w:x-left,h:bottom-y,c:'rgba(37,99,235,.045)',t:'저수입·저비용',tx:left+10,ty:y+18,col:'#2563eb'},
-      {x:x,y:y,w:right-x,h:bottom-y,c:'rgba(217,119,6,.045)',t:'고수입·저비용',tx:x+10,ty:y+18,col:'#d97706'}
+      {x:left,y:top,w:x-left,h:y-top,c:'rgba(220,38,38,.045)',lines:['저수입','고비용'],tx:left+10,ty:top+15,col:'#dc2626'},
+      {x:x,y:top,w:right-x,h:y-top,c:'rgba(0,153,117,.045)',lines:['고수입','고비용'],tx:x+10,ty:top+15,col:'#009975'},
+      {x:left,y:y,w:x-left,h:bottom-y,c:'rgba(37,99,235,.045)',lines:['저수입','저비용'],tx:left+10,ty:y+17,col:'#2563eb'},
+      {x:x,y:y,w:right-x,h:bottom-y,c:'rgba(217,119,6,.045)',lines:['고수입','저비용'],tx:x+10,ty:y+17,col:'#d97706'}
     ];
-    rects.forEach(r=>{ctx.fillStyle=r.c;ctx.fillRect(r.x,r.y,r.w,r.h);ctx.fillStyle=r.col;ctx.font='700 11px Noto Sans KR';ctx.fillText(r.t,r.tx,r.ty);});
+    rects.forEach(r=>{
+      ctx.fillStyle=r.c;ctx.fillRect(r.x,r.y,r.w,r.h);
+      ctx.fillStyle=r.col;ctx.font='800 9px Noto Sans KR';ctx.textBaseline='top';
+      r.lines.forEach((line,idx)=>ctx.fillText(line,r.tx,r.ty+(idx*11)));
+    });
+    ctx.restore();
+  }
+};
+
+
+const financeSelectedLabelPlugin = {
+  id:'financeSelectedLabelPlugin',
+  afterDatasetsDraw(chart){
+    if(!selectedFinanceGu) return;
+    const {ctx}=chart;
+    ctx.save();
+    ctx.font='900 10px Noto Sans KR';
+    ctx.textAlign='left';
+    ctx.textBaseline='middle';
+    ctx.fillStyle='#dc2626';
+    chart.data.datasets.forEach((ds,di)=>{
+      const meta=chart.getDatasetMeta(di);
+      if(ds.type==='line' || !meta || meta.hidden) return;
+      meta.data.forEach((pt,i)=>{
+        const raw=ds.data[i];
+        const r=raw?.r;
+        if(r && r.name===selectedFinanceGu){
+          ctx.beginPath();
+          ctx.arc(pt.x,pt.y,5.5,0,Math.PI*2);
+          ctx.strokeStyle='#dc2626';
+          ctx.lineWidth=2.5;
+          ctx.stroke();
+          ctx.fillText(r.name, pt.x+9, pt.y-9);
+        }
+      });
+    });
     ctx.restore();
   }
 };
@@ -2719,9 +2866,8 @@ function renderFinanceTargetViews(){
   renderFinanceBurdenMap();
   renderFinanceScatter();
   renderFinanceMatrix();
+  updateFinanceSelectionUI();
   setTimeout(()=>financeBurdenMapInstance&&financeBurdenMapInstance.invalidateSize(),120);
-  const first=document.querySelector('#finance-matrix .matrix-cell.occupied');
-  if(first) first.click();
 }
 
 function initFinanceAnalysis(){
@@ -2731,6 +2877,69 @@ function initFinanceAnalysis(){
     return;
   }
   renderFinanceTargetViews();
+}
+
+
+function selectFinanceGu(name){
+  selectedFinanceGu=name;
+  selectedFinanceCellKey='';
+  renderFinanceTargetViews();
+}
+function clearFinanceGuSelection(){
+  selectedFinanceGu='';
+  selectedFinanceCellKey='';
+  renderFinanceTargetViews();
+}
+function getSelectedFinanceRow(){
+  if(!selectedFinanceGu) return null;
+  return financeRows(financeTarget).find(r=>r.name===selectedFinanceGu) || null;
+}
+function updateFinanceSelectionUI(){
+  const grid=document.getElementById('finance-combined-view');
+  const summary=document.getElementById('finance-selected-map-summary');
+  const detail=document.getElementById('finance-matrix-detail');
+  const row=getSelectedFinanceRow();
+  if(grid) grid.classList.toggle('has-gu-selection', !!row);
+  const cfg=getFinanceTargetConfig(financeTarget);
+  if(!row){
+    if(summary){
+      summary.className='finance-selected-summary empty';
+      summary.innerHTML='지도·산점도·매트릭스에서 자치구를 클릭하면 주민부담률과 재정자립도가 표시됩니다.';
+    }
+    if(detail){
+      detail.innerHTML=`<div class="finance-side-head"><div><div class="finance-side-title">자치구를 선택하세요</div><div class="finance-side-sub">지도·산점도·매트릭스에서 클릭 시 상세 패널이 열립니다</div></div></div><div style="font-size:11px;color:var(--text2);line-height:1.7">선택한 자치구의 유형 정의와 해석이 이 영역에 표시됩니다.</div>`;
+    }
+    return;
+  }
+  if(summary){
+    summary.className='finance-selected-summary';
+    summary.innerHTML=`<div class="finance-selected-name"><span class="finance-selected-dot"></span>${row.name}</div>
+      <div class="finance-selected-stats">
+        <div class="finance-selected-stat"><div class="finance-selected-stat-label">${cfg.rateLabel}</div><div class="finance-selected-stat-val" style="color:var(--red)">${pctTxt(row.rate)}</div></div>
+        <div class="finance-selected-stat"><div class="finance-selected-stat-label">재정자립도</div><div class="finance-selected-stat-val" style="color:var(--teal)">${pctTxt(row.fiscal)}</div></div>
+      </div>`;
+  }
+  if(detail){
+    const clusterDesc=clusterShortText(row.clusterName);
+    const structureDesc=financeStructureShortText(row.type);
+    const rec=policyRecommendation(row);
+    const policies=(rec?.policies||[]).slice(0,2);
+    detail.innerHTML=`<div class="finance-side-head">
+      <div><div class="finance-side-title">${row.name}</div><div class="finance-side-sub">${cfg.label} 기준 · ${row.clusterName} · ${row.typeLabel}</div></div>
+      <button class="finance-gu-reset" onclick="clearFinanceGuSelection()">✕ 선택 해제</button>
+    </div>
+    <div class="finance-type-definition">
+      <div class="finance-type-definition-label">유형정의</div>
+      <div class="finance-type-definition-main">${row.clusterName} × ${row.typeLabel}</div>
+    </div>
+    <div class="finance-type-cards">
+      <div class="finance-type-card"><div class="finance-type-card-title">지역 유형</div><div class="finance-type-card-text">${clusterDesc}</div></div>
+      <div class="finance-type-card"><div class="finance-type-card-title">주민 부담 구조 유형</div><div class="finance-type-card-text">${structureDesc}</div></div>
+    </div>
+    <div class="finance-policy-cards">
+      ${policies.map((p,i)=>`<div class="finance-policy-card"><div class="finance-policy-card-title">추천 정책 ${i+1}</div><div class="finance-policy-card-text">${p}</div></div>`).join('')}
+    </div>`;
+  }
 }
 
 function financeRateColor(rate, min, max){
@@ -2766,18 +2975,23 @@ async function renderFinanceBurdenMap(){
   financeBurdenLabels.forEach(l=>l.remove()); financeBurdenLabels=[];
   financeBurdenLayer=L.geoJSON(geo,{
     style:f=>{
-      const r=byName[getDistName(f.properties)];
+      const name=getDistName(f.properties);
+      const r=byName[name];
+      const isSel=selectedFinanceGu && name===selectedFinanceGu;
       const clr=r?financeRateColor(r.rate,min,max):'#e5e7eb';
-      return {fillColor:clr,fillOpacity:.72,color:'rgba(0,0,0,.25)',weight:1};
+      return {fillColor:isSel?'#dc2626':clr,fillOpacity:isSel ? .88 : .72,color:isSel?'#7f1d1d':'rgba(0,0,0,.25)',weight:isSel?2.8:1};
     },
     onEachFeature:(feature,layer)=>{
       const name=getDistName(feature.properties);
       const r=byName[name]; if(!r) return;
-      layer.bindTooltip(`<strong>${r.name}</strong><br>${r.rateLabel}: ${pctTxt(r.rate)}<br>수입 ${won(r.salesPerCap)} / 비용 ${won(r.costPerCap)}`,{className:'gu-tooltip',sticky:true,direction:'top'});
-      layer.on('mouseover',e=>e.target.setStyle({weight:2.5,color:'#000',fillOpacity:.88}));
+      layer.bindTooltip(`<strong>${r.name}</strong><br>${r.rateLabel}: ${pctTxt(r.rate)}<br>재정자립도 ${pctTxt(r.fiscal)}<br>수입 ${won(r.salesPerCap)} / 비용 ${won(r.costPerCap)}`,{className:'gu-tooltip',sticky:true,direction:'top'});
+      layer.on('mouseover',e=>e.target.setStyle({weight:3,color:'#111827',fillOpacity:.92}));
       layer.on('mouseout',e=>financeBurdenLayer.resetStyle(e.target));
+      layer.on('click',()=>selectFinanceGu(name));
       const center=layer.getBounds().getCenter();
-      const labelIcon=L.divIcon({className:'gu-label',html:name.replace('구',''),iconSize:[40,12],iconAnchor:[20,6]});
+      const labelColor=(selectedFinanceGu && name===selectedFinanceGu)?'#dc2626':'#1a2332';
+      const labelWeight=(selectedFinanceGu && name===selectedFinanceGu)?900:600;
+      const labelIcon=L.divIcon({className:'gu-label',html:`<span style="color:${labelColor};font-weight:${labelWeight}">${name.replace('구','')}</span>`,iconSize:[40,12],iconAnchor:[20,6]});
       financeBurdenLabels.push(L.marker(center,{icon:labelIcon,interactive:false}).addTo(financeBurdenMapInstance));
     }
   }).addTo(financeBurdenMapInstance);
@@ -2806,39 +3020,71 @@ function renderFinanceScatter(){
     type:'scatter',
     label:nm,
     data:rows.filter(r=>r.cluster===ci).map(r=>({x:r.salesPerCap,y:r.costPerCap,r})),
-    pointRadius:rctx=>pointRadiusByRate(rctx.raw?.r?.rate),
-    pointHoverRadius:rctx=>pointRadiusByRate(rctx.raw?.r?.rate)+2,
-    backgroundColor:CLUSTER_COLORS[ci],
-    borderColor:'#fff',
-    borderWidth:1.8
+    pointRadius:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 6.5 : 2.8) : pointRadiusByRate(rctx.raw?.r?.rate),
+    pointHoverRadius:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 7.5 : 4.2) : pointRadiusByRate(rctx.raw?.r?.rate)+1.3,
+    backgroundColor:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? '#dc2626' : 'rgba(148,163,184,.48)') : CLUSTER_COLORS[ci],
+    borderColor:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? '#ffffff' : 'rgba(255,255,255,.8)') : '#fff',
+    borderWidth:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 2 : 0.8) : 1.1
   })).filter(ds=>ds.data.length);
   if(charts.financeScatter) charts.financeScatter.destroy();
   charts.financeScatter=new Chart(canvas.getContext('2d'),{
-    plugins:[financeQuadrantPlugin],
+    plugins:[financeQuadrantPlugin,financeSelectedLabelPlugin],
     data:{datasets:[
       ...clusterDatasets,
       {type:'line',label:'평균 수입',data:[{x:avgX,y:minY},{x:avgX,y:maxY}],borderColor:'rgba(124,58,237,.55)',borderDash:[5,5],pointRadius:0,borderWidth:1.5},
       {type:'line',label:'평균 비용',data:[{x:minX,y:avgY},{x:maxX,y:avgY}],borderColor:'rgba(217,119,6,.55)',borderDash:[5,5],pointRadius:0,borderWidth:1.5}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:10},filter:item=>!String(item.text).startsWith('평균')}},financeQuadrantPlugin:{avgX,avgY},tooltip:{callbacks:{label:c=>{const r=c.raw?.r;if(!r)return c.dataset.label;return `${r.name} · ${r.clusterName} · ${r.typeLabel||financeTypeLabel(r.type)} · ${r.rateLabel} ${pctTxt(r.rate)} · 수입 ${won(r.salesPerCap)} / 비용 ${won(r.costPerCap)}`;}}}},scales:{x:{type:'linear',min:minX,max:maxX,title:{display:true,text:`${cfg.incomeLabel}(원/명)`}},y:{min:minY,max:maxY,title:{display:true,text:`${cfg.costLabel}(원/명)`}}}}
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{padding:{top:6,right:10,bottom:2,left:2}},
+      onClick:(evt,elements)=>{
+        const el=elements && elements[0];
+        if(!el) return;
+        const raw=charts.financeScatter?.data?.datasets?.[el.datasetIndex]?.data?.[el.index];
+        if(raw?.r?.name) selectFinanceGu(raw.r.name);
+      },
+      onHover:(evt,elements)=>{
+        canvas.style.cursor=(elements && elements.length)?'pointer':'default';
+      },
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{boxWidth:8,boxHeight:8,usePointStyle:true,font:{size:9},padding:10,filter:item=>!String(item.text).startsWith('평균')}},
+        financeQuadrantPlugin:{avgX,avgY},
+        tooltip:{callbacks:{label:c=>{const r=c.raw?.r;if(!r)return c.dataset.label;return `${r.name} · ${r.clusterName} · ${r.typeLabel||financeTypeLabel(r.type)} · ${r.rateLabel} ${pctTxt(r.rate)} · 수입 ${won(r.salesPerCap)} / 비용 ${won(r.costPerCap)}`;}}}
+      },
+      scales:{
+        x:{type:'linear',min:minX,max:maxX,ticks:{font:{size:8.5},maxTicksLimit:4},title:{display:true,text:`${cfg.incomeLabel}(원/명)`,font:{size:10}}},
+        y:{min:minY,max:maxY,ticks:{font:{size:8.5},maxTicksLimit:5},title:{display:true,text:`${cfg.costLabel}(원/명)`,font:{size:10}}}
+      }
+    }
   });
 }
 function pointRadiusByRate(rate){
   const v=(Number(rate)||0)*100;
-  if(v<22) return 5;
-  if(v<34) return 7;
-  return 9;
+  if(v<22) return 2.8;
+  if(v<34) return 3.8;
+  return 4.8;
 }
 function matrixPointPositions(n){
-  const layouts={1:[[50,52]],2:[[43,51],[58,49]],3:[[39,47],[58,43],[50,63]],4:[[36,44],[55,42],[44,63],[65,61]],5:[[32,44],[47,40],[62,44],[40,64],[56,63]]};
-  return layouts[Math.min(n,5)] || layouts[5];
+  const layouts={
+    1:[[50,52]],
+    2:[[42,52],[60,50]],
+    3:[[34,48],[52,42],[68,58]],
+    4:[[32,44],[52,42],[40,64],[64,62]],
+    5:[[28,44],[46,40],[64,44],[38,64],[58,64]],
+    6:[[25,42],[43,40],[61,42],[31,62],[50,64],[69,62]],
+    7:[[23,39],[41,39],[59,39],[31,58],[50,60],[69,58],[50,76]],
+    8:[[22,38],[39,38],[56,38],[73,38],[30,59],[48,61],[66,59],[50,77]],
+    9:[[22,38],[39,38],[56,38],[73,38],[30,58],[48,60],[66,58],[38,76],[60,76]]
+  };
+  return layouts[Math.min(Math.max(n,1),9)] || layouts[9];
 }
 function clusterShape(cluster){return 'circle';}
 function matrixPointSize(rate){
   const v=(Number(rate)||0)*100;
-  if(v<22) return 28;
-  if(v<34) return 36;
-  return 44;
+  if(v<22) return 30;
+  if(v<34) return 38;
+  return 46;
 }
 function renderFinanceMatrix(){
   const el=document.getElementById('finance-matrix');
@@ -2859,9 +3105,19 @@ function renderFinanceMatrix(){
       const key=`${financeTarget}__${cluster}__${type}`;
       const selected=selectedFinanceCellKey===key;
       const scen=scenarioIdForCell(cluster,type);
-      const positions=matrixPointPositions(arr.length);
-      const points=arr.map((r,i)=>{const p=positions[i%positions.length], col=CLUSTER_COLORS[r.cluster]||meta.color, shape=clusterShape(r.clusterName), size=matrixPointSize(r.rate); return `<div class="matrix-point ${shape}" style="--pt:${size}px;left:${p[0]}%;top:${p[1]}%;color:${col};background:rgba(255,255,255,.88)" title="${r.name} · ${r.scenarioId} · ${r.rateLabel} ${pctTxt(r.rate)}"><span>${r.name}</span></div>`;}).join('');
-      html+=`<div class="matrix-cell ${occupied?'occupied':''} ${selected?'selected':''}" ${occupied?`onclick="showFinanceMatrixDetail('${cluster}','${type}',this)"`:''} style="background:${meta.bg}">
+      const positions=matrixPointPositions(arr.length || 1);
+      const points=arr.map((r,i)=>{
+        const p=positions[i%positions.length];
+        const isGuSelected=selectedFinanceGu && r.name===selectedFinanceGu;
+        const muted=selectedFinanceGu && !isGuSelected;
+        const col=isGuSelected?'#dc2626':(muted?'#cbd5e1':(CLUSTER_COLORS[r.cluster]||meta.color));
+        const shape=clusterShape(r.clusterName);
+        const size=selectedFinanceGu ? (isGuSelected?46:24) : matrixPointSize(r.rate);
+        const cls=`matrix-point ${shape} ${muted?'finance-muted-point':''} ${isGuSelected?'finance-selected-point':''}`;
+        const label=r.name.replace('구','');
+        return `<div class="${cls}" onclick="selectFinanceGu('${r.name}')" style="--pt:${size}px;left:${p[0]}%;top:${p[1]}%;color:${col};background:rgba(255,255,255,.88)" title="${r.name} 클릭 시 상세 패널 열기"><span>${label}</span></div>`;
+      }).join('');
+      html+=`<div class="matrix-cell ${occupied?'occupied':''} ${selected?'selected':''}" style="background:${meta.bg}">
         <div class="matrix-scenario-no">${scen}</div>
         ${occupied?points:'<div class="matrix-empty-note">EMPTY</div>'}
       </div>`;
@@ -2875,8 +3131,9 @@ function renderFinanceMatrix(){
     <span class="matrix-legend-item"><span class="matrix-legend-symbol circle" style="background:${CLUSTER_COLORS[1]}"></span>주거형</span>
     <span class="matrix-legend-item"><span class="matrix-legend-symbol circle" style="background:${CLUSTER_COLORS[2]}"></span>유동집중형</span>
     <span class="matrix-legend-item"><span class="matrix-legend-symbol circle" style="background:${CLUSTER_COLORS[3]}"></span>혼합형</span>
-    <span class="matrix-legend-item">점 크기 = ${getFinanceTargetConfig(financeTarget).rateLabel}</span>
+    <span class="matrix-legend-item">${selectedFinanceGu?'선택 자치구=빨강 · 기타=회색':'점 크기 = '+getFinanceTargetConfig(financeTarget).rateLabel}</span>
   </div>`;
+  if(selectedFinanceGu) html+=`<div class="finance-matrix-guide">선택한 ${selectedFinanceGu}는 빨간색으로 강조하고, 다른 자치구는 회색 원 안에도 이름이 보이도록 유지해 전체 분포를 함께 비교할 수 있게 했습니다.</div>`;
   el.innerHTML=html;
 }
 function showFinanceMatrixDetail(cluster,type,el){
@@ -2909,16 +3166,41 @@ function showFinanceMatrixDetail(cluster,type,el){
 /* ════════════════════════════════════════════════ */
 let selectedPolicyDefaultsApplied=false;
 function policyRecommendation(row){
-  const base={rev:5,gen:6,food:6,title:'균형형 정책 패키지',policies:['분리배출 품질 개선','수집동선 최적화','수수료 소폭 조정']};
-  if(row.type==='분자↓·분모↑' || row.type==='저수입 고비용') Object.assign(base,{rev:8,gen:12,food:10,title:'재정 회수력 보강 + 처리비 절감 패키지',policies:['수수료 단계 조정','수집·운반 계약 효율화','음식물 처리방식 개선']});
-  if(row.type==='분자↑·분모↑' || row.type==='고수입 고비용') Object.assign(base,{rev:2,gen:10,food:8,title:'고비용 구조 개선 패키지',policies:['다량배출원 관리','처리비 원가 점검','상권 배출 집중 관리']});
-  if(row.type==='분자↑·분모↓' || row.type==='고수입 저비용') Object.assign(base,{rev:0,gen:5,food:5,title:'회수력 유지 + 감량 인센티브 패키지',policies:['현행 요금 안정','감량 인센티브','재활용 품질 개선']});
-  if(row.type==='분자↓·분모↓' || row.type==='저수입 저비용') Object.assign(base,{rev:5,gen:6,food:8,title:'기초 회수력 강화 패키지',policies:['RFID·봉투제 보완','분리배출 교육','무단투기 관리']});
-  if(row.clusterName.includes('상업')){base.policies.unshift('상가·사업장 배출원 협약'); base.rev=Math.max(base.rev,6);}
-  else if(row.clusterName.includes('주거')){base.policies.unshift('공동주택 RFID·감량 인센티브'); base.food=Math.max(base.food,10);}
-  else if(row.clusterName.includes('유동')){base.policies.unshift('역세권·상권 거점 분리배출함'); base.gen=Math.max(base.gen,8);}
-  else {base.policies.unshift('권역별 주거·상업 분리 처방');}
-  base.policies=[...new Set(base.policies)].slice(0,4);
+  const base={rev:5,gen:6,food:6,title:'균형형 정책 패키지',policies:[]};
+  const typeLabel=(row.typeLabel||row.type||'').trim();
+  const clusterLabel=(row.clusterName||'').trim();
+  const targetLabel=financeTarget==='food' ? '음식물' : '일반';
+
+  let structurePolicy='현재는 수입과 비용이 모두 극단적이지 않은 편입니다. 급격한 요금 조정보다는 분리배출 품질을 높이고, 수거 동선을 정리하면서 안정적으로 운영 효율을 높이는 접근이 적합합니다.';
+  if(row.type==='분자↓·분모↑' || typeLabel==='저수입·고비용형' || typeLabel==='저수입 고비용'){
+    base.rev=8; base.gen=12; base.food=10; base.title='재정 회수력 보강 + 처리비 절감 패키지';
+    structurePolicy=`${targetLabel} 부문에서 처리비용 부담이 큰데 비해 수입 회수는 약한 편입니다. 그래서 한 번에 요금을 크게 올리기보다, 먼저 수집·운반·처리 단계의 비효율을 줄이고, 그다음 RFID·다량배출원 관리·누락 수수료 점검처럼 실제로 비용을 회수할 수 있는 장치를 함께 강화하는 것이 좋습니다.`;
+  }else if(row.type==='분자↑·분모↑' || typeLabel==='고수입·고비용형' || typeLabel==='고수입 고비용'){
+    base.rev=2; base.gen=10; base.food=8; base.title='고비용 구조 개선 패키지';
+    structurePolicy=`수입은 비교적 잘 걷히지만 처리비용 자체가 큰 구조입니다. 따라서 추가 인상보다는 배출이 많이 발생하는 구간을 찾아 집중 관리하고, 처리 단가·수거 빈도·민간위탁 방식 등을 점검해 비용이 커지는 원인을 줄이는 쪽이 더 효과적입니다.`;
+  }else if(row.type==='분자↑·분모↓' || typeLabel==='고수입·저비용형' || typeLabel==='고수입 저비용'){
+    base.rev=0; base.gen=5; base.food=5; base.title='회수력 유지 + 감량 인센티브 패키지';
+    structurePolicy=`수입 회수력은 괜찮고 비용 부담도 상대적으로 낮은 편입니다. 지금 구조를 크게 흔들기보다는 현재 체계를 안정적으로 유지하면서, 주민 참여형 감량 인센티브와 재활용 품질 개선으로 좋은 구조를 오래 유지하는 것이 적합합니다.`;
+  }else if(row.type==='분자↓·분모↓' || typeLabel==='저수입·저비용형' || typeLabel==='저수입 저비용'){
+    base.rev=5; base.gen=6; base.food=8; base.title='기초 회수력 강화 패키지';
+    structurePolicy=`아직 비용은 아주 높지 않지만 수입 회수 기반이 다소 약합니다. 부담을 갑자기 키우기보다는 봉투제·RFID·분리배출 안내를 촘촘히 보완해 기본적인 회수 체계를 먼저 다지는 방식이 부담이 적고 실행 가능성도 높습니다.`;
+  }
+
+  let clusterPolicy='지역 특성을 반영해 주거지와 상권의 배출 패턴을 구분해서 관리하면 정책 효과가 더 커집니다.';
+  if(clusterLabel.includes('상업')){
+    base.rev=Math.max(base.rev,6);
+    clusterPolicy='상업형 지역은 상가·음식점·사업장에서 나오는 배출이 많아 특정 시간대와 특정 골목에 쓰레기가 몰리기 쉽습니다. 상가 밀집 구간의 배출시간 관리, 다량배출사업장 점검, 업종별 분리배출 가이드를 강화하면 체감 효과가 빠르게 나타날 가능성이 큽니다.';
+  }else if(clusterLabel.includes('주거')){
+    base.food=Math.max(base.food,10);
+    clusterPolicy='주거형 지역은 공동주택과 생활권 중심 배출이 많아서 주민 참여 방식이 특히 중요합니다. 공동주택 RFID 확대, 감량 인센티브, 분리배출 교육처럼 주민이 바로 실천할 수 있는 정책을 붙이면 비용 절감과 회수율 개선을 함께 노릴 수 있습니다.';
+  }else if(clusterLabel.includes('유동')){
+    base.gen=Math.max(base.gen,8);
+    clusterPolicy='유동집중형 지역은 등록인구보다 실제 이용 인구가 많아 역세권·상권 주변에서 짧은 시간에 배출이 집중되는 경우가 많습니다. 거점 수거함 정비, 청소 동선의 시간대별 재배치, 상권 중심 분리배출 시설 보강이 특히 중요합니다.';
+  }else if(clusterLabel.includes('혼합')){
+    clusterPolicy='혼합형 지역은 주거와 상업 기능이 함께 나타나기 때문에 한 가지 정책만으로 해결하기 어렵습니다. 생활권에는 주민 참여형 감량 정책을, 상권에는 배출원 관리 정책을 나눠 적용하는 식의 이중 전략이 더 잘 맞습니다.';
+  }
+
+  base.policies=[clusterPolicy, structurePolicy];
   return base;
 }
 
