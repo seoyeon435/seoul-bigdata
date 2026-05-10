@@ -22,7 +22,7 @@
   --mono:'JetBrains Mono',monospace; --sans:'Noto Sans KR',sans-serif;
   --shadow:0 2px 8px rgba(124,58,237,.04);
   --shadow2:0 4px 20px rgba(124,58,237,.06);
-  --panel-width: 400px;
+  --panel-width: 520px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -137,10 +137,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 
 /* CAPACITY CHART side stats */
 .cap-stats{display:flex;flex-direction:column;gap:10px}
-.cap-stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px 16px;flex:1;display:flex;flex-direction:column;justify-content:center}
-.cap-stat-label{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:5px;font-weight:600}
-.cap-stat-val{font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-1.5px;line-height:1.1}
-.cap-stat-sub{font-size:11px;color:var(--text2);font-family:var(--mono);margin-top:8px}
+.cap-stat{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px 16px;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.cap-stat-icon{font-size:26px;margin-bottom:10px;line-height:1}
+.cap-stat-label{font-size:11px;font-family:var(--mono);color:var(--text3);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:5px;font-weight:600;text-align:center;line-height:1.4}
+.cap-stat-val{font-size:32px;font-weight:700;font-family:var(--mono);letter-spacing:-1.5px;line-height:1.1;text-align:center}
+.cap-stat-sub{font-size:12px;color:var(--text2);font-family:var(--mono);margin-top:10px;text-align:center}
 
 /* TOP5 */
 .top5-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -505,11 +506,11 @@ select:focus{border-color:var(--green)}
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .sp2-proc-bar-row:last-child { margin-bottom: 0; }
 .sp2-proc-bar-label {
-  width: 40px;
+  width: 44px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
@@ -537,13 +538,12 @@ select:focus{border-color:var(--green)}
   border-radius: 5px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 8px;
+  justify-content: center;
   transition: width 0.4s ease;
   min-width: 2px;
 }
 .sp2-proc-bar-fill span {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   font-family: var(--mono);
   color: #fff;
@@ -552,10 +552,11 @@ select:focus{border-color:var(--green)}
 .sp2-proc-bar-meta {
   font-size: 11px;
   font-family: var(--mono);
-  color: var(--text3);
-  min-width: 70px;
-  text-align: right;
+  color: var(--text2);
+  min-width: 100px;
+  text-align: left;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 /* Section title badge */
 .sp2-section-max-badge {
@@ -665,16 +666,14 @@ select:focus{border-color:var(--green)}
     <!-- 사이드 스탯 -->
     <div class="cap-stats">
       <div class="cap-stat">
-        <div class="cap-stat-label" style="color:var(--purple)">
-          <span>📅</span> 최대 부족 월
-        </div>
+        <div class="cap-stat-icon" style="color:var(--purple)">📅</div>
+        <div class="cap-stat-label" style="color:var(--purple)">최대 부족 월</div>
         <div class="cap-stat-val" id="stat-max-month" style="color:var(--purple)">—월</div>
         <div class="cap-stat-sub" id="stat-max-shortage">— 톤/일</div>
       </div>
       <div class="cap-stat">
-        <div class="cap-stat-label" style="color:var(--amber)">
-          <span>⚠</span> 정비 시 최대 부족량
-        </div>
+        <div class="cap-stat-icon" style="color:var(--amber)">⚠</div>
+        <div class="cap-stat-label" style="color:var(--amber)">정비 시 최대 부족량</div>
         <div class="cap-stat-val" id="stat-maint-max" style="color:var(--amber)">— 톤/일</div>
         <div class="cap-stat-sub">정비 기간 기준</div>
       </div>
@@ -743,8 +742,8 @@ select:focus{border-color:var(--green)}
 
       <!-- [변경 3] 새 레이아웃: 상단 (지도 + TOP5×2), 하단 (구성 차트 전체 폭) -->
 
-      <!-- 상단: 지도 + TOP5 나란히 -->
-      <div style="display:grid;grid-template-columns:1.5fr 0.65fr;gap:14px;margin-bottom:14px;align-items:stretch">
+      <!-- 상단: 지도 + TOP5 나란히 (3-column) -->
+      <div style="display:grid;grid-template-columns:1.45fr 0.55fr 0.55fr;gap:14px;margin-bottom:14px;align-items:stretch">
 
         <!-- 지도 패널 -->
         <div class="panel s21-style-map-panel" style="position:relative;padding:18px 18px 14px">
@@ -765,25 +764,23 @@ select:focus{border-color:var(--green)}
           </div>
         </div>
 
-        <!-- TOP5 두 박스 세로 배치 -->
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <!-- 총량 TOP5 -->
-          <div class="panel" style="flex:1;padding:20px 18px">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
-              <span style="font-size:14px">🚛</span>
-              <span id="top5-left-title" style="font-size:13px;font-weight:700;color:var(--text)">총량 TOP 5 &nbsp;<span style="font-size:11px;font-weight:400;color:var(--text3)">(전체)</span></span>
-            </div>
-            <div id="top5-left"></div>
+        <!-- 총량 TOP5 -->
+        <div class="panel" style="padding:20px 18px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
+            <span style="font-size:14px">🚛</span>
+            <span id="top5-left-title" style="font-size:13px;font-weight:700;color:var(--text)">총량 TOP 5 &nbsp;<span style="font-size:11px;font-weight:400;color:var(--text3)">(전체)</span></span>
           </div>
-          <!-- 1인당 TOP5 -->
-          <div class="panel" style="flex:1;padding:20px 18px">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
-              <span style="font-size:14px">🧍</span>
-              <span id="top5-right-title" style="font-size:13px;font-weight:700;color:var(--text)">1인당 TOP 5 &nbsp;<span style="font-size:11px;font-weight:400;color:var(--text3)">(전체)</span></span>
-            </div>
-            <div id="top5-right"></div>
+          <div id="top5-left" style="flex:1"></div>
+        </div>
+
+        <!-- 1인당 TOP5 -->
+        <div class="panel" style="padding:20px 18px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
+            <span style="font-size:14px">🧍</span>
+            <span id="top5-right-title" style="font-size:13px;font-weight:700;color:var(--text)">1인당 TOP 5 &nbsp;<span style="font-size:11px;font-weight:400;color:var(--text3)">(전체)</span></span>
           </div>
-          <div style="text-align:right;font-size:10px;color:var(--text3);font-family:var(--mono)">※ 선택한 유형·지표에 따라 TOP5가 변경됩니다.</div>
+          <div id="top5-right" style="flex:1"></div>
+          <div style="text-align:right;font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:10px">※ 선택한 유형·지표에 따라 TOP5가 변경됩니다.</div>
         </div>
       </div>
 
@@ -824,19 +821,19 @@ select:focus{border-color:var(--green)}
       <div class="kpi-row k4 mb12" style="gap:14px">
         <div class="kpi green" style="padding:22px 24px">
           <span class="kpi-icon">♻</span>
-          <div class="kpi-label">재활용률 <span class="info-icon" data-tip="25개 자치구 총 재활용량 합 / 총 발생량 합 × 100">ⓘ</span></div>
+          <div class="kpi-label">재활용률</div>
           <div class="kpi-val" style="font-size:32px"><span id="kpi13-recycle" style="color:var(--green)">—</span><span class="kpi-unit" style="font-size:14px">%</span></div>
           <div class="kpi-sub" id="kpi13-recycle-sub">—</div>
         </div>
         <div class="kpi red" style="padding:22px 24px">
           <span class="kpi-icon">🔥</span>
-          <div class="kpi-label">소각 비중 <span class="info-icon" data-tip="25개 자치구 총 소각량 합 / 총 발생량 합 × 100">ⓘ</span></div>
+          <div class="kpi-label">소각 비중</div>
           <div class="kpi-val" style="font-size:32px"><span id="kpi13-inc" style="color:var(--red)">—</span><span class="kpi-unit" style="font-size:14px">%</span></div>
           <div class="kpi-sub" id="kpi13-inc-sub">—</div>
         </div>
         <div class="kpi purple" style="padding:22px 24px">
           <span class="kpi-icon">⛏</span>
-          <div class="kpi-label">매립 비중 <span class="info-icon" data-tip="25개 자치구 총 매립량 합 / 총 발생량 합 × 100">ⓘ</span></div>
+          <div class="kpi-label">매립 비중</div>
           <div class="kpi-val" style="font-size:32px"><span id="kpi13-land" style="color:var(--purple)">—</span><span class="kpi-unit" style="font-size:14px">%</span></div>
           <div class="kpi-sub" id="kpi13-land-sub">—</div>
         </div>
@@ -863,9 +860,7 @@ select:focus{border-color:var(--green)}
           <!-- 자치구별 총폐기물 처리 구조 -->
           <div class="panel" style="flex:1;padding:18px 20px">
             <div class="panel-title flex-between" style="margin-bottom:14px">
-              <span>자치구별 총폐기물 처리 구조
-                <span class="info-icon" data-tip="재활용/소각/매립 비율이 합쳐서 100%가 되도록 기타 항목 추가. 막대 중앙에 비율 표시.">ⓘ</span>
-              </span>
+              <span>자치구별 총폐기물 처리 구조</span>
               <div style="display:flex;align-items:center;gap:5px">
                 <span style="font-size:10px;color:var(--text3)">정렬 기준</span>
                 <select class="drop-sort" id="proc-sort" onchange="renderProcessingChart()" style="width:auto;font-size:10px;padding:3px 6px">
@@ -882,10 +877,17 @@ select:focus{border-color:var(--green)}
               <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#a78bfa"></div>매립</div>
               <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#cbd5e1"></div>기타</div>
             </div>
-            <div id="processing-scroll-container" style="overflow-y:auto;max-height:400px;padding-right:4px">
-              <div id="processing-chart-wrap"><canvas id="processing-chart"></canvas></div>
+            <!-- sticky x축 컨테이너 -->
+            <div style="position:relative;overflow:hidden">
+              <!-- 스크롤 바 영역 -->
+              <div id="processing-scroll-container" style="overflow-y:auto;max-height:400px;padding-right:4px;padding-bottom:32px">
+                <div id="processing-chart-wrap"><canvas id="processing-chart"></canvas></div>
+              </div>
+              <!-- sticky x축 -->
+              <div id="proc-sticky-xaxis" style="position:absolute;bottom:0;left:0;right:4px;height:32px;background:var(--bg2);border-top:1px solid var(--border);z-index:10">
+                <canvas id="proc-xaxis-canvas" style="width:100%;height:32px"></canvas>
+              </div>
             </div>
-            <p class="note-text" style="margin-top:8px">상/하위 5개 자치구 기본 노출 (총 10개) · 스크롤 시 전체 표시</p>
           </div>
         </div>
 
@@ -893,7 +895,7 @@ select:focus{border-color:var(--green)}
         <div class="panel" style="display:flex;flex-direction:column;padding:18px 20px">
           <div class="panel-title flex-between" style="margin-bottom:14px">
             <span>생활계 처리 방식 비교
-              <span class="info-icon" data-tip="생활계폐기물(가정 + 소규모 사업장)의 재활용/소각/매립률을 서울 평균 대비 차이(%p)로 표시합니다.">ⓘ</span>
+              <span class="info-icon" data-tip="생활계폐기물은 가정 및 소규모 사업장에서 발생하는 폐기물입니다.">ⓘ</span>
             </span>
             <span class="panel-badge">기준: 서울 평균 대비</span>
           </div>
@@ -907,7 +909,6 @@ select:focus{border-color:var(--green)}
             </div>
           </div>
           <div class="div-bar-wrap" id="diverging-bar" style="flex:1;overflow-y:visible;max-height:none"></div>
-          <p class="note-text" style="margin-top:8px">※ 생활계폐기물은 가정 및 소규모 사업장에서 발생하는 폐기물입니다.</p>
         </div>
       </div>
 
@@ -1230,9 +1231,9 @@ function drawCapacityChart(incinerationDemand) {
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#5a6478', font: { size: 10 } } },
-        y: { grid: { color: 'rgba(0,0,0,.04)' }, ticks: { color: '#5a6478', font: { size: 9, family: 'JetBrains Mono' }, callback: v => fmt(v) }, suggestedMin: 0 }
+        y: { grid: { color: 'rgba(0,0,0,.04)' }, ticks: { color: '#5a6478', font: { size: 9, family: 'JetBrains Mono' }, callback: v => fmt(v) }, min: 0, max: 3000 }
       },
-      layout: { padding: { top: 20, right: 0 } }
+      layout: { padding: { top: 28, right: 0 } }
     }
   });
 }
@@ -1579,11 +1580,22 @@ function drawTrend13() {
   const incData = YEARS.map(y => { let r=0,t=0; DISTRICTS.forEach(d=>{const dy=DISTRICT_YEAR[d]?.[y];if(dy){r+=dy.total_incineration||0;t+=dy.total_waste||0;}}); return t>0?+(r/t*100).toFixed(1):0; });
   const landData = YEARS.map(y => { let r=0,t=0; DISTRICTS.forEach(d=>{const dy=DISTRICT_YEAR[d]?.[y];if(dy){r+=dy.total_landfill||0;t+=dy.total_waste||0;}}); return t>0?+(r/t*100).toFixed(1):0; });
 
-  function toDisplay(v) { if (v<=25) return v*(60/25); return 60+(v-25)*(40/75); }
+  // 3-구간 비선형 스케일: 0~15% 확대, 15~75% 압축, 75~100% 확대
+  // display space: 0~30 → 0~15%, 30~60 → 15~75%, 60~100 → 75~100%
+  function toDisplay(v) {
+    if (v <= 15)  return v * (30 / 15);               // 0~15% → display 0~30
+    if (v <= 75)  return 30 + (v - 15) * (30 / 60);  // 15~75% → display 30~60
+    return 60 + (v - 75) * (40 / 25);                 // 75~100% → display 60~100
+  }
+  function fromDisplay(d) {
+    if (d <= 30)  return d * (15 / 30);
+    if (d <= 60)  return 15 + (d - 30) * (60 / 30);
+    return 75 + (d - 60) * (25 / 40);
+  }
   const recycleDisp = recycleData.map(toDisplay);
   const incDisp = incData.map(toDisplay);
   const landDisp = landData.map(toDisplay);
-  const tickActual = [0,5,10,15,20,25,40,60,80,100];
+  const tickActual = [0, 5, 10, 15, 20, 30, 45, 60, 75, 85, 95, 100];
   const tickDisp = tickActual.map(toDisplay);
 
   const pointLabelsPlugin = {
@@ -1652,10 +1664,12 @@ function renderProcessingChart() {
   else if(sort==='incineration')datasets=['inc','recycle','land','other'];
   else datasets=['land','recycle','inc','other'];
 
-  const barH=32; const chartH=allData.length*barH+60;
+  const barH=36; const chartH=allData.length*barH+60;
   document.getElementById('processing-chart-wrap').style.height=chartH+'px';
 
+  // Plugin: 막대 중앙에 % 값 표시
   const stackLabelPlugin={id:'stackLabels',afterDatasetsDraw(chart){const{ctx:c}=chart;chart.data.datasets.forEach((ds,dsIdx)=>{const meta=chart.getDatasetMeta(dsIdx);if(meta.hidden)return;meta.data.forEach((bar,i)=>{const val=ds.data[i];if(val<6)return;const{x,y,width,height,base}=bar.getProps(['x','y','width','height','base'],true);const barW=Math.abs(x-base);if(barW<28)return;c.save();c.fillStyle='rgba(255,255,255,0.92)';c.font=`bold 9px 'JetBrains Mono', monospace`;c.textAlign='center';c.textBaseline='middle';c.fillText(val.toFixed(0)+'%',base+barW/2,y+height/2);c.restore();});});}};
+  // Plugin: 서울 평균 dashed line
   const avgLinePlugin={id:'procAvgLine',afterDraw(chart){const{ctx:c,chartArea,scales}=chart;if(!chartArea)return;const xPx=scales.x.getPixelForValue(seoulAvgPct);c.save();c.beginPath();c.setLineDash([5,4]);c.strokeStyle='#1a2332';c.lineWidth=1.5;c.moveTo(xPx,chartArea.top);c.lineTo(xPx,chartArea.bottom);c.stroke();c.setLineDash([]);c.fillStyle='#1a2332';c.font=`600 9px 'JetBrains Mono', monospace`;c.textAlign='center';c.fillText(`서울 평균(${sortLabel}) ${seoulAvgPct}%`,xPx,chartArea.top-6);c.restore();}};
 
   if(charts.processing)charts.processing.destroy();
@@ -1668,12 +1682,45 @@ function renderProcessingChart() {
       responsive:true,maintainAspectRatio:false,indexAxis:'y',animation:{duration:300},
       plugins:{legend:{display:false},tooltip:{enabled:false}},
       scales:{
-        x:{stacked:true,max:100,min:0,grid:{color:'rgba(0,0,0,.04)'},ticks:{color:'#5a6478',font:{size:9},callback:v=>v+'%'},title:{display:true,text:'처리 비율 (%)',color:'#8a94a8',font:{size:9}}},
+        x:{stacked:true,max:100,min:0,grid:{color:'rgba(0,0,0,.04)'},ticks:{display:false},title:{display:false}},
         y:{stacked:true,grid:{display:false},ticks:{color:'#3a4252',font:{size:10}}}
       },
-      layout:{padding:{top:20,right:4}},
+      layout:{padding:{top:20,right:4,bottom:0}},
       onClick:(e,els)=>{if(els.length>0)openSidePanel(allData[els[0].index].d);}
     }
+  });
+
+  // Draw sticky x-axis on separate canvas
+  requestAnimationFrame(() => {
+    const xCanvas = document.getElementById('proc-xaxis-canvas');
+    if (!xCanvas || !charts.processing) return;
+    const mainCanvas = document.getElementById('processing-chart');
+    const chartArea = charts.processing.chartArea;
+    if (!chartArea) return;
+    xCanvas.width = mainCanvas.width;
+    const xCtx = xCanvas.getContext('2d');
+    xCtx.clearRect(0, 0, xCanvas.width, xCanvas.height);
+    xCtx.strokeStyle = 'rgba(0,0,0,.15)';
+    xCtx.lineWidth = 1;
+    xCtx.beginPath();
+    xCtx.moveTo(chartArea.left, 0);
+    xCtx.lineTo(chartArea.right, 0);
+    xCtx.stroke();
+    const ticks = [0, 25, 50, 75, 100];
+    xCtx.fillStyle = '#5a6478';
+    xCtx.font = `9px 'JetBrains Mono', monospace`;
+    xCtx.textAlign = 'center';
+    xCtx.textBaseline = 'middle';
+    const scale = charts.processing.scales.x;
+    ticks.forEach(t => {
+      const xPx = scale.getPixelForValue(t);
+      xCtx.fillText(t + '%', xPx, 16);
+      xCtx.beginPath();
+      xCtx.strokeStyle = 'rgba(0,0,0,.1)';
+      xCtx.moveTo(xPx, 0);
+      xCtx.lineTo(xPx, 6);
+      xCtx.stroke();
+    });
   });
 }
 
@@ -1683,8 +1730,9 @@ function renderDivergingBar() {
   DISTRICTS.forEach(d=>{const dy=DISTRICT_YEAR[d]?.[ly];if(!dy)return;if(divergMetric==='recycle')numerator+=dy.living_recycle||0;else if(divergMetric==='incineration')numerator+=dy.living_incineration||0;else numerator+=dy.living_landfill||0;denom+=dy.living_waste||0;});
   const seoulAvg=denom>0?numerator/denom*100:0;
   const metricLabel=divergMetric==='recycle'?'재활용률':divergMetric==='incineration'?'소각률':'매립률';
-  const posColor=divergMetric==='recycle'?'#34d399':'#f87171';
-  const negColor=divergMetric==='recycle'?'#f87171':'#34d399';
+  // 색상 고정: 평균 이상 → 초록, 평균 이하 → 빨강 (토글 무관)
+  const posColor='#34d399';
+  const negColor='#f87171';
 
   const distData=[...DISTRICTS].map(d=>{
     const dy=DISTRICT_YEAR[d]?.[ly];if(!dy)return null;
@@ -1695,20 +1743,20 @@ function renderDivergingBar() {
   const maxAbs=Math.max(...distData.map(x=>Math.abs(x.diff)),0.1);
   const wrap=document.getElementById('diverging-bar');
   wrap.innerHTML=`
-    <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:8px;line-height:1.5">
+    <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:10px;line-height:1.5">
       <span style="font-weight:600;color:var(--text2)">${metricLabel} 비교</span> · 서울 평균 <strong style="color:var(--text)">${seoulAvg.toFixed(1)}%</strong>
     </div>
     <div style="display:grid;grid-template-columns:72px 1fr;margin-bottom:4px;font-size:9px;font-family:var(--mono);color:var(--text3)">
       <div></div>
       <div style="display:flex;justify-content:space-between;padding:0 4px">
         <span style="color:${negColor}">← 평균 이하</span>
-        <span>서울 평균 대비 차이 (%p)</span>
+        <span>서울 평균</span>
         <span style="color:${posColor}">평균 이상 →</span>
       </div>
     </div>
     ${distData.map(x=>{
       const pct=Math.abs(x.diff)/maxAbs*46;const isPos=x.diff>=0;const color=isPos?posColor:negColor;const valTxt=(x.diff>=0?'+':'')+x.diff.toFixed(1);
-      return`<div class="div-bar-row" onclick="openSidePanel('${x.d}')" style="cursor:pointer;padding:2px 0">
+      return`<div class="div-bar-row" onclick="openSidePanel('${x.d}')" style="cursor:pointer;padding:4px 0">
         <div class="div-bar-label" style="font-size:11px">${x.d}</div>
         <div class="div-bar-center">
           <div class="div-bar-left">${!isPos?`<div class="div-bar-fill" style="width:${pct}%;background:${color};border-radius:2px 0 0 2px"><span class="div-bar-val" style="right:calc(100% + 3px);color:${color};font-weight:700;font-size:10px">${valTxt}</span></div>`:''}</div>
@@ -1717,7 +1765,12 @@ function renderDivergingBar() {
         </div>
       </div>`;
     }).join('')}
-    <div style="margin-top:14px;display:flex;gap:14px;font-size:10px">
+    <!-- 하단 x축 -->
+    <div style="display:grid;grid-template-columns:72px 1fr;margin-top:4px;font-size:9px;font-family:var(--mono);color:var(--text3)">
+      <div></div>
+      <div style="border-top:1px solid var(--border2);padding-top:5px;text-align:center">서울 평균 대비 차이 (%p)</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:14px;font-size:10px">
       <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:8px;border-radius:2px;background:${posColor}"></span>평균 이상</span>
       <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:8px;border-radius:2px;background:${negColor}"></span>평균 이하</span>
     </div>`;
@@ -1726,6 +1779,18 @@ function renderDivergingBar() {
 // ══════════════════════════════════════════════════════
 //  [변경 1, 2] SIDE PANEL — REDESIGNED
 // ══════════════════════════════════════════════════════
+
+// 만톤 단위 formatter: 10만 이상 → X.X만톤, 미만 → X천톤
+function fmtMan(ton) {
+  if (ton == null || isNaN(ton)) return '—';
+  if (ton >= 100000) {
+    const man = ton / 10000;
+    return man % 1 === 0 ? man.toFixed(0) + '만톤' : man.toFixed(1) + '만톤';
+  }
+  const cheon = Math.round(ton / 1000);
+  return cheon.toFixed(1).replace(/\.0$/,'') + '천톤';
+}
+
 function renderSidePanel(district) {
   const y = selectedYear;
   const ly = LATEST_YEAR;
@@ -1804,7 +1869,7 @@ function renderSidePanel(district) {
     <div class="sp2-kpi-grid">
       <div class="sp2-kpi">
         <div class="sp2-kpi-label">총 발생량<br>(총 폐기물)</div>
-        <div class="sp2-kpi-val" style="color:var(--green);font-size:16px">${fmt(Math.round(totalWaste/1000))}천톤</div>
+        <div class="sp2-kpi-val" style="color:var(--green);font-size:16px">${fmtMan(totalWaste)}</div>
         <span class="sp2-kpi-unit">톤/년</span>
       </div>
       <div class="sp2-kpi">
@@ -1842,7 +1907,7 @@ function renderSidePanel(district) {
             <div class="sp2-donut-dot" style="background:${c.color}"></div>
             <span class="sp2-legend-name" data-tip="${c.tip}">${c.label}</span>
             <span class="sp2-legend-pct">${c.pct.toFixed(1)}%</span>
-            <span class="sp2-legend-ton">(${fmt(Math.round(c.val/1000))}천톤)</span>
+            <span class="sp2-legend-ton">(${fmtMan(c.val)})</span>
           </div>`).join('')}
       </div>
     </div>
@@ -1880,9 +1945,8 @@ function renderSidePanel(district) {
     </div>
 
     <!-- [변경 2] 처리 구조 요약: 3줄 horizontal bar -->
-    <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">
       처리 구조 요약
-      <span class="info-icon" data-tip="재활용률: 전체 폐기물 중 재활용 비율&#10;소각률: 전체 폐기물 중 소각 비율&#10;매립률: 전체 폐기물 중 매립 비율">ⓘ</span>
     </div>
     <div class="sp2-proc-bars">
       ${[
@@ -1900,7 +1964,7 @@ function renderSidePanel(district) {
               <span>${s.v > 8 ? s.v.toFixed(1)+'%' : ''}</span>
             </div>
           </div>
-          <div class="sp2-proc-bar-meta">${fmt(Math.round(s.ton/1000))}천톤</div>
+          <div class="sp2-proc-bar-meta">${s.v.toFixed(1)}% (${fmtMan(s.ton)})</div>
         </div>`).join('')}
     </div>
   </div>
