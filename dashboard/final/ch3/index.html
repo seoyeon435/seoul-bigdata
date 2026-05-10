@@ -179,7 +179,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .sim-stat-val{font-family:var(--mono);color:var(--text);font-weight:600;font-size:13px}
 
 /* SIM SECTION — 입력 사이드바와 패널 텍스트 가독성 강화 */
-.grid-sim .panel-title{font-size:13px}
+.grid-sim .panel-title{font-size:17px}
 .grid-sim .panel-badge{font-size:11px;padding:3px 8px}
 .grid-sim .ctrl-label{font-size:12px;margin-bottom:7px;letter-spacing:.03em}
 .grid-sim select,
@@ -335,20 +335,43 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .finance-detail{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:112px}
 .finance-detail-title{font-size:15px;font-weight:800;margin-bottom:5px;color:var(--text)}
 .finance-detail-text{font-size:11px;color:var(--text2);line-height:1.7}
-.finance-type-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;border:1px solid var(--border2);background:#fff;font-size:10px;font-family:var(--mono);font-weight:800;color:var(--text2)}
+.finance-type-pill{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:999px;border:1px solid var(--border2);background:#fff;font-size:12px;font-family:var(--mono);font-weight:800;color:var(--text2)}
 .policy-panel-grid{display:grid;grid-template-columns:330px 1fr;gap:14px;align-items:stretch}
 .policy-sim-panel{padding:18px;min-height:560px}
 .policy-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:10px}
 .policy-kpi{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:12px 12px;min-height:78px}
-.policy-kpi-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;margin-bottom:5px}
-.policy-kpi-val{font-size:20px;font-weight:800;font-family:var(--mono);letter-spacing:-.5px}
+.policy-kpi-label{font-size:12px;color:var(--text2);font-family:var(--sans);text-transform:none;letter-spacing:-.1px;margin-bottom:7px;font-weight:600}
+.policy-kpi-val{font-size:24px;font-weight:800;font-family:var(--mono);letter-spacing:-.5px}
 .policy-kpi-sub{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:4px;line-height:1.35}
-.policy-reco-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:10px}
-.policy-reco-title{font-size:14px;font-weight:800;margin-bottom:5px;color:var(--text)}
+.policy-reco-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;box-shadow:0 2px 8px rgba(124,58,237,.04)}
+.policy-reco-title{font-size:16px;font-weight:800;margin-bottom:8px;color:var(--text)}
 .policy-reco-text{font-size:11px;color:var(--text2);line-height:1.75}
-.policy-slider-row{margin-bottom:13px}
-.policy-slider-head{display:flex;justify-content:space-between;font-size:10px;margin-bottom:5px;color:var(--text2)}
-.policy-slider-head strong{font-family:var(--mono);color:var(--teal)}
+.policy-reco-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+
+/* 추천 박스 2-column */
+.reco-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:16px}
+.reco-col{background:#fcfcfe;border:1px solid #e6e1ff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 2px 8px rgba(124,58,237,.04)}
+.reco-col-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px}
+.reco-col-sub{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.55}
+.reco-metrics{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.reco-metric{flex:1;min-width:90px;background:#fff;border:1px solid #e6e1ff;border-radius:10px;padding:12px 8px;text-align:center}
+.reco-metric-label{font-size:12px;color:var(--text2);font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:8px}
+.reco-metric-val{font-size:22px;font-weight:900;font-family:var(--mono);color:var(--text);letter-spacing:-.5px}
+.reco-metric.rev .reco-metric-val{color:#10b981}
+.reco-metric.gen .reco-metric-val{color:#fb923c}
+.reco-metric.food .reco-metric-val{color:#a78bfa}
+.reco-apply-btn{width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--sans);background:#10b981;color:#fff;border:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.reco-apply-btn:hover{background:#059669;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+.reco-apply-note{font-size:11px;color:var(--text3);margin-top:10px;line-height:1.55}
+.reco-strategies{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.reco-strategy{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;padding:6px 4px}
+.reco-strategy-icon{width:38px;height:38px;border-radius:9px;background:#f1efff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.reco-strategy-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px}
+.reco-strategy-desc{font-size:12px;color:var(--text2);line-height:1.55}
+.policy-slider-row{margin-bottom:14px}
+.policy-slider-head{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:7px;color:var(--text)}
+.policy-slider-head strong{font-family:var(--mono);color:var(--teal);font-size:14px}
+.policy-ctrl-label{font-size:13px !important;font-family:var(--sans) !important;color:var(--text) !important;text-transform:none !important;letter-spacing:-.1px !important;font-weight:600;margin-bottom:7px !important}
 .policy-actions{display:grid;grid-template-columns:1fr;gap:7px;margin-top:12px}
 .policy-action-btn{width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--sans);transition:all .12s ease}
 .policy-action-btn.primary{background:var(--teal-bg);border:1px solid rgba(0,153,117,.3);color:var(--teal)}
@@ -384,7 +407,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .policy-panel-grid{grid-template-columns:320px 1fr;gap:16px}
 .policy-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;align-items:stretch}
 .policy-mini-chart{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:300px}
-.policy-mini-chart-title{font-size:10px;font-family:var(--mono);color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.policy-mini-chart-title{font-size:14px;font-family:var(--sans);color:var(--text);font-weight:700;text-transform:none;letter-spacing:-.1px;margin-bottom:9px}
 .policy-mini-chart .chart-wrap{height:248px}
 @media(max-width:1100px){.policy-chart-grid{grid-template-columns:1fr}.policy-panel-grid{grid-template-columns:1fr}.policy-mini-chart{min-height:270px}.policy-mini-chart .chart-wrap{height:220px}}
 
@@ -420,16 +443,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 /* ── policy effect cards: current(red) → simulation(green) ── */
 .policy-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .policy-compare-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;min-height:auto}
-.policy-compare-title{font-size:10px;font-family:var(--mono);font-weight:900;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.policy-compare-title{font-size:14px;font-family:var(--sans);font-weight:800;color:var(--text);letter-spacing:-.1px;text-transform:none;margin-bottom:10px}
 .policy-compare-flow{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);gap:5px;align-items:center}
 .policy-compare-box{border-radius:8px;padding:8px 10px;background:#fff;min-width:0;overflow:hidden;display:flex;flex-direction:column;align-items:center}
 .policy-compare-box.current{border:1px solid rgba(248,113,113,.45);background:rgba(248,113,113,.075)}
 .policy-compare-box.after{border:1px solid rgba(16,185,129,.45);background:rgba(16,185,129,.09)}
-.policy-compare-label{font-size:9px;color:var(--text3);font-weight:700;margin-bottom:2px;white-space:normal;line-height:1.3;text-align:center}
-.policy-compare-val{font-size:20px;font-weight:900;font-family:var(--mono);letter-spacing:-.7px;line-height:1.1;white-space:normal;overflow-wrap:break-word;word-break:break-all;text-align:center}
+.policy-compare-label{font-size:12px;color:var(--text2);font-weight:700;margin-bottom:5px;white-space:normal;line-height:1.3;text-align:center}
+.policy-compare-val{font-size:24px;font-weight:900;font-family:var(--mono);letter-spacing:-.7px;line-height:1.1;white-space:normal;overflow-wrap:break-word;word-break:break-all;text-align:center}
 .policy-compare-box.current .policy-compare-val{color:var(--red)}
 .policy-compare-box.after .policy-compare-val{color:var(--teal)}
-.policy-compare-sub{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:3px;line-height:1.3;white-space:normal;text-align:center}
+.policy-compare-sub{font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:6px;line-height:1.4;white-space:normal;text-align:center}
 .policy-compare-arrow{display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:15px;font-weight:900;font-family:var(--mono)}
 @media(max-width:1100px){.policy-compare-grid{grid-template-columns:1fr}.policy-compare-flow{grid-template-columns:1fr 18px 1fr}.policy-compare-val{font-size:17px}}
 </style>
@@ -791,7 +814,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <div style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0">자치구와 가중치를 변경하면 결과가 자동으로 갱신됩니다</div>
       </div>
       <div id="sim-map-wrap" style="position:relative;margin-top:12px;display:none">
-        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">▸ 출발지 → 추천 시설 경로</div>
+        <div style="font-size:17px;font-family:var(--sans);color:var(--text);margin-bottom:10px;letter-spacing:-.2px;font-weight:700">▸ 출발지 → 추천 시설 경로</div>
         <div id="sim-map" class="lmap h280"></div>
       </div>
     </div>
@@ -817,20 +840,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <div class="policy-panel-grid">
       <div>
         <div class="ctrl-group">
-          <div class="ctrl-label">① 자치구 선택</div>
+          <div class="ctrl-label policy-ctrl-label">① 자치구 선택</div>
           <select id="policy-gu" onchange="updatePolicyGu(true)"></select>
         </div>
         <div class="policy-slider-row">
-          <div class="policy-slider-head"><span>④ 가격조정률</span><strong id="policy-rev-v">0%</strong></div>
+          <div class="policy-slider-head"><span>② 가격조정률</span><strong id="policy-rev-v">0%</strong></div>
           <input type="range" id="policy-rev" min="-10" max="30" value="0" oninput="runPolicySim()">
           <div class="price-note" id="policy-price-note">가중평균봉투단가 변화: -</div>
         </div>
         <div class="policy-slider-row">
-          <div class="policy-slider-head"><span>⑤ 일반 쓰레기 수집·운반·처리비 절감률</span><strong id="policy-gen-v">0%</strong></div>
+          <div class="policy-slider-head"><span>③ 일반 쓰레기 수집·운반·처리비 절감률</span><strong id="policy-gen-v">0%</strong></div>
           <input type="range" id="policy-gen" min="0" max="25" value="0" oninput="runPolicySim()">
         </div>
         <div class="policy-slider-row">
-          <div class="policy-slider-head"><span>⑥ 음식물 처리비 절감률</span><strong id="policy-food-v">0%</strong></div>
+          <div class="policy-slider-head"><span>④ 음식물 처리비 절감률</span><strong id="policy-food-v">0%</strong></div>
           <input type="range" id="policy-food" min="0" max="25" value="0" oninput="runPolicySim()">
         </div>
         <div class="policy-actions">
@@ -851,7 +874,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
             <div class="chart-wrap"><canvas id="policy-position-chart"></canvas></div>
           </div>
           <div class="policy-mini-chart">
-            <div class="policy-mini-chart-title">쓰레기 배출 변화량 <span id="policy-waste-change-rate" style="color:var(--red);font-size:12px;font-weight:900;margin-left:4px">: 0.0%</span></div>
+            <div class="policy-mini-chart-title">쓰레기 배출 변화량 <span id="policy-waste-change-rate" style="color:var(--red);font-size:14px;font-weight:900;margin-left:4px">: 0.0%</span></div>
             <div class="chart-wrap"><canvas id="policy-contribution-chart"></canvas></div>
           </div>
         </div>
@@ -2362,6 +2385,28 @@ function showFinanceMatrixDetail(cluster,type,el){
 /* ════════════════════════════════════════════════ */
 /* COMPACT POLICY SIMULATOR                         */
 /* ════════════════════════════════════════════════ */
+const POLICY_META = {
+  '분리배출 품질 개선': {icon:'🗂', desc:'분리배출 정확도를 높여 재활용 효율을 개선합니다.'},
+  '수집동선 최적화': {icon:'🚛', desc:'수거 경로를 최적화해 운반 비용을 절감합니다.'},
+  '수수료 소폭 조정': {icon:'💰', desc:'봉투 수수료를 단계적으로 소폭 조정합니다.'},
+  '수수료 단계 조정': {icon:'💰', desc:'봉투 수수료를 단계별로 조정해 회수력을 보강합니다.'},
+  '수집·운반 계약 효율화': {icon:'📋', desc:'수집·운반 위탁 계약 구조를 효율화합니다.'},
+  '음식물 처리방식 개선': {icon:'🍱', desc:'음식물 쓰레기 처리 방식을 개선해 비용을 절감합니다.'},
+  '다량배출원 관리': {icon:'🏢', desc:'다량배출 사업장을 집중 관리하여 비용을 절감합니다.'},
+  '처리비 원가 점검': {icon:'🧮', desc:'처리비 산정 구조를 점검하고 원가를 최적화합니다.'},
+  '상권 배출 집중 관리': {icon:'🏪', desc:'상권 중심 배출을 관리해 수거·운반 효율을 높입니다.'},
+  '현행 요금 안정': {icon:'⚖', desc:'현행 요금 체계를 안정적으로 유지합니다.'},
+  '감량 인센티브': {icon:'🎁', desc:'배출 감량 시 인센티브를 제공합니다.'},
+  '재활용 품질 개선': {icon:'♻', desc:'재활용 품질 관리 체계를 강화합니다.'},
+  'RFID·봉투제 보완': {icon:'📡', desc:'RFID·종량제 봉투 시스템을 보완합니다.'},
+  '분리배출 교육': {icon:'📚', desc:'주민 대상 분리배출 교육을 강화합니다.'},
+  '무단투기 관리': {icon:'🚫', desc:'무단투기 단속과 관리 체계를 강화합니다.'},
+  '상가·사업장 배출원 협약': {icon:'🤝', desc:'상가·사업장과 배출량 협약을 체결해 감량을 유도합니다.'},
+  '공동주택 RFID·감량 인센티브': {icon:'🏠', desc:'공동주택 RFID 시스템과 감량 인센티브를 도입합니다.'},
+  '역세권·상권 거점 분리배출함': {icon:'🚉', desc:'역세권·상권에 거점 분리배출함을 설치합니다.'},
+  '권역별 주거·상업 분리 처방': {icon:'🗺', desc:'권역별로 주거·상업 특성에 맞춘 정책을 적용합니다.'}
+};
+function policyMetaOf(name){return POLICY_META[name] || {icon:'📌', desc:'세부 실행 전략을 마련합니다.'};}
 let selectedPolicyDefaultsApplied=false;
 function policyRecommendation(row){
   const base={rev:5,gen:6,food:6,title:'균형형 정책 패키지',policies:['분리배출 품질 개선','수집동선 최적화','수수료 소폭 조정']};
@@ -2533,8 +2578,36 @@ function runPolicySim(){
       </div>
     </div>`;
 
-  document.getElementById('policy-reco-title').textContent=`${row.name} 추천: ${reco.title}`;
-  document.getElementById('policy-reco-text').innerHTML=`<span class="finance-type-pill">${row.clusterName}</span> <span class="finance-type-pill">${row.typeLabel||financeTypeLabel(row.type)}</span> <span class="finance-type-pill">탄력성 ${elasticity.toFixed(2)}</span><br>${reco.policies.map(p=>'• '+p).join(' ')}<br>${financeTypeText(row.type)} ${clusterPolicyText(row.clusterName)}`;
+  document.getElementById('policy-reco-title').innerHTML=`👍 ${row.name} 추천: ${reco.title}`;
+  const strategiesHtml = reco.policies.map(p=>{
+    const m = policyMetaOf(p);
+    return `<div class="reco-strategy"><div class="reco-strategy-icon">${m.icon}</div><div><div class="reco-strategy-title">${p}</div><div class="reco-strategy-desc">${m.desc}</div></div></div>`;
+  }).join('');
+  document.getElementById('policy-reco-text').innerHTML=`
+    <div class="policy-reco-pills">
+      <span class="finance-type-pill">${row.clusterName}</span>
+      <span class="finance-type-pill">${row.typeLabel||financeTypeLabel(row.type)}</span>
+      <span class="finance-type-pill">탄력성 ${elasticity.toFixed(2)}</span>
+    </div>
+    <div class="reco-grid">
+      <div class="reco-col">
+        <div class="reco-col-title">추천 정책 <span style="font-weight:500;color:var(--text3);font-size:12px">(슬라이더 연동 항목)</span></div>
+        <div class="reco-col-sub">▼ 이 항목들이 시뮬레이션 결과에 반영됩니다</div>
+        <div class="reco-metrics">
+          <div class="reco-metric rev"><div class="reco-metric-label">💰 수수료 인상</div><div class="reco-metric-val">+${reco.rev}%</div></div>
+          <div class="reco-metric gen"><div class="reco-metric-label">🟠 일반 비용 절감</div><div class="reco-metric-val">${reco.gen}%</div></div>
+          <div class="reco-metric food"><div class="reco-metric-label">🟣 음식물 비용 절감</div><div class="reco-metric-val">${reco.food}%</div></div>
+        </div>
+        <button class="reco-apply-btn" onclick="applyPolicyRecommendation()">✨ 이 정책 적용하기</button>
+        <div class="reco-apply-note">추천 정책을 적용하면 좌측 슬라이더가 위 값으로 자동 설정됩니다.</div>
+      </div>
+      <div class="reco-col">
+        <div class="reco-col-title">실행 전략 <span style="font-weight:500;color:var(--text3);font-size:12px">(운영 가이드)</span></div>
+        <div class="reco-col-sub">선택한 정책을 효과적으로 실행하기 위한 권고 사항입니다.</div>
+        <div class="reco-strategies">${strategiesHtml}</div>
+      </div>
+    </div>
+  `;
 
   renderPolicyCharts(row,{beforeBurden,afterBurden,beforeUnrec,afterUnrec,curFiscal,afterFiscal,afterIncome,afterCost,beforeIncome,beforeCost,beforeWaste,afterWaste,wasteReduction,wasteChangeRate,volumeFactor,priceFactor,elasticity,costSaving,afterGenIncome,afterFoodIncome,afterGenCost,afterFoodCost});
 }
