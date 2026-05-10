@@ -804,7 +804,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-kicker{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(91,68,255,.10);color:#5b44ff;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.06em;margin-bottom:10px}
 .impact-title{font-size:27px;font-weight:900;line-height:1.2;letter-spacing:-.02em;color:#352b69;margin-bottom:10px}
 .impact-desc{font-size:11px;color:#6b6b83;line-height:1.7;max-width:760px}
-.impact-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-bottom:16px}
+.impact-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;margin-bottom:16px}
 .impact-guide-box{background:#faf9ff;border:1px solid #e6e1ff;border-radius:14px;padding:14px 16px;box-shadow:0 3px 10px rgba(91,68,255,.06)}
 .impact-guide-title{font-size:13px;font-weight:900;color:#4f46e5;margin-bottom:8px}
 .impact-guide-text{font-size:11px;color:#6b7280;line-height:1.7}
@@ -1005,8 +1005,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-range-fill.pos{background:#ef4444}.resid23-range-fill.neg{background:#818cf8}.resid23-range-fill.neutral{background:#9ca3af}
 .resid23-feature-diff.pos{color:#f87171}.resid23-feature-diff.neg{color:#818cf8}.resid23-feature-diff.neutral{color:#64748b}
 .resid23-factor-list{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0 16px}
-.resid23-factor-card{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:start;border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:12px 14px}
-.resid23-factor-card.muted{opacity:.55;background:#f8fafc}
+.resid23-factor-card{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:start;border:1.5px solid rgba(167,139,250,.35);border-radius:12px;background:#fff;padding:12px 14px;box-shadow:0 2px 8px rgba(167,139,250,.08)}
+.resid23-factor-card.muted{opacity:.4;background:#f5f5f7;border:1px solid #e5e7eb;box-shadow:none;filter:grayscale(.6)}
 .resid23-factor-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;background:#eff6ff;border:1px solid #bfdbfe}
 .resid23-factor-title{font-size:14px;font-weight:900;color:#111827;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .resid23-factor-badge{font-family:var(--mono);font-size:10px;font-weight:900;border-radius:999px;padding:3px 7px;border:1px solid}
@@ -1418,17 +1418,61 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   <!-- hidden cluster-list elements for renderClusterLists() -->
   <div style="display:none"><span id="cluster-list-0"></span><span id="cluster-list-1"></span><span id="cluster-list-2"></span><span id="cluster-list-3"></span></div>
 
-  <!-- 2.2 잔차 분석: 예측 vs 실제 + 조정지표 비교 -->
-  <div class="section-div">
+  <!-- 2.2 잔차 기반 특이 자치구 해석 (이전 2.3) -->
+  <div class="section-div resid23-section-head">
     <span class="section-num">2.2</span>
+    <span class="section-title">구조적으로 설명되지 않는 자치구는 어디인가?</span>
+  </div>
+
+  <div class="resid23-intro">
+    도시 구조(유형)와 생활인구를 반영한 예측값 대비 실제 배출량 차이를 통해 추가 요인이 있는 자치구를 확인합니다.
+  </div>
+
+  <div class="resid23-grid mb12">
+    <div class="panel resid23-chart-panel">
+      <div class="resid23-panel-head compact">
+        <div>
+          <div class="resid23-panel-title">예측 대비 실제 배출량 차이(잔차율) <button class="resid23-info-dot clickable" onclick="toggleResid23Criteria()" title="해석 기준 보기">i</button></div>
+          <div class="resid23-formula">예측 대비 차이율 = (실제 배출량 - 예측 배출량) / 예측 배출량 × 100</div>
+        </div>
+      </div>
+      <div id="resid23-criteria-pop" class="resid23-criteria-pop">
+        <div class="resid23-criteria-title">예측 대비 차이율 해석 기준</div>
+        <div class="resid23-legend-cards in-pop">
+          <div class="resid23-legend-card over">과다 배출<br><strong>예측 대비 차이율 &gt; +10%</strong></div>
+          <div class="resid23-legend-card normal">예측 범위 내<br><strong>-10% ≤ 예측 대비 차이율 ≤ +10%</strong></div>
+          <div class="resid23-legend-card good">상대적으로 양호<br><strong>예측 대비 차이율 &lt; -10%</strong></div>
+        </div>
+      </div>
+      <div class="resid23-axis-head" id="resid23-axis-head"></div>
+      <div class="resid23-chart-wrap" id="resid23-chart"></div>
+      <div class="resid23-footnote" id="resid23-footnote">자치구를 선택하면 오른쪽에서 상세 해석을 확인할 수 있습니다.</div>
+    </div>
+
+    <div class="panel resid23-detail-panel">
+      <div class="resid23-detail-head">
+        <div>
+          <div class="resid23-panel-title">선택 자치구 상세 해석</div>
+          <div class="resid23-formula">잔차 유형별 원인 후보와 같은 유형 평균 대비 위치를 함께 봅니다.</div>
+        </div>
+        <select id="resid23-select" onchange="selectResid23Gu(this.value)"></select>
+      </div>
+      <div id="resid23-detail"></div>
+    </div>
+  </div>
+
+  <!-- 2.3 잔차 분석: 예측 vs 실제 + 조정지표 비교 (이전 2.2) -->
+  <div class="section-div">
+    <span class="section-num">2.3</span>
     <span class="section-title">생활인구를 반영하면 어떻게 달라질까?</span>
   </div>
 
   <div class="impact-grid mb12">
     <div class="panel impact-main-panel">
       <div class="impact-hero">
-        <div>
-          <div class="impact-desc">거주인구 기준으로 계산하면 일부 자치구의 1인당 배출량이 과대평가될 수 있습니다. 생활인구를 반영하면 실제 이용 인구를 고려한 비교가 가능해져, 자치구별 배출 패턴을 더 정확하게 해석할 수 있습니다.</div>
+        <div class="impact-guide-box">
+          <div class="impact-guide-title">📖 도입 배경</div>
+          <div class="impact-guide-text">거주인구 기준으로 계산하면 일부 자치구의 1인당 배출량이 과대평가될 수 있습니다. 생활인구를 반영하면 실제 이용 인구를 고려한 비교가 가능해져, 자치구별 배출 패턴을 더 정확하게 해석할 수 있습니다.</div>
         </div>
         <div class="impact-guide-box">
           <div class="impact-guide-title">💡 이용 방법</div>
@@ -1466,7 +1510,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <div class="panel impact-detail-panel">
       <div class="impact-detail-top">
         <div>
-          <div class="impact-detail-kicker">선택 자치구 해석 패널</div>
           <div class="impact-detail-title">선택한 구 해석 카드</div>
           <div class="impact-detail-desc">선택한 자치구가 변화율 상위 5위에 포함되면 보라색 카드로, 그 외 자치구이면 파란색 카드로 표시됩니다.</div>
         </div>
@@ -1476,50 +1519,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <div class="impact-cluster-head">유형별 평균 변화 요약</div>
         <div class="impact-cluster-cards" id="impact-cluster-summary"></div>
       </div>
-    </div>
-  </div>
-
-  <!-- 2.3 잔차 기반 특이 자치구 해석 -->
-  <div class="section-div resid23-section-head">
-    <span class="section-num">2.3</span>
-    <span class="section-title">구조적으로 설명되지 않는 자치구는 어디인가?</span>
-    <span class="section-sub">모델: M4 재학습 모델</span>
-  </div>
-
-  <div class="resid23-intro">
-    도시 구조(유형)와 생활인구를 반영한 예측값 대비 실제 배출량 차이를 통해 추가 요인이 있는 자치구를 확인합니다.
-  </div>
-
-  <div class="resid23-grid mb12">
-    <div class="panel resid23-chart-panel">
-      <div class="resid23-panel-head compact">
-        <div>
-          <div class="resid23-panel-title">예측 대비 실제 배출량 차이(잔차율) <button class="resid23-info-dot clickable" onclick="toggleResid23Criteria()" title="해석 기준 보기">i</button></div>
-          <div class="resid23-formula">예측 대비 차이율 = (실제 배출량 - 예측 배출량) / 예측 배출량 × 100</div>
-        </div>
-      </div>
-      <div id="resid23-criteria-pop" class="resid23-criteria-pop">
-        <div class="resid23-criteria-title">예측 대비 차이율 해석 기준</div>
-        <div class="resid23-legend-cards in-pop">
-          <div class="resid23-legend-card over">과다 배출<br><strong>예측 대비 차이율 &gt; +10%</strong></div>
-          <div class="resid23-legend-card normal">예측 범위 내<br><strong>-10% ≤ 예측 대비 차이율 ≤ +10%</strong></div>
-          <div class="resid23-legend-card good">상대적으로 양호<br><strong>예측 대비 차이율 &lt; -10%</strong></div>
-        </div>
-      </div>
-      <div class="resid23-axis-head" id="resid23-axis-head"></div>
-      <div class="resid23-chart-wrap" id="resid23-chart"></div>
-      <div class="resid23-footnote" id="resid23-footnote">자치구를 선택하면 오른쪽에서 상세 해석을 확인할 수 있습니다.</div>
-    </div>
-
-    <div class="panel resid23-detail-panel">
-      <div class="resid23-detail-head">
-        <div>
-          <div class="resid23-panel-title">선택 자치구 상세 해석</div>
-          <div class="resid23-formula">잔차 유형별 원인 후보와 같은 유형 평균 대비 위치를 함께 봅니다.</div>
-        </div>
-        <select id="resid23-select" onchange="selectResid23Gu(this.value)"></select>
-      </div>
-      <div id="resid23-detail"></div>
     </div>
   </div>
 
