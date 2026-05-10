@@ -168,9 +168,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .sim-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
 .sim-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;transition:border-color .15s}
 .sim-card:hover{border-color:var(--teal)}
-.sim-rank{position:absolute;top:-9px;left:14px;background:var(--teal);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;padding:3px 10px;border-radius:5px;letter-spacing:.02em}
-.sim-card.r2 .sim-rank{background:var(--blue)}
-.sim-card.r3 .sim-rank{background:var(--text2)}
+.sim-rank{position:absolute;top:-9px;left:14px;background:#10b981;color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;padding:3px 10px;border-radius:5px;letter-spacing:.02em}
+.sim-card.r2 .sim-rank{background:#818cf8}
+.sim-card.r3 .sim-rank{background:#fbbf24}
 .sim-name{font-size:16px;font-weight:700;margin:6px 0 10px;color:var(--text);letter-spacing:-.01em}
 .sim-meta{font-size:12px;color:var(--text2);margin-bottom:10px;font-family:var(--mono)}
 .sim-stat{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--border)}
@@ -1893,7 +1893,7 @@ function drawSimMap(gu,top3){
   ).addTo(simMapInstance);
   simMapLayers.push(srcMarker);
 
-  const rankColors=['#10b981','#818cf8','#a78bfa'];
+  const rankColors=['#10b981','#818cf8','#fbbf24'];
   top3.forEach((f,i)=>{
     const line=L.polyline([[srcLat,srcLng],[f.lat,f.lng]],{
       color:rankColors[i],weight:i===0?3:2,opacity:i===0?.85:.55,
