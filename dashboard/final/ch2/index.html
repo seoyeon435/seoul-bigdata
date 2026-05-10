@@ -202,7 +202,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 /* SECTION 2.1 REDESIGN — 3-column layout */
 .s21-layout{display:grid;grid-template-columns:280px 1fr 300px;gap:12px;margin-bottom:12px;min-height:460px}
 .s21-left,.s21-right{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;overflow-y:auto;max-height:540px}
-.s21-left-empty,.s21-right-empty{font-size:11px;color:var(--text3);text-align:center;padding:40px 10px;line-height:1.7}
+.s21-left-empty,.s21-right-empty{font-size:13px;color:var(--text3);text-align:center;padding:40px 20px;line-height:1.8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;height:100%}
+.s21-left{display:flex;flex-direction:column}
 .s21-center{position:relative}
 .s21-type-btns{position:absolute;top:10px;right:10px;z-index:402;display:flex;gap:3px;flex-wrap:wrap;max-width:180px;justify-content:flex-end}
 .s21-type-btn{padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.7);font-size:9px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--sans);background:rgba(255,255,255,.88);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08);line-height:1.2}
@@ -803,7 +804,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-kicker{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(91,68,255,.10);color:#5b44ff;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.06em;margin-bottom:10px}
 .impact-title{font-size:27px;font-weight:900;line-height:1.2;letter-spacing:-.02em;color:#352b69;margin-bottom:10px}
 .impact-desc{font-size:11px;color:#6b6b83;line-height:1.7;max-width:760px}
-.impact-hero{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;align-items:start;margin-bottom:16px}
+.impact-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-bottom:16px}
 .impact-guide-box{background:#faf9ff;border:1px solid #e6e1ff;border-radius:14px;padding:14px 16px;box-shadow:0 3px 10px rgba(91,68,255,.06)}
 .impact-guide-title{font-size:13px;font-weight:900;color:#4f46e5;margin-bottom:8px}
 .impact-guide-text{font-size:11px;color:#6b7280;line-height:1.7}
@@ -1387,25 +1388,30 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <!-- 가운데: 지도 + 유형 버튼 오버레이 -->
     <div class="s21-center panel" style="padding:0;overflow:hidden;background:#f8f9fb;border-color:var(--border)">
       <div style="position:relative;height:100%">
-        <div class="s21-reference-badge">SECTION 2.1</div>
         <div id="map4" class="lmap" style="height:100%;min-height:500px"></div>
         <div class="map-loading" id="map4-loading">지도 로드 중...</div>
         <div class="s21-type-btns" id="s21-type-btns">
           <button class="s21-type-btn cl-1" onclick="selectClusterType(1)">🏠 주거형</button>
           <button class="s21-type-btn cl-0" onclick="selectClusterType(0)">🏢 상업형</button>
           <button class="s21-type-btn cl-2" onclick="selectClusterType(2)">🚶 유동형</button>
-          <button class="s21-type-btn cl-3" onclick="selectClusterType(3)">🔀 혼합형</button>
+          <button class="s21-type-btn cl-3" onclick="selectClusterType(3)">🧩 혼합형</button>
         </div>
       </div>
     </div>
 
     <!-- 오른쪽: 구 클릭 시 표시 -->
     <div class="s21-right" id="gu-detail-panel">
-      <div class="gu-detail-empty">
-        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">구(例: 종로구) 클릭 시</div>
-        지도에서 자치구를 클릭하면<br>
-        해당 자치구의 상세 특성과<br>
-        개선 가능성이 표시됩니다
+      <div class="gu-detail-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;padding:40px 20px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#c8c4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:18px">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;letter-spacing:-.3px">자치구 또는 유형을 선택하세요.</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.7">
+          지도에서 자치구를 클릭하거나<br>
+          왼쪽의 유형을 선택하면<br>
+          상세 정보를 확인할 수 있습니다.
+        </div>
       </div>
     </div>
   </div>
@@ -1422,8 +1428,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <div class="panel impact-main-panel">
       <div class="impact-hero">
         <div>
-          <div class="impact-kicker">SECTION 2</div>
-          <div class="impact-title">2.2 생활인구를 반영하면 어떻게 달라질까?</div>
           <div class="impact-desc">거주인구 기준으로 계산하면 일부 자치구의 1인당 배출량이 과대평가될 수 있습니다. 생활인구를 반영하면 실제 이용 인구를 고려한 비교가 가능해져, 자치구별 배출 패턴을 더 정확하게 해석할 수 있습니다.</div>
         </div>
         <div class="impact-guide-box">
@@ -1689,7 +1693,7 @@ function getDistName(props){
 
 // anchor: 0=상업형, 1=주거형, 2=유동집중형, 3=혼합형  (cluster_result.csv 기준)
 const CLUSTER_COLORS=['#f87171','#818cf8','#fbbf24','#a78bfa'];
-const CLUSTER_NAMES=['🏢 상업형','🏠 주거형','🚶 유동집중형','🔀 혼합형'];
+const CLUSTER_NAMES=['🏢 상업형','🏠 주거형','🚶 유동집중형','🧩 혼합형'];
 
 // 출처: rrf.seoul.go.kr — 2026년 실제 정비 일정
 // 용량 단위: 톤/일 (설계 기준)
@@ -1770,7 +1774,7 @@ const S21_CLUSTER_META=[
   {name:'유동형',fullName:'유동인구 집중',icon:'🚶',sub:'관광·소비 활동이 활발한 지역',
    bullets:['주말 활동 인구와 소비·관광 비중이 높음','방문객 중심 음식물·포장재 폐기물 발생 구조'],
    tagClass:'cl-transit-bg cl-transit',iconClass:'cl-2'},
-  {name:'혼합형',fullName:'복합 특성',icon:'🔀',sub:'업무·산업·거주 기능이 혼합된 지역',
+  {name:'혼합형',fullName:'복합 특성',icon:'🧩',sub:'업무·산업·거주 기능이 혼합된 지역',
    bullets:['산업·물류 비중이 높고 다양한 기능이 혼재','낮·밤 인구 비율이 비교적 균형적'],
    tagClass:'cl-mixed-bg cl-mixed',iconClass:'cl-3'}
 ];
@@ -1968,9 +1972,9 @@ function policyCard(varKey, title, obj, d){
 /* ── Mini residual bar chart for same cluster ── */
 function miniResidBars(d){
   if(typeof RESID==='undefined') return '';
-  const type=d.clusterType || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🔀 ]/g,'') || '혼합형';
+  const type=d.clusterType || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🧩 ]/g,'') || '혼합형';
   const peers=Object.entries(RESID)
-    .filter(([gu,v])=>{const gd=GU.find(x=>x.n===gu); return gd&&(gd.clusterType||CLUSTER_NAMES[gd.cluster]?.replace(/[🏢🏠🚶🔀 ]/g,''))==type;})
+    .filter(([gu,v])=>{const gd=GU.find(x=>x.n===gu); return gd&&(gd.clusterType||CLUSTER_NAMES[gd.cluster]?.replace(/[🏢🏠🚶🧩 ]/g,''))==type;})
     .sort((a,b)=>b[1].residPct-a[1].residPct);
   if(peers.length===0) return '';
   const maxAbs=Math.max(...peers.map(([,v])=>Math.abs(v.residPct)),1);
@@ -2070,7 +2074,7 @@ function renderRegressionInsight(d){
   const el=document.getElementById('regression-insight');
   if(!el || !d) return;
 
-  const type=d.clusterType || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🔀 ]/g,'') || '혼합형';
+  const type=d.clusterType || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🧩 ]/g,'') || '혼합형';
   const r2=getModelR2();
   const reg=(typeof REGRESSION_BY_GU !== 'undefined') ? REGRESSION_BY_GU[d.n] : null;
 
@@ -2785,7 +2789,7 @@ function showGuDetail(d){
 
 function resetGuDetail(){
   const panel=document.getElementById('gu-detail-panel');
-  panel.innerHTML=`<div class="gu-detail-empty"><div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">구(例: 종로구) 클릭 시</div>지도에서 자치구를 클릭하면<br>해당 자치구의 상세 특성과<br>개선 가능성이 표시됩니다</div>`;
+  panel.innerHTML=`<div class="gu-detail-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;padding:40px 20px"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#c8c4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:18px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;letter-spacing:-.3px">자치구 또는 유형을 선택하세요.</div><div style="font-size:12px;color:var(--text3);line-height:1.7">지도에서 자치구를 클릭하거나<br>왼쪽의 유형을 선택하면<br>상세 정보를 확인할 수 있습니다.</div></div>`;
   if(map4Layer){map4Layer.eachLayer(l=>{l._selected=false; map4Layer.resetStyle(l);});}
 }
 
@@ -3295,7 +3299,7 @@ function getImpactRows(){
       changePct,
       gap:+(living-resident).toFixed(2),
       absGap:+Math.abs(living-resident).toFixed(2),
-      clusterLabel:(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🔀]/g,'').trim()
+      clusterLabel:(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🧩]/g,'').trim()
     };
   });
   if(impactSort==='resident') rows.sort((a,b)=>b.residentPerCap-a.residentPerCap);
@@ -3472,13 +3476,13 @@ function buildSelectedImpactRecord(name){
     residentPerCap:+(getPerCap(selected)||0).toFixed(2),
     livingPerCap:+(getLivingPerCap(selected,2024)||0).toFixed(2),
     changePct:getPerCap(selected)?+((((getLivingPerCap(selected,2024)||0)-getPerCap(selected))/getPerCap(selected))*100).toFixed(0):0,
-    clusterLabel:(CLUSTER_NAMES[selected.cluster]||'').replace(/[🏢🏠🚶🔀]/g,'').trim()
+    clusterLabel:(CLUSTER_NAMES[selected.cluster]||'').replace(/[🏢🏠🚶🧩]/g,'').trim()
   };
 }
 function impactInterpretation(d, isTop5){
   const diff=(d.residentPerCap-d.livingPerCap).toFixed(2);
   const dayNight=getDayNightRatioFor(d,2024);
-  const cluster=(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🔀]/g,'').trim();
+  const cluster=(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🧩]/g,'').trim();
   if(isTop5){
     return {
       items:[
@@ -3502,7 +3506,7 @@ function makeImpactCaseCard(d){
   const isTop5=top5Names.includes(d.n);
   const top5Rank=top5Names.indexOf(d.n)+1;
   const rec=getLivingPopRecord(d.n,2024) || {};
-  const cluster=(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🔀]/g,'').trim();
+  const cluster=(CLUSTER_NAMES[d.cluster]||'').replace(/[🏢🏠🚶🧩]/g,'').trim();
   const theme=isTop5?'top5':'other';
   const label=isTop5?'① 상위 변화 자치구 (변화율 상위 5위)':'② 그 외 자치구 (변화율 상위 5위 미만)';
   const rankLabel=isTop5?`TOP 변화 ${top5Rank}위`:'TOP 5 외';
@@ -3580,7 +3584,7 @@ function resid23Rows(){
   if(typeof RESID==='undefined') return [];
   return Object.entries(RESID).map(([gu,v])=>{
     const gd=GU.find(x=>x.n===gu) || {};
-    const type=(gd.clusterType || v.clusterType || (CLUSTER_NAMES[gd.cluster]||'').replace(/[🏢🏠🚶🔀]/g,'').trim() || '기타');
+    const type=(gd.clusterType || v.clusterType || (CLUSTER_NAMES[gd.cluster]||'').replace(/[🏢🏠🚶🧩]/g,'').trim() || '기타');
     return {gu, ...v, gd, type, status:resid23Status(v.residPct)};
   }).sort((a,b)=>b.residPct-a.residPct);
 }
@@ -3706,7 +3710,7 @@ function resid23Causes(status){
 }
 function resid23RegressionVars(row){
   const d=row.gd || {};
-  const type=(d.clusterType || row.type || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🔀 ]/g,'') || '혼합형').trim();
+  const type=(d.clusterType || row.type || CLUSTER_NAMES[d.cluster]?.replace(/[🏢🏠🚶🧩 ]/g,'') || '혼합형').trim();
   const reg=(typeof REGRESSION_BY_GU !== 'undefined') ? REGRESSION_BY_GU[row.gu] : null;
   const living=reg && reg.living ? normalizeRegVar(reg.living) : (REGRESSION_MODEL.living[type] ? normalizeRegVar(REGRESSION_MODEL.living[type]) : null);
   const elderly=reg && reg.elderly ? normalizeRegVar(reg.elderly) : null;
@@ -3754,7 +3758,7 @@ function renderResid23Detail(){
   const row=resid23Rows().find(r=>r.gu===resid23SelectedGu) || resid23Rows()[0];
   if(!row) return;
   const status=row.status, meta=resid23Meta(status), d=row.gd||{};
-  const type=(d.clusterType || row.type || '기타').replace(/[🏢🏠🚶🔀]/g,'').trim();
+  const type=(d.clusterType || row.type || '기타').replace(/[🏢🏠🚶🧩]/g,'').trim();
   const peerRows=resid23Rows().filter(r=>r.type===row.type);
   const peerAvg=peerRows.length?peerRows.reduce((s,r)=>s+r.residPct,0)/peerRows.length:0;
   const diff=row.residPct-peerAvg;
@@ -3812,7 +3816,7 @@ function financeRate(name,key){
 }
 function won(v){return Math.round(v).toLocaleString()+'원';}
 function pctTxt(v,d=1){return (v*100).toFixed(d)+'%';}
-function cleanClusterName(d){return (CLUSTER_NAMES[d.cluster]||d.clusterType||'유형미상').replace(/[🏢🏠🚶🔀]/g,'').trim();}
+function cleanClusterName(d){return (CLUSTER_NAMES[d.cluster]||d.clusterType||'유형미상').replace(/[🏢🏠🚶🧩]/g,'').trim();}
 function mean(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
 function median(arr){const a=[...arr].sort((x,y)=>x-y);const n=a.length;if(!n)return 0;return n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2;}
 

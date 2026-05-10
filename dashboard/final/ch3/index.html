@@ -638,7 +638,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <button class="tgl blue active" onclick="setRadarCluster(0,this)">🏠 주거형</button>
         <button class="tgl red" onclick="setRadarCluster(1,this)">🏢 상업형</button>
         <button class="tgl amber" onclick="setRadarCluster(2,this)">🚶 유동집중형</button>
-        <button class="tgl purple" onclick="setRadarCluster(3,this)">🔀 혼합형</button>
+        <button class="tgl purple" onclick="setRadarCluster(3,this)">🧩 혼합형</button>
       </div>
       <div class="chart-wrap h280"><canvas id="radar4"></canvas></div>
     </div>
@@ -648,7 +648,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <div class="cluster-card"><span class="cluster-tag cl-residential-bg cl-residential">🏠 주거형</span><div class="cluster-name">주거·가정형</div><div class="cluster-districts" id="cluster-list-0">-</div><div class="cluster-feat">거주인구↑ 공동주택↑<br>음식물 가정배출 多</div></div>
         <div class="cluster-card"><span class="cluster-tag cl-commercial-bg cl-commercial">🏢 상업형</span><div class="cluster-name">상업·사업장형</div><div class="cluster-districts" id="cluster-list-1">-</div><div class="cluster-feat">카드소비↑ 다량배출↑<br>사업장 음식물 多</div></div>
         <div class="cluster-card"><span class="cluster-tag cl-transit-bg cl-transit">🚶 유동집중형</span><div class="cluster-name">유동인구 집중</div><div class="cluster-districts" id="cluster-list-2">-</div><div class="cluster-feat">생활인구÷거주 > 2<br>관광·숙박↑</div></div>
-        <div class="cluster-card"><span class="cluster-tag cl-mixed-bg cl-mixed">🔀 혼합형</span><div class="cluster-name">복합 특성</div><div class="cluster-districts" id="cluster-list-3">-</div><div class="cluster-feat">2개 이상 조건 혼재<br>단계적 접근 필요</div></div>
+        <div class="cluster-card"><span class="cluster-tag cl-mixed-bg cl-mixed">🧩 혼합형</span><div class="cluster-name">복합 특성</div><div class="cluster-districts" id="cluster-list-3">-</div><div class="cluster-feat">2개 이상 조건 혼재<br>단계적 접근 필요</div></div>
       </div>
     </div>
   </div>
@@ -882,7 +882,7 @@ function getDistName(props){
 <script>
 
 const CLUSTER_COLORS=['#818cf8','#f87171','#fbbf24','#a78bfa'];
-const CLUSTER_NAMES=['🏠 주거형','🏢 상업형','🚶 유동집중형','🔀 혼합형'];
+const CLUSTER_NAMES=['🏠 주거형','🏢 상업형','🚶 유동집중형','🧩 혼합형'];
 
 // ── CO₂ 배출 계수 (환경부 화물수송 온실가스 산정방법) ──────────────────
 // 근거: 경유 1L = 2.67 kg CO₂eq (CO₂ + CH₄ × GWP21 + N₂O × GWP310)
@@ -1963,7 +1963,7 @@ function financeRate(name,key){
 }
 function won(v){return Math.round(v).toLocaleString()+'원';}
 function pctTxt(v,d=1){return (v*100).toFixed(d)+'%';}
-function cleanClusterName(d){return (CLUSTER_NAMES[d.cluster]||d.clusterType||'유형미상').replace(/[🏢🏠🚶🔀]/g,'').trim();}
+function cleanClusterName(d){return (CLUSTER_NAMES[d.cluster]||d.clusterType||'유형미상').replace(/[🏢🏠🚶🧩]/g,'').trim();}
 function mean(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
 function median(arr){const a=[...arr].sort((x,y)=>x-y);const n=a.length;if(!n)return 0;return n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2;}
 
