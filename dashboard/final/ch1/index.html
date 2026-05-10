@@ -11,22 +11,22 @@
 <script src="data.js"></script>
 <style>
 :root {
-  --bg:#f5f7fa; --bg2:#ffffff; --bg3:#f0f3f7; --bg4:#e3e8ef;
-  --border:rgba(0,0,0,.07); --border2:rgba(0,0,0,.12);
-  --text:#1a2332; --text2:#5a6478; --text3:#8a94a8;
-  --green:#059669; --green2:#047857; --green-bg:rgba(5,150,105,.08); --green-light:#d1fae5;
-  --red:#dc2626; --red-bg:rgba(220,38,38,.07); --red-light:#fee2e2;
-  --blue:#2563eb; --blue-bg:rgba(37,99,235,.07);
-  --amber:#d97706; --amber-bg:rgba(217,119,6,.08);
-  --purple:#7c3aed; --purple-bg:rgba(124,58,237,.07);
+  --bg:#f4f2fa; --bg2:#ffffff; --bg3:#efebf7; --bg4:#e5dff2;
+  --border:rgba(124,58,237,.08); --border2:rgba(124,58,237,.16);
+  --text:#2a2440; --text2:#5e587a; --text3:#9189a8;
+  --green:#34d399; --green2:#10b981; --green-bg:rgba(52,211,153,.12); --green-light:#d1fae5;
+  --red:#f87171; --red-bg:rgba(248,113,113,.12); --red-light:#fee2e2;
+  --blue:#818cf8; --blue-bg:rgba(129,140,248,.12);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.15);
+  --purple:#a78bfa; --purple-bg:rgba(167,139,250,.12);
   --mono:'JetBrains Mono',monospace; --sans:'Noto Sans KR',sans-serif;
-  --shadow:0 1px 4px rgba(0,0,0,.06);
-  --shadow2:0 4px 20px rgba(0,0,0,.08);
+  --shadow:0 2px 8px rgba(124,58,237,.04);
+  --shadow2:0 4px 20px rgba(124,58,237,.06);
   --panel-width: 400px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh}
 
 /* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200;box-shadow:var(--shadow)}
@@ -51,30 +51,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
 /* SECTION */
-.section-header{display:flex;align-items:baseline;gap:10px;margin:28px 0 14px;padding-top:4px}
+.section-header{display:flex;align-items:center;gap:12px;margin:32px 0 18px;padding-top:4px}
 .section-header:first-child{margin-top:0}
-.section-badge{font-family:var(--mono);font-size:10px;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;font-weight:600;flex-shrink:0}
-.section-title{font-size:16px;font-weight:700;letter-spacing:-.2px}
-.section-meta{font-size:10px;color:var(--text3);font-family:var(--mono);margin-left:auto}
+.section-badge{font-family:var(--mono);font-size:13px;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(167,139,250,.3);border-radius:6px;padding:5px 10px;font-weight:700;flex-shrink:0;letter-spacing:-.2px}
+.section-title{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.section-meta{font-size:12px;color:var(--text3);font-family:var(--mono);margin-left:auto}
 
 /* PANELS */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;overflow:hidden;box-shadow:var(--shadow)}
-.panel-title{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;overflow:hidden;box-shadow:var(--shadow)}
+.panel-title{font-size:17px;font-family:var(--sans);color:var(--text);text-transform:none;letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
 .panel-badge{font-size:9px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:2px 6px;color:var(--text2);font-family:var(--mono);text-transform:none;letter-spacing:0;white-space:nowrap}
 .panel-badge.warn{color:var(--amber);background:var(--amber-bg);border-color:rgba(217,119,6,.3)}
 
 /* KPI CARDS */
-.kpi-row{display:grid;gap:10px;margin-bottom:12px}
+.kpi-row{display:grid;gap:14px;margin-bottom:16px}
 .kpi-row.k4{grid-template-columns:repeat(4,1fr)}
 .kpi-row.k3{grid-template-columns:repeat(3,1fr)}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
-.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:2px 2px 0 0}
-.kpi.green::after{background:var(--green)}.kpi.red::after{background:var(--red)}.kpi.blue::after{background:var(--blue)}.kpi.amber::after{background:var(--amber)}.kpi.purple::after{background:var(--purple)}
-.kpi-label{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:5px}
-.kpi-val{font-size:26px;font-weight:700;font-family:var(--mono);letter-spacing:-1.5px;line-height:1;display:flex;align-items:baseline;gap:4px}
-.kpi-unit{font-size:12px;font-weight:400;color:var(--text2)}
-.kpi-sub{font-size:10px;color:var(--text3);margin-top:4px;font-family:var(--mono)}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:18px;opacity:.15}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"icon label" "icon val" "icon sub";column-gap:18px;row-gap:4px;align-items:center;box-shadow:var(--shadow2)}
+.kpi-label{grid-area:label;font-size:15px;font-family:var(--sans);color:var(--text2);margin-bottom:0;text-transform:none;letter-spacing:-.1px;display:flex;align-items:center;gap:6px;font-weight:500}
+.kpi-val{grid-area:val;font-size:34px;font-weight:700;font-family:var(--mono);letter-spacing:-1.6px;line-height:1.05;display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.kpi-unit{font-size:15px;font-weight:500;color:var(--text2)}
+.kpi-sub{grid-area:sub;font-size:12px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+.kpi-icon{grid-area:icon;position:static;top:auto;right:auto;width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;opacity:1;flex-shrink:0}
+.kpi.green .kpi-icon{background:var(--green-bg);color:var(--green)}
+.kpi.red .kpi-icon{background:var(--red-bg);color:var(--red)}
+.kpi.blue .kpi-icon{background:var(--blue-bg);color:var(--blue)}
+.kpi.amber .kpi-icon{background:var(--amber-bg);color:var(--amber)}
+.kpi.purple .kpi-icon{background:var(--purple-bg);color:var(--purple)}
+/* "-274 / -610" 두 숫자 카드 폰트 작게 */
+#kpi11-gap-val{font-size:24px;letter-spacing:-1px}
 
 /* TOGGLE */
 .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
@@ -117,15 +122,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .tl-header{display:grid;grid-template-columns:150px 1fr 90px;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--border);font-size:9px;font-family:var(--mono);color:var(--text3);font-weight:600}
 .tl-months{display:flex;justify-content:space-between;padding:0 2px}
 .tl-rows-wrap{position:relative}
-.tl-today-line{position:absolute;top:0;bottom:0;width:2px;background:#059669;z-index:10;pointer-events:none;border-radius:1px}
-.tl-today-badge{position:absolute;bottom:-28px;transform:translateX(-50%);background:#059669;color:#fff;font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;z-index:11;box-shadow:0 2px 6px rgba(5,150,105,.35)}
+.tl-today-line{position:absolute;top:0;bottom:0;width:2px;background:#70636a;z-index:10;pointer-events:none;border-radius:1px}
+.tl-today-badge{position:absolute;bottom:-28px;transform:translateX(-50%);background:#70636a;color:#fff;font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;z-index:11;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .tl-row{display:grid;grid-template-columns:150px 1fr 90px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
 .tl-row:last-child{border-bottom:none}
 .tl-name{font-size:12px;font-weight:600}
 .tl-cap{font-size:10px;color:var(--text3);font-family:var(--mono)}
 .tl-bar-wrap{position:relative;height:24px;background:var(--bg3);border-radius:4px;overflow:hidden}
 .tl-bar{position:absolute;height:100%;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:var(--mono);color:#fff;font-weight:700;white-space:nowrap}
-.tl-dates{font-size:10px;font-family:var(--mono);color:var(--amber);text-align:right;font-weight:500;line-height:1.4}
+.tl-dates{font-size:12px;font-family:var(--mono);color:#a78bfa;text-align:right;font-weight:600;line-height:1.4}
 .tl-legend{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
 .tl-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
 .tl-legend-dot{width:12px;height:8px;border-radius:2px}
@@ -234,6 +239,18 @@ select:focus{border-color:var(--green)}
 .map-legend-dot{width:10px;height:10px;border-radius:2px}
 .grad-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:6px}
 .grad-bar{flex:1;height:5px;border-radius:3px}
+
+/* SECTION 2.1 STYLE MAP PANEL — applied to 1.2 map */
+.s21-style-map-panel{
+  position:relative !important;
+  border-radius:18px !important;
+  background:linear-gradient(135deg,#ffffff 0%,#f7fbff 60%,#f5f7ff 100%) !important;
+  border:1px solid rgba(226,232,240,.95) !important;
+  box-shadow:0 12px 32px rgba(37,99,235,.06) !important;
+  overflow:hidden;
+}
+.s21-style-map-panel .lmap{background:transparent !important}
+.s21-style-map-panel .leaflet-container{background:transparent !important}
 
 /* 1.3 specific */
 .chart-scroll-y{overflow-y:auto;max-height:360px}
@@ -559,19 +576,6 @@ select:focus{border-color:var(--green)}
 <div class="panel-overlay" id="panel-overlay"></div>
 <div class="slide-panel" id="slide-panel"><div id="slide-panel-inner"></div></div>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-mark">🗂</div>
-    <div>
-      <div class="logo-text">서울시 자치구별 쓰레기 발생 구조 진단 대시보드</div>
-      <div class="logo-sub">25개 자치구 · 진단 → 분석 → 처방</div>
-    </div>
-  </div>
-  <div class="header-meta">
-    <div>2026 실제 정비 일정 (출처: rrf.seoul.go.kr)</div>
-    <div id="header-date-display">기준일: —</div>
-  </div>
-</div>
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab(0)">
@@ -635,10 +639,16 @@ select:focus{border-color:var(--green)}
     <div class="panel" style="display:flex;flex-direction:column">
       <div class="panel-title">서울시 공공 소각시설 4개소 정비 타임라인</div>
       <div id="facility-timeline" style="flex:1"></div>
-      <div class="tl-legend" id="tl-legend">
-        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#059669"></div>오늘</div>
-        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:var(--bg4)"></div>정비 기간 외</div>
-        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#d97706"></div>정비 기간</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:14px">
+        <div class="tl-legend" id="tl-legend" style="margin-top:0">
+          <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#70636a"></div>오늘</div>
+          <div class="tl-legend-item"><div class="tl-legend-dot" style="background:var(--bg4)"></div>정비 기간 외</div>
+          <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#a78bfa"></div>정비 기간</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);text-align:right;line-height:1.7">
+          <div>2026 실제 정비 일정 (출처: rrf.seoul.go.kr)</div>
+          <div id="header-date-display">기준일: —</div>
+        </div>
       </div>
     </div>
 
@@ -737,7 +747,7 @@ select:focus{border-color:var(--green)}
       <div style="display:grid;grid-template-columns:1.5fr 0.65fr;gap:14px;margin-bottom:14px;align-items:stretch">
 
         <!-- 지도 패널 -->
-        <div class="panel" style="position:relative;padding:18px 18px 14px">
+        <div class="panel s21-style-map-panel" style="position:relative;padding:18px 18px 14px">
           <div class="panel-title flex-between" style="margin-bottom:12px">
             <span id="map12-title" style="font-size:14px;font-weight:700;color:var(--text);font-family:var(--sans);text-transform:none;letter-spacing:0">자치구별 발생량 지도 (총량)
               <span class="info-icon" data-tip="자치구별 폐기물 발생량을 색상으로 표현한 코로플레스 지도. 클릭 시 상세 패널이 열립니다.">ⓘ</span>
@@ -750,7 +760,7 @@ select:focus{border-color:var(--green)}
           <div class="grad-bar-wrap" style="margin-top:10px">
             <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">(단위: 톤/년)</span>
             <span style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-left:8px">낮음</span>
-            <div class="grad-bar" id="map12-gradient" style="background:linear-gradient(to right,#d1fae5,#059669);flex:1;max-width:120px"></div>
+            <div class="grad-bar" id="map12-gradient" style="background:linear-gradient(to right,#d1fae5,#34d399);flex:1;max-width:120px"></div>
             <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">높음</span>
           </div>
         </div>
@@ -867,9 +877,9 @@ select:focus{border-color:var(--green)}
             </div>
             <!-- 범례 -->
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
-              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#059669"></div>재활용</div>
-              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#dc2626"></div>소각</div>
-              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#7c3aed"></div>매립</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#34d399"></div>재활용</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#f87171"></div>소각</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#a78bfa"></div>매립</div>
               <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:2px;background:#cbd5e1"></div>기타</div>
             </div>
             <div id="processing-scroll-container" style="overflow-y:auto;max-height:400px;padding-right:4px">
@@ -1072,7 +1082,7 @@ function drawTimeline() {
     const endMM = m.end_date.slice(5).replace('-','/');
     rowsHtml += `<div class="tl-row">
       <div><div class="tl-name">${m.facility} 자원회수시설</div><div class="tl-cap">${fmt(m.capacity)}톤/일</div></div>
-      <div class="tl-bar-wrap"><div class="tl-bar" style="left:${sf*100}%;width:${(ef-sf)*100}%;background:#d97706">${days}일</div></div>
+      <div class="tl-bar-wrap"><div class="tl-bar" style="left:${sf*100}%;width:${(ef-sf)*100}%;background:#a78bfa">${days}일</div></div>
       <div class="tl-dates">${startMM}<br>~${endMM}</div>
     </div>`;
   });
@@ -1161,7 +1171,7 @@ function drawCapacityChart(incinerationDemand) {
         const diff = monthlyVals[i] - incinerationDemand;
         const sign = diff >= 0 ? '+' : '';
         const txt = sign + fmt(Math.round(diff));
-        const color = diff >= 0 ? '#2563eb' : '#dc2626';
+        const color = diff >= 0 ? '#818cf8' : '#f87171';
         c.save();
         c.fillStyle = color;
         c.font = `bold 9px JetBrains Mono, monospace`;
@@ -1179,7 +1189,7 @@ function drawCapacityChart(incinerationDemand) {
       if (!chartArea) return;
       const yPx = scales.y.getPixelForValue(incinerationDemand);
       c.save();
-      c.fillStyle = '#dc2626';
+      c.fillStyle = '#f87171';
       c.font = `600 9px JetBrains Mono, monospace`;
       c.textAlign = 'right';
       c.fillText('처리 대상 (연간 일평균)', chartArea.right - 2, yPx - 14);
@@ -1195,7 +1205,7 @@ function drawCapacityChart(incinerationDemand) {
       labels: MONTHS_KR,
       datasets: [
         { label: '실제 처리량', data: monthlyVals, backgroundColor: 'rgba(37,99,235,0.65)', borderColor: 'rgba(37,99,235,0.85)', borderWidth: 0, borderRadius: 3 },
-        { label: '처리 대상량', data: Array(12).fill(incinerationDemand), type: 'line', borderColor: '#dc2626', borderWidth: 2, borderDash: [6, 4], pointRadius: 0, fill: false, order: -1 }
+        { label: '처리 대상량', data: Array(12).fill(incinerationDemand), type: 'line', borderColor: '#f87171', borderWidth: 2, borderDash: [6, 4], pointRadius: 0, fill: false, order: -1 }
       ]
     },
     plugins: [backgroundZonesPlugin, barLabelsPlugin, demandLabelPlugin],
@@ -1209,7 +1219,7 @@ function drawCapacityChart(incinerationDemand) {
             generateLabels(chart) {
               return [
                 { text: '실제 처리량', fillStyle: 'rgba(37,99,235,0.65)', strokeStyle: 'transparent', lineWidth: 0, hidden: false, datasetIndex: 0 },
-                { text: '처리 대상량', fillStyle: 'transparent', strokeStyle: '#dc2626', lineWidth: 2, lineDash: [6,4], hidden: false, datasetIndex: 1 },
+                { text: '처리 대상량', fillStyle: 'transparent', strokeStyle: '#f87171', lineWidth: 2, lineDash: [6,4], hidden: false, datasetIndex: 1 },
                 { text: '여유', fillStyle: 'rgba(37,99,235,0.15)', strokeStyle: 'transparent', lineWidth: 0, hidden: false },
                 { text: '부족', fillStyle: 'rgba(220,38,38,0.15)', strokeStyle: 'transparent', lineWidth: 0, hidden: false },
               ];
@@ -1339,13 +1349,13 @@ async function drawMap12() {
 
   const grad = document.getElementById('map12-gradient');
   if (selectedMetric === 'percap') grad.style.background = 'linear-gradient(to right,#fef3c7,#92400e)';
-  else grad.style.background = 'linear-gradient(to right,#d1fae5,#059669)';
+  else grad.style.background = 'linear-gradient(to right,#d1fae5,#34d399)';
 
   const metricLabel = selectedMetric === 'total' ? '톤/년' : 'kg/인일';
   const typeLabel = selectedType;
 
   map12Layer = L.geoJSON(geo, {
-    style: f => ({ fillColor: getColor(getDistName(f.properties)), fillOpacity: .82, color: 'rgba(0,0,0,.2)', weight: 1 }),
+    style: f => ({ fillColor: getColor(getDistName(f.properties)), fillOpacity: .72, color: 'rgba(255,255,255,.98)', weight: 2.8, opacity: 1 }),
     onEachFeature: (feature, layer) => {
       const name = getDistName(feature.properties);
       const dy = DISTRICT_YEAR[name]?.[selectedYear];
@@ -1355,7 +1365,7 @@ async function drawMap12() {
       const fmtV = selectedMetric === 'total' ? `${fmt(totalV)} 톤/년` : `${(+totalV).toFixed(3)} kg/인일`;
       layer.bindTooltip(`<strong>${name}</strong><br>${typeLabel} ${metricLabel === 'kg/인일' ? '1인당' : '총량'}: ${fmtV}<br>인구: ${fmt(pop)}명`,
         { className: 'gu-tooltip', sticky: true, direction: 'top' });
-      layer.on('mouseover', e => e.target.setStyle({ weight: 2.5, color: '#000', fillOpacity: .95 }));
+      layer.on('mouseover', e => e.target.setStyle({ weight: 3.6, color: 'rgba(51,65,85,.85)', fillOpacity: .9 }));
       layer.on('mouseout', e => map12Layer.resetStyle(e.target));
       layer.on('click', () => openSidePanel(name));
 
@@ -1403,7 +1413,7 @@ function renderTop5() {
 
 // 구성 차트 범례 필터 상태
 let compHiddenKeys = new Set();
-const COMP_COLORS = { household:'#059669', biz_nonbiz:'#2563eb', industrial:'#d97706', construction:'#94a3b8', designated:'#dc2626' };
+const COMP_COLORS = { household:'#34d399', biz_nonbiz:'#818cf8', industrial:'#fbbf24', construction:'#94a3b8', designated:'#f87171' };
 const COMP_LABELS = { household:'가정', biz_nonbiz:'사업장비배출', industrial:'사업장배출', construction:'건설', designated:'지정' };
 const COMP_TIPS = { household:'가정에서 발생하는 생활계 폐기물', biz_nonbiz:'소규모 사업장 등에서 발생하며 별도 배출시설이 없는 폐기물', industrial:'공장·제조업 등 법적으로 지정된 배출시설에서 발생하는 폐기물', construction:'건설/철거/토목 공사 폐기물', designated:'유해성으로 인해 별도 관리되는 폐기물' };
 const COMP_KEYS = ['household','biz_nonbiz','industrial','construction','designated'];
@@ -1599,9 +1609,9 @@ function drawTrend13() {
     data: {
       labels,
       datasets: [
-        { label:'재활용', data:recycleDisp, borderColor:'#059669', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#059669', fill:false, tension:.3 },
-        { label:'소각',   data:incDisp,     borderColor:'#dc2626', borderWidth:2,   pointRadius:4, pointBackgroundColor:'#dc2626', fill:false, tension:.3 },
-        { label:'매립',   data:landDisp,    borderColor:'#7c3aed', borderWidth:2,   pointRadius:4, pointBackgroundColor:'#7c3aed', fill:false, tension:.3 }
+        { label:'재활용', data:recycleDisp, borderColor:'#34d399', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#34d399', fill:false, tension:.3 },
+        { label:'소각',   data:incDisp,     borderColor:'#f87171', borderWidth:2,   pointRadius:4, pointBackgroundColor:'#f87171', fill:false, tension:.3 },
+        { label:'매립',   data:landDisp,    borderColor:'#a78bfa', borderWidth:2,   pointRadius:4, pointBackgroundColor:'#a78bfa', fill:false, tension:.3 }
       ]
     },
     plugins: [pointLabelsPlugin],
@@ -1637,7 +1647,7 @@ function renderProcessingChart() {
   const sortLabel=sort==='recycle'?'재활용률':sort==='incineration'?'소각 비중':'매립 비중';
 
   let datasets;
-  const baseDatasets={recycle:{label:'재활용',key:'recycle',bg:'#059669'},inc:{label:'소각',key:'inc',bg:'#ef4444'},land:{label:'매립',key:'land',bg:'#7c3aed'},other:{label:'기타',key:'other',bg:'#cbd5e1'}};
+  const baseDatasets={recycle:{label:'재활용',key:'recycle',bg:'#34d399'},inc:{label:'소각',key:'inc',bg:'#ef4444'},land:{label:'매립',key:'land',bg:'#a78bfa'},other:{label:'기타',key:'other',bg:'#cbd5e1'}};
   if(sort==='recycle')datasets=['recycle','inc','land','other'];
   else if(sort==='incineration')datasets=['inc','recycle','land','other'];
   else datasets=['land','recycle','inc','other'];
@@ -1673,8 +1683,8 @@ function renderDivergingBar() {
   DISTRICTS.forEach(d=>{const dy=DISTRICT_YEAR[d]?.[ly];if(!dy)return;if(divergMetric==='recycle')numerator+=dy.living_recycle||0;else if(divergMetric==='incineration')numerator+=dy.living_incineration||0;else numerator+=dy.living_landfill||0;denom+=dy.living_waste||0;});
   const seoulAvg=denom>0?numerator/denom*100:0;
   const metricLabel=divergMetric==='recycle'?'재활용률':divergMetric==='incineration'?'소각률':'매립률';
-  const posColor=divergMetric==='recycle'?'#059669':'#dc2626';
-  const negColor=divergMetric==='recycle'?'#dc2626':'#059669';
+  const posColor=divergMetric==='recycle'?'#34d399':'#f87171';
+  const negColor=divergMetric==='recycle'?'#f87171':'#34d399';
 
   const distData=[...DISTRICTS].map(d=>{
     const dy=DISTRICT_YEAR[d]?.[ly];if(!dy)return null;
@@ -1737,11 +1747,11 @@ function renderSidePanel(district) {
 
   // Composition data
   const compData = [
-    { label: '가정', key: 'household_waste', color: '#059669', tip: '가정에서 발생하는 생활계 폐기물' },
-    { label: '사업장비배출', key: 'biz_nonbiz_waste', color: '#2563eb', tip: '소규모 사업장 등에서 발생하며 별도 배출시설이 없는 폐기물' },
-    { label: '사업장배출', key: 'industrial_waste', color: '#d97706', tip: '공장·제조업 등 법적으로 지정된 배출시설에서 발생하는 폐기물' },
+    { label: '가정', key: 'household_waste', color: '#34d399', tip: '가정에서 발생하는 생활계 폐기물' },
+    { label: '사업장비배출', key: 'biz_nonbiz_waste', color: '#818cf8', tip: '소규모 사업장 등에서 발생하며 별도 배출시설이 없는 폐기물' },
+    { label: '사업장배출', key: 'industrial_waste', color: '#fbbf24', tip: '공장·제조업 등 법적으로 지정된 배출시설에서 발생하는 폐기물' },
     { label: '건설', key: 'construction_waste', color: '#94a3b8', tip: '건설/철거/토목 공사 폐기물' },
-    { label: '지정', key: 'designated_waste', color: '#dc2626', tip: '유해성으로 인해 별도 관리되는 폐기물' },
+    { label: '지정', key: 'designated_waste', color: '#f87171', tip: '유해성으로 인해 별도 관리되는 폐기물' },
   ].map(c => ({ ...c, val: dy[c.key] || 0, pct: ((dy[c.key] || 0) / totalWaste * 100) }));
   const maxComp = compData.reduce((a,b) => a.pct > b.pct ? a : b);
 
@@ -1876,9 +1886,9 @@ function renderSidePanel(district) {
     </div>
     <div class="sp2-proc-bars">
       ${[
-        {l:'재활용', v:totalRR, c:'#059669', ton:dy.total_recycle},
+        {l:'재활용', v:totalRR, c:'#34d399', ton:dy.total_recycle},
         {l:'소각',   v:totalIR, c:'#ef4444', ton:dy.total_incineration},
-        {l:'매립',   v:totalLR, c:'#7c3aed', ton:dy.total_landfill}
+        {l:'매립',   v:totalLR, c:'#a78bfa', ton:dy.total_landfill}
       ].map(s => `
         <div class="sp2-proc-bar-row">
           <div class="sp2-proc-bar-label">

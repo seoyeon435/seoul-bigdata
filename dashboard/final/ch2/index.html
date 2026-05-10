@@ -14,18 +14,18 @@
 <script src="data_finance_burden2023.js"></script>
 <style>
 :root{
-  --bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f3f7;--bg4:#e3e8ef;
-  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.12);
-  --text:#1a2332;--text2:#5a6478;--text3:#8a94a8;
-  --teal:#009975;--teal2:#007a5e;--teal-bg:rgba(0,153,117,0.08);
-  --amber:#d97706;--amber-bg:rgba(217,119,6,0.08);
-  --red:#dc2626;--red-bg:rgba(220,38,38,0.07);
-  --blue:#2563eb;--blue-bg:rgba(37,99,235,0.07);
-  --purple:#7c3aed;--purple-bg:rgba(124,58,237,0.07);
+  --bg:#f4f2fa;--bg2:#ffffff;--bg3:#efebf7;--bg4:#e5dff2;
+  --border:rgba(124,58,237,0.08);--border2:rgba(124,58,237,0.16);
+  --text:#2a2440;--text2:#5e587a;--text3:#9189a8;
+  --teal:#10b981;--teal2:#059669;--teal-bg:rgba(16,185,129,0.12);
+  --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.15);
+  --red:#f87171;--red-bg:rgba(248,113,113,0.12);
+  --blue:#818cf8;--blue-bg:rgba(129,140,248,0.12);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.12);
   --mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh;overflow-x:hidden}
 
 .header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200}
 .logo{display:flex;align-items:center;gap:10px}
@@ -48,35 +48,38 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* CHAPTER INTRO */
-.chap-intro{margin-bottom:20px;padding:16px 20px;background:linear-gradient(90deg,#ffffff,transparent);border-left:4px solid var(--teal);border-radius:0 10px 10px 0}
-.chap-intro.amber{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(217,119,6,.07),transparent)}
-.chap-intro.red{border-left-color:var(--red);background:linear-gradient(90deg,rgba(220,38,38,.06),transparent)}
+.chap-intro{margin-bottom:20px;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.chap-intro.amber,.chap-intro.red{}
 .chap-num{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:.1em;margin-bottom:5px}
 .chap-title{font-size:22px;font-weight:700;margin-bottom:5px;letter-spacing:-.3px}
 .chap-question{font-size:13px;color:var(--text2);font-style:italic}
 
 /* SECTION DIVIDER - 더 큰 글씨 */
-.section-div{display:flex;align-items:center;gap:12px;margin:28px 0 16px;padding-top:10px;border-top:1px dashed var(--border)}
+.section-div{display:flex;align-items:center;gap:12px;margin:32px 0 18px;padding-top:12px;border-top:1px dashed var(--border)}
 .section-div:first-of-type{border-top:none;padding-top:0;margin-top:0}
-.section-num{font-family:var(--mono);font-size:11px;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:5px;letter-spacing:.05em;font-weight:600}
-.section-title{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.2px}
-.section-sub{font-size:11px;color:var(--text2);margin-left:auto;font-family:var(--mono)}
+.section-num{font-family:var(--mono);font-size:13px;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(167,139,250,.3);padding:5px 11px;border-radius:6px;letter-spacing:-.2px;font-weight:700}
+.section-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.5px}
+.section-sub{font-size:12px;color:var(--text2);margin-left:auto;font-family:var(--mono)}
 
 /* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
 .kpi-row.k5{grid-template-columns:repeat(5,1fr)}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kpi.teal::before{background:var(--teal)}.kpi.amber::before{background:var(--amber)}.kpi.red::before{background:var(--red)}.kpi.blue::before{background:var(--blue)}.kpi.purple::before{background:var(--purple)}
-.kpi-label{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-.kpi-val{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1.5px;line-height:1}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(124,58,237,.06);display:grid;grid-template-columns:auto 1fr;grid-template-areas:"icon label" "icon val" "icon sub";column-gap:18px;row-gap:4px;align-items:center}
+.kpi-label{grid-area:label;font-size:15px;font-family:var(--sans);color:var(--text2);margin-bottom:0;text-transform:none;letter-spacing:-.1px;font-weight:500}
+.kpi-val{grid-area:val;font-size:34px;font-weight:700;font-family:var(--mono);letter-spacing:-1.6px;line-height:1.05}
 .kpi-val.teal{color:var(--teal)}.kpi-val.amber{color:var(--amber)}.kpi-val.red{color:var(--red)}.kpi-val.blue{color:var(--blue)}.kpi-val.purple{color:var(--purple)}
-.kpi-unit{font-size:12px;font-weight:400;color:var(--text2);margin-left:2px}
-.kpi-sub{font-size:10px;color:var(--text3);margin-top:5px;font-family:var(--mono)}
+.kpi-unit{font-size:15px;font-weight:500;color:var(--text2);margin-left:4px}
+.kpi-sub{grid-area:sub;font-size:12px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+.kpi-icon{grid-area:icon;width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.kpi.teal .kpi-icon{background:var(--teal-bg);color:var(--teal)}
+.kpi.amber .kpi-icon{background:var(--amber-bg);color:var(--amber)}
+.kpi.red .kpi-icon{background:var(--red-bg);color:var(--red)}
+.kpi.blue .kpi-icon{background:var(--blue-bg);color:var(--blue)}
+.kpi.purple .kpi-icon{background:var(--purple-bg);color:var(--purple)}
 
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:hidden}
-.panel-title{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:600}
-.panel-badge{font-size:9px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;color:var(--text2);font-family:var(--mono);text-transform:none;letter-spacing:0;white-space:nowrap}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.panel-title{font-size:17px;font-family:var(--sans);color:var(--text);text-transform:none;letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:700}
+.panel-badge{font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:3px 7px;color:var(--text2);font-family:var(--mono);text-transform:none;letter-spacing:0;white-space:nowrap;font-weight:500}
 .panel-badge.est{color:var(--amber);background:var(--amber-bg);border-color:rgba(217,119,6,.25)}
 
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -120,7 +123,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .rank-val{font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:600}
 
 /* CLUSTER */
-.cl-residential{color:#2563eb}.cl-commercial{color:#dc2626}.cl-transit{color:#d97706}.cl-mixed{color:#7c3aed}
+.cl-residential{color:#818cf8}.cl-commercial{color:#f87171}.cl-transit{color:#fbbf24}.cl-mixed{color:#a78bfa}
 .cl-residential-bg{background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.3)}
 .cl-commercial-bg{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.3)}
 .cl-transit-bg{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3)}
@@ -179,7 +182,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 /* CITIZEN CARD - REIMAGINED — 단순 통계 X, 환경 영향/실천 가이드 */
 
 /* GANGSEO CASE */
-.case-box{background:var(--bg2);border:1px solid rgba(124,58,237,.15);border-radius:10px;padding:16px;border-left:3px solid var(--purple)}
+.case-box{background:var(--bg2);border:1px solid rgba(124,58,237,.15);border-radius:10px;padding:16px}
 .case-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .case-tag{font-size:9px;font-family:var(--mono);background:var(--purple-bg);color:var(--purple);padding:2px 8px;border-radius:10px;border:1px solid rgba(124,58,237,.3)}
 .case-title{font-size:14px;font-weight:700}
@@ -194,7 +197,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .gu-detail-stat{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px dashed var(--border)}
 .gu-detail-stat-label{color:var(--text3)}
 .gu-detail-stat-val{font-family:var(--mono);color:var(--text);font-weight:500}
-.gu-detail-msg{margin-top:10px;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:11px;line-height:1.6;color:var(--text2);border-left:2px solid var(--teal)}
+.gu-detail-msg{margin-top:10px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:11px;line-height:1.6;color:var(--text2)}
 
 /* SECTION 2.1 REDESIGN — 3-column layout */
 .s21-layout{display:grid;grid-template-columns:280px 1fr 300px;gap:12px;margin-bottom:12px;min-height:460px}
@@ -214,9 +217,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .s21-info-wrap{position:relative;display:inline-block;vertical-align:middle;margin-left:8px}
 .s21-info-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:serif;transition:all .15s}
 .s21-info-btn:hover{background:var(--amber-bg);color:var(--amber);border-color:rgba(217,119,6,.3)}
-.s21-popover{display:none;position:absolute;bottom:calc(100% + 10px);right:0;width:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:500}
+.s21-popover{display:none;position:absolute;top:calc(100% + 10px);right:0;width:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:500}
 .s21-popover.show{display:block}
-.s21-popover::after{content:'';position:absolute;bottom:-7px;right:6px;width:12px;height:12px;background:var(--bg2);border-right:1px solid var(--border2);border-bottom:1px solid var(--border2);transform:rotate(45deg)}
+.s21-popover::after{content:'';position:absolute;top:-7px;right:6px;width:12px;height:12px;background:var(--bg2);border-left:1px solid var(--border2);border-top:1px solid var(--border2);transform:rotate(45deg)}
 .s21-popover-close{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
 .s21-popover-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 
@@ -265,6 +268,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .s21-r-stat-val{font-family:var(--mono);color:var(--text);font-weight:500}
 
 
+
+/* SECTION 2.1 STYLE MAP PANEL — applied to 2.4 finance map */
+.s21-style-map-panel{
+  position:relative !important;
+  border-radius:18px !important;
+  background:linear-gradient(135deg,#ffffff 0%,#f7fbff 60%,#f5f7ff 100%) !important;
+  border:1px solid rgba(226,232,240,.95) !important;
+  box-shadow:0 12px 32px rgba(37,99,235,.06) !important;
+  overflow:hidden;
+}
+.s21-style-map-panel .lmap{background:transparent !important}
+.s21-style-map-panel .leaflet-container{background:transparent !important}
 
 /* SECTION 2.1 MAP — reference image inspired card/map styling */
 .s21-layout{
@@ -330,7 +345,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   z-index:402;
   font-size:10px;
   font-family:var(--mono);
-  color:#2563eb;
+  color:#818cf8;
   background:rgba(239,246,255,.92);
   border:1px solid rgba(37,99,235,.16);
   border-radius:999px;
@@ -449,7 +464,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 
 
 /* METRIC INFO / REGRESSION INSIGHT — Ch.2 추가 */
-.metric-info-panel{border-left:3px solid var(--amber);background:linear-gradient(135deg,#fff,rgba(217,119,6,.035))}
+.metric-info-panel{background:var(--bg2)}
 .info-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .info-chip{border:1px solid rgba(217,119,6,.28);background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:6px 10px;font-size:10px;font-family:var(--sans);font-weight:700;cursor:pointer;transition:all .15s}
 .info-chip:hover{background:rgba(217,119,6,.14);transform:translateY(-1px)}
@@ -595,7 +610,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .policy-kpi-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;margin-bottom:5px}
 .policy-kpi-val{font-size:20px;font-weight:800;font-family:var(--mono);letter-spacing:-.5px}
 .policy-kpi-sub{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:4px;line-height:1.35}
-.policy-reco-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:10px;border-left:4px solid var(--teal)}
+.policy-reco-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:10px}
 .policy-reco-title{font-size:14px;font-weight:800;margin-bottom:5px;color:var(--text)}
 .policy-reco-text{font-size:11px;color:var(--text2);line-height:1.75}
 .policy-slider-row{margin-bottom:13px}
@@ -704,14 +719,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 }
 .finance-combined-grid .matrix-point.finance-muted-point span{display:block;color:#94a3b8;font-weight:900;letter-spacing:-.02em;}
 .finance-combined-grid .matrix-point.finance-selected-point{
-  color:#dc2626 !important;
+  color:#f87171 !important;
   background:#fff !important;
-  border-color:#dc2626 !important;
+  border-color:#f87171 !important;
   border-width:2.5px;
   z-index:8;
   box-shadow:0 4px 10px rgba(220,38,38,.22);
 }
-.finance-combined-grid .matrix-point.finance-selected-point span{display:block;color:#dc2626;font-weight:900;}
+.finance-combined-grid .matrix-point.finance-selected-point span{display:block;color:#f87171;font-weight:900;}
 .finance-combined-grid .matrix-scenario-no{font-size:7.5px;left:5px;top:4px;}
 .finance-detail-wide{
   display:none;
@@ -742,7 +757,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .finance-side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
 .finance-side-title{font-size:18px;font-weight:900;line-height:1.25;}
 .finance-side-sub{font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:3px;}
-.finance-gu-reset{border:0;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(220,38,38,.18);}
+.finance-gu-reset{border:0;background:linear-gradient(135deg,#f87171,#ef4444);color:#fff;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(220,38,38,.18);}
 .finance-gu-reset:hover{filter:brightness(1.04);transform:translateY(-1px);}
 .finance-type-definition{background:linear-gradient(135deg,rgba(220,38,38,.055),#fff);border:1px solid rgba(220,38,38,.15);border-radius:9px;padding:10px 11px;margin-bottom:9px;}
 .finance-type-definition-label{font-size:9px;font-family:var(--mono);color:var(--text3);margin-bottom:4px;font-weight:800;}
@@ -827,17 +842,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-point-label.resident{color:#6b7280;top:14px}
 .impact-change{font-family:var(--mono);font-size:14px;font-weight:900;text-align:right}
 .impact-change.negative{color:#4f46e5}
-.impact-change.positive{color:#dc2626}
+.impact-change.positive{color:#f87171}
 .impact-scale-note{margin-top:14px;padding:10px 4px 0}
 .impact-scale-note>span{display:block;font-size:11px;color:#7a7693;font-weight:800;margin-bottom:8px}
-.impact-gradient-bar{height:7px;border-radius:999px;background:linear-gradient(90deg,#5b44ff 0%,#a9a2ff 30%,#d8d5e8 50%,#f4c4ca 70%,#dc2626 100%)}
+.impact-gradient-bar{height:7px;border-radius:999px;background:linear-gradient(90deg,#5b44ff 0%,#a9a2ff 30%,#d8d5e8 50%,#f4c4ca 70%,#f87171 100%)}
 .impact-scale-labels{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#8b8aa0;font-family:var(--mono);margin-top:6px}
 .impact-cluster-block{margin-top:16px;border-top:1px solid #efecf8;padding-top:14px}
 .impact-cluster-head{font-size:13px;font-weight:900;color:#3c355c;margin-bottom:10px}
 .impact-cluster-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .impact-cluster-card{border:1px solid #ece8fb;border-radius:14px;padding:12px;background:#fff}
 .impact-cluster-name{font-size:12px;font-weight:900;margin-bottom:8px}
-.impact-cluster-name.commercial{color:#dc2626}.impact-cluster-name.residential{color:#16a34a}.impact-cluster-name.transit{color:#7c3aed}.impact-cluster-name.mixed{color:#2563eb}
+.impact-cluster-name.commercial{color:#f87171}.impact-cluster-name.residential{color:#16a34a}.impact-cluster-name.transit{color:#a78bfa}.impact-cluster-name.mixed{color:#818cf8}
 .impact-cluster-metrics{display:flex;align-items:flex-end;gap:10px;margin-bottom:6px}
 .impact-cluster-metric{font-family:var(--mono);font-size:22px;font-weight:900;line-height:1}
 .impact-cluster-metric.small{font-size:19px;color:#5b44ff}.impact-cluster-metric.resident{color:#818196}
@@ -845,7 +860,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-cluster-bar{width:14px;border-radius:4px 4px 2px 2px;background:#d8d5e8}
 .impact-cluster-bar.living{background:#5b44ff}
 .impact-cluster-change{font-family:var(--mono);font-size:13px;font-weight:900}
-.impact-cluster-change.negative{color:#4f46e5}.impact-cluster-change.positive{color:#dc2626}
+.impact-cluster-change.negative{color:#4f46e5}.impact-cluster-change.positive{color:#f87171}
 .impact-tip{margin-top:12px;background:#faf9ff;border:1px dashed #d7cffc;border-radius:12px;padding:11px 14px;font-size:11px;color:#68617e;line-height:1.6}
 
 .impact-detail-kicker{font-size:11px;font-family:var(--mono);color:#7c78a8;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
@@ -856,7 +871,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-case-card.top5{border-top:4px solid #5b44ff;background:linear-gradient(180deg,#fff 0%,#faf8ff 100%)}.impact-case-card.other{border-top:4px solid #3b82f6;background:linear-gradient(180deg,#fff 0%,#f7fbff 100%)}
 .impact-case-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .impact-case-type{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:900;border:1px solid}
-.impact-case-type.top5{background:#f2efff;color:#5b44ff;border-color:#dcd5ff}.impact-case-type.other{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+.impact-case-type.top5{background:#f2efff;color:#5b44ff;border-color:#dcd5ff}.impact-case-type.other{background:#eff6ff;color:#818cf8;border-color:#bfdbfe}
 .impact-case-rank{font-size:10px;font-family:var(--mono);color:#8b8aa0;font-weight:800}
 .impact-case-name{font-size:30px;font-weight:900;color:#2d274d;line-height:1;margin:8px 0}
 .impact-case-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -903,12 +918,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .impact-summary-item{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid #ece8fb;border-radius:12px;background:#fff}
 .impact-summary-icon{width:28px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
 .impact-summary-icon.top5{background:#f2efff;color:#5b44ff}
-.impact-summary-icon.other{background:#eff6ff;color:#2563eb}
+.impact-summary-icon.other{background:#eff6ff;color:#818cf8}
 .impact-summary-title{font-size:11px;font-weight:900;color:#374151;margin-bottom:3px}
 .impact-summary-text{font-size:11px;color:#6b7280;line-height:1.6}
 .impact-case-bottom-note{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:11px;line-height:1.6}
 .impact-case-bottom-note.top5{background:#f5f1ff;border:1px solid #e3d8ff;color:#5b44ff}
-.impact-case-bottom-note.other{background:#f0f7ff;border:1px solid #cfe5ff;color:#2563eb}
+.impact-case-bottom-note.other{background:#f0f7ff;border:1px solid #cfe5ff;color:#818cf8}
 .impact-footer-simple{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .impact-footer-simple .impact-foot-chip{background:#fff}
 .impact-detail-panel .impact-case-grid{grid-template-columns:1fr !important}
@@ -937,7 +952,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-formula{font-size:12px;color:#536079;line-height:1.6;margin-top:6px}
 .resid23-info-dot{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;border:1px solid #cbd5e1;color:#64748b;font-size:12px;margin-left:5px;font-family:var(--mono)}
 .resid23-criteria-btn{border:1px solid #cbd7ea;background:#f8fbff;color:#315176;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
-.resid23-criteria-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.resid23-criteria-btn:hover{border-color:#818cf8;color:#818cf8;background:#eff6ff}
 .resid23-chart-wrap{position:relative;background:linear-gradient(180deg,#fff1f2 0 32%,#f8fafc 32% 68%,#eff6ff 68% 100%);border-radius:12px;padding:22px 18px 22px 92px;min-height:520px;overflow:hidden}
 .resid23-axis{position:absolute;left:92px;right:24px;top:0;bottom:0;pointer-events:none}
 .resid23-axis-line{position:absolute;top:0;bottom:0;width:1px;background:#9ca3af;opacity:.8}
@@ -950,9 +965,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-bar-area{position:relative;height:18px}
 .resid23-zero{position:absolute;top:-8px;bottom:-8px;width:1px;background:#64748b;left:var(--zero)}
 .resid23-bar{position:absolute;top:50%;height:14px;border-radius:999px;transform:translateY(-50%);box-shadow:0 4px 10px rgba(15,23,42,.12)}
-.resid23-bar.over{background:linear-gradient(90deg,#fb7185,#dc2626)}
+.resid23-bar.over{background:linear-gradient(90deg,#fb7185,#f87171)}
 .resid23-bar.normal{background:linear-gradient(90deg,#d1d5db,#9ca3af)}
-.resid23-bar.good{background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.resid23-bar.good{background:linear-gradient(90deg,#60a5fa,#818cf8)}
 .resid23-val{font-family:var(--mono);font-size:15px;font-weight:900;text-align:right}
 .resid23-val.over{color:#c52434}.resid23-val.normal{color:#4b5563}.resid23-val.good{color:#1d5fae}
 .resid23-zone-label{position:absolute;font-size:13px;font-weight:900;top:12px;color:#c52434}
@@ -965,13 +980,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-card{border:1px solid #e5e7eb;border-radius:18px;padding:20px;background:linear-gradient(180deg,#fff,#fcfcfd);box-shadow:0 6px 18px rgba(15,23,42,.04)}
 .resid23-card.over{border-color:#fecaca;background:linear-gradient(180deg,#fff,#fff8f8)}.resid23-card.normal{border-color:#cfe0ff;background:linear-gradient(180deg,#fff,#f8fbff)}.resid23-card.good{border-color:#d8eadf;background:linear-gradient(180deg,#fff,#fbfefc)}
 .resid23-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
-.resid23-status-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.resid23-chip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 13px;font-size:15px;font-weight:900}.resid23-chip.over{background:#fee2e2;color:#dc2626}.resid23-chip.normal{background:#dbeafe;color:#2563eb}.resid23-chip.good{background:#dcfce7;color:#15803d}
+.resid23-status-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.resid23-chip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 13px;font-size:15px;font-weight:900}.resid23-chip.over{background:#fee2e2;color:#f87171}.resid23-chip.normal{background:#dbeafe;color:#818cf8}.resid23-chip.good{background:#dcfce7;color:#15803d}
 .resid23-gu-name{font-size:36px;font-weight:900;letter-spacing:-.03em;color:#111827}.resid23-type-pill{border:1px solid #d6dde8;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:800;background:#fff;color:#334155}
-.resid23-big-val{font-size:34px;font-weight:900;font-family:var(--mono);text-align:right}.resid23-big-val.over{color:#dc2626}.resid23-big-val.normal{color:#2563eb}.resid23-big-val.good{color:#15803d}.resid23-big-label{font-size:13px;color:#334155;text-align:right;margin-top:4px}
+.resid23-big-val{font-size:34px;font-weight:900;font-family:var(--mono);text-align:right}.resid23-big-val.over{color:#f87171}.resid23-big-val.normal{color:#818cf8}.resid23-big-val.good{color:#15803d}.resid23-big-label{font-size:13px;color:#334155;text-align:right;margin-top:4px}
 .resid23-summary{font-size:16px;color:#111827;line-height:1.65;margin:-4px 0 22px}
-.resid23-feature-box{border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:16px;background:#fff}.resid23-feature-title{font-size:18px;font-weight:900;margin-bottom:14px;color:#111827;display:flex;align-items:center;gap:8px}.resid23-feature-title small{font-size:13px;color:#64748b;font-weight:700}.resid23-feature-row{display:grid;grid-template-columns:132px 1fr 60px;gap:12px;align-items:center;margin:14px 0}.resid23-feature-name{font-size:15px;font-weight:800;color:#111827}.resid23-range{position:relative;height:8px;border-radius:999px;background:#e5e7eb}.resid23-range::after{content:'';position:absolute;left:50%;top:-5px;width:1px;height:18px;background:#cbd5e1}.resid23-range-point{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:#9ca3af;box-shadow:0 0 0 4px rgba(255,255,255,.85)}.resid23-range-fill{position:absolute;top:50%;height:7px;border-radius:999px;transform:translateY(-50%)}.resid23-range-fill.over{background:#ef4444}.resid23-range-fill.good{background:#15803d}.resid23-feature-diff{font-family:var(--mono);font-size:15px;font-weight:900;text-align:right}.resid23-feature-diff.over{color:#dc2626}.resid23-feature-diff.normal{color:#334155}.resid23-feature-diff.good{color:#15803d}
+.resid23-feature-box{border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:16px;background:#fff}.resid23-feature-title{font-size:18px;font-weight:900;margin-bottom:14px;color:#111827;display:flex;align-items:center;gap:8px}.resid23-feature-title small{font-size:13px;color:#64748b;font-weight:700}.resid23-feature-row{display:grid;grid-template-columns:132px 1fr 60px;gap:12px;align-items:center;margin:14px 0}.resid23-feature-name{font-size:15px;font-weight:800;color:#111827}.resid23-range{position:relative;height:8px;border-radius:999px;background:#e5e7eb}.resid23-range::after{content:'';position:absolute;left:50%;top:-5px;width:1px;height:18px;background:#cbd5e1}.resid23-range-point{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:#9ca3af;box-shadow:0 0 0 4px rgba(255,255,255,.85)}.resid23-range-fill{position:absolute;top:50%;height:7px;border-radius:999px;transform:translateY(-50%)}.resid23-range-fill.over{background:#ef4444}.resid23-range-fill.good{background:#15803d}.resid23-feature-diff{font-family:var(--mono);font-size:15px;font-weight:900;text-align:right}.resid23-feature-diff.over{color:#f87171}.resid23-feature-diff.normal{color:#334155}.resid23-feature-diff.good{color:#15803d}
 .resid23-cause-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.resid23-cause-grid.one{grid-template-columns:1fr}.resid23-cause-grid.two{grid-template-columns:1fr 1fr}.resid23-cause-card{border:1px solid #e5e7eb;border-radius:14px;padding:18px;text-align:center;background:#fff}.resid23-cause-card .ico{font-size:38px;line-height:1;margin-bottom:12px}.resid23-cause-title{font-size:16px;font-weight:900;margin-bottom:8px}.resid23-cause-text{font-size:13px;color:#334155;line-height:1.6}
-.resid23-peer-box{border:1px solid #e5e7eb;border-radius:14px;padding:18px;background:#fff;margin-top:16px}.resid23-peer-title{font-size:17px;font-weight:900;margin-bottom:16px}.resid23-peer-compare{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:16px;text-align:center}.resid23-peer-label{font-size:14px;color:#111827}.resid23-peer-val{font-family:var(--mono);font-size:26px;font-weight:900;margin-top:5px}.resid23-people{font-size:24px;letter-spacing:2px;color:#9ca3af}.resid23-people.target.over{color:#ef4444}.resid23-people.target.normal{color:#2563eb}.resid23-people.target.good{color:#15803d}.resid23-vs{font-size:22px;font-weight:900;color:#64748b}.resid23-peer-desc{font-size:13px;color:#334155;text-align:center;margin-top:14px;line-height:1.6}
+.resid23-peer-box{border:1px solid #e5e7eb;border-radius:14px;padding:18px;background:#fff;margin-top:16px}.resid23-peer-title{font-size:17px;font-weight:900;margin-bottom:16px}.resid23-peer-compare{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:16px;text-align:center}.resid23-peer-label{font-size:14px;color:#111827}.resid23-peer-val{font-family:var(--mono);font-size:26px;font-weight:900;margin-top:5px}.resid23-people{font-size:24px;letter-spacing:2px;color:#9ca3af}.resid23-people.target.over{color:#ef4444}.resid23-people.target.normal{color:#818cf8}.resid23-people.target.good{color:#15803d}.resid23-vs{font-size:22px;font-weight:900;color:#64748b}.resid23-peer-desc{font-size:13px;color:#334155;text-align:center;margin-top:14px;line-height:1.6}
 .resid23-insight{border-radius:14px;padding:16px 18px;margin-top:16px;font-size:15px;line-height:1.65;font-weight:800}.resid23-insight.over{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}.resid23-insight.normal{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}.resid23-insight.good{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
 .resid23-criteria-pop{display:none;border:1px dashed #cbd5e1;background:#f8fafc;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.7;color:#475569;margin:8px 0 14px}.resid23-criteria-pop.show{display:block}
 @media(max-width:1200px){.resid23-grid{grid-template-columns:1fr}.resid23-chart-wrap{min-height:480px}.resid23-cause-grid{grid-template-columns:1fr}.resid23-cause-grid.two{grid-template-columns:1fr}}
@@ -981,13 +996,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-grid{grid-template-columns:.95fr 1.05fr;align-items:start}
 .resid23-panel-head.compact{margin-bottom:10px}
 .resid23-info-dot.clickable{cursor:pointer;background:#fff;border:1px solid #cbd5e1;color:#64748b;padding:0;margin-left:6px;vertical-align:middle}
-.resid23-info-dot.clickable:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.resid23-info-dot.clickable:hover{border-color:#818cf8;color:#818cf8;background:#eff6ff}
 .resid23-criteria-title{font-size:13px;font-weight:900;color:#334155;margin-bottom:10px}
 .resid23-legend-cards.in-pop{margin-top:0}
 .resid23-chart-wrap{height:760px;min-height:0;max-height:760px;overflow-y:auto;scrollbar-gutter:stable;overscroll-behavior-y:contain}
 .resid23-chart-wrap::-webkit-scrollbar{width:9px}.resid23-chart-wrap::-webkit-scrollbar-track{background:#f1f5f9;border-radius:999px}.resid23-chart-wrap::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px;border:2px solid #f1f5f9}.resid23-chart-wrap::-webkit-scrollbar-thumb:hover{background:#94a3b8}
-.resid23-range-fill.pos{background:#ef4444}.resid23-range-fill.neg{background:#2563eb}.resid23-range-fill.neutral{background:#9ca3af}
-.resid23-feature-diff.pos{color:#dc2626}.resid23-feature-diff.neg{color:#2563eb}.resid23-feature-diff.neutral{color:#64748b}
+.resid23-range-fill.pos{background:#ef4444}.resid23-range-fill.neg{background:#818cf8}.resid23-range-fill.neutral{background:#9ca3af}
+.resid23-feature-diff.pos{color:#f87171}.resid23-feature-diff.neg{color:#818cf8}.resid23-feature-diff.neutral{color:#64748b}
 .resid23-factor-list{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0 16px}
 .resid23-factor-card{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:start;border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:12px 14px}
 .resid23-factor-card.muted{opacity:.55;background:#f8fafc}
@@ -996,7 +1011,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-factor-badge{font-family:var(--mono);font-size:10px;font-weight:900;border-radius:999px;padding:3px 7px;border:1px solid}
 .resid23-factor-badge.sig{background:#ecfdf5;color:#059669;border-color:#99f6e4}.resid23-factor-badge.ref{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0}
 .resid23-factor-desc{font-size:12px;color:#475569;line-height:1.6}.resid23-factor-action{font-size:11px;color:#059669;line-height:1.55;margin-top:5px;font-weight:800}.resid23-factor-action::before{content:'→ ';}
-.resid23-factor-effect{font-family:var(--mono);font-size:17px;font-weight:900;text-align:right;white-space:nowrap;padding-top:2px}.resid23-factor-effect.pos{color:#dc2626}.resid23-factor-effect.neg{color:#2563eb}
+.resid23-factor-effect{font-family:var(--mono);font-size:17px;font-weight:900;text-align:right;white-space:nowrap;padding-top:2px}.resid23-factor-effect.pos{color:#f87171}.resid23-factor-effect.neg{color:#818cf8}
 .resid23-factor-explain{font-family:var(--mono);font-size:10px;color:#94a3b8;line-height:1.55;margin-top:5px}
 @media(max-width:1200px){.resid23-grid{grid-template-columns:1fr}.resid23-chart-wrap{height:620px;max-height:620px}.resid23-factor-card{grid-template-columns:38px 1fr}.resid23-factor-effect{grid-column:2;text-align:left}}
 
@@ -1105,9 +1120,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .resid23-axis-head-tick:last-child{transform:translateX(-86%) !important}
 .resid23-zone-bar{position:relative;height:24px;display:flex;border-radius:6px;overflow:hidden;margin-bottom:6px}
 .resid23-zone-seg{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.resid23-zone-seg.good{background:#eff6ff;color:#2563eb;border-right:1px dashed #93c5fd;border-radius:6px 0 0 6px}
+.resid23-zone-seg.good{background:#eff6ff;color:#818cf8;border-right:1px dashed #93c5fd;border-radius:6px 0 0 6px}
 .resid23-zone-seg.mid{background:#f1f5f9;color:#64748b;border-right:1px dashed #cbd5e1}
-.resid23-zone-seg.over{background:#fff1f2;color:#dc2626;border-radius:0 6px 6px 0}
+.resid23-zone-seg.over{background:#fff1f2;color:#f87171;border-radius:0 6px 6px 0}
 .resid23-val{text-align:right !important}
 .resid23-axis-line.threshold-line{background:#94a3b8 !important;opacity:.6 !important}
 .resid23-grid{align-items:stretch !important}
@@ -1133,18 +1148,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 </div>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-mark">🗂️</div>
-    <div>
-      <div class="logo-text">서울시 자치구별 쓰레기 발생 구조 진단 대시보드</div>
-      <div class="logo-sub">25개 자치구 · 진단 → 분석 → 처방</div>
-    </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">데이터: 2018–2024</span>
-  </div>
-</div>
 
 <div class="tabs">
   <div class="tab active" onclick="sw(0)">
@@ -1225,10 +1228,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
 
   <div class="kpi-row">
-    <div class="kpi teal"><div class="kpi-label">서울 생활계 연간 발생량</div><div class="kpi-val teal" id="kpi-total">383.7<span class="kpi-unit">만톤</span></div><div class="kpi-sub" id="kpi-total-sub">일평균 10,512톤/일</div></div>
-    <div class="kpi amber"><div class="kpi-label">평균 1인당 배출량</div><div class="kpi-val amber" id="kpi-percap">1.135<span class="kpi-unit">kg/일</span></div><div class="kpi-sub">전국 평균 0.94kg 대비</div></div>
-    <div class="kpi blue"><div class="kpi-label">평균 재활용률</div><div class="kpi-val blue" id="kpi-recycle">60.2<span class="kpi-unit">%</span></div><div class="kpi-sub" id="kpi-recycle-sub">소각 26.0% · 매립 6.1%</div></div>
-    <div class="kpi red"><div class="kpi-label">1인당 배출량 최고 vs 최저</div><div class="kpi-val red" id="kpi-gap">2.3<span class="kpi-unit">배</span></div><div class="kpi-sub" id="kpi-gap-sub">중구 vs 강동구</div></div>
+    <div class="kpi teal"><span class="kpi-icon">🗑</span><div class="kpi-label">서울 생활계 연간 발생량</div><div class="kpi-val teal" id="kpi-total">383.7<span class="kpi-unit">만톤</span></div><div class="kpi-sub" id="kpi-total-sub">일평균 10,512톤/일</div></div>
+    <div class="kpi amber"><span class="kpi-icon">👤</span><div class="kpi-label">평균 1인당 배출량</div><div class="kpi-val amber" id="kpi-percap">1.135<span class="kpi-unit">kg/일</span></div><div class="kpi-sub">전국 평균 0.94kg 대비</div></div>
+    <div class="kpi blue"><span class="kpi-icon">♻</span><div class="kpi-label">평균 재활용률</div><div class="kpi-val blue" id="kpi-recycle">60.2<span class="kpi-unit">%</span></div><div class="kpi-sub" id="kpi-recycle-sub">소각 26.0% · 매립 6.1%</div></div>
+    <div class="kpi red"><span class="kpi-icon">⚖</span><div class="kpi-label">1인당 배출량 최고 vs 최저</div><div class="kpi-val red" id="kpi-gap">2.3<span class="kpi-unit">배</span></div><div class="kpi-sub" id="kpi-gap-sub">중구 vs 강동구</div></div>
   </div>
 
   <!-- 토글 -->
@@ -1252,7 +1255,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
         <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">낮음</span>
-        <div id="map1-gradient" style="flex:1;height:6px;border-radius:3px;background:linear-gradient(to right,#d1eee3,#009975)"></div>
+        <div id="map1-gradient" style="flex:1;height:6px;border-radius:3px;background:linear-gradient(to right,#d1eee3,#10b981)"></div>
         <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">높음</span>
       </div>
     </div>
@@ -1328,12 +1331,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 <!--   CH.2 분석                                       -->
 <!-- ════════════════════════════════════════════════ -->
 <div class="page" id="pg1">
-
-  <div class="chap-intro amber">
-    <div class="chap-num">CHAPTER 2 · ANALYSIS</div>
-    <div class="chap-title">🧬 분석 — 왜 자치구마다 다른가</div>
-    <div class="chap-question">"같은 서울인데 왜 종로는 1.38kg, 도봉은 0.60kg을 배출할까?"</div>
-  </div>
 
   <!-- 2.1 자치구 유형화 -->
   <div class="section-div" style="position:relative">
@@ -1544,7 +1541,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <div class="finance-selection-guide">💡 <strong>자치구를 클릭하면 자세히 볼 수 있어요.</strong> 지도뿐 아니라 <strong>산점도 점</strong>, <strong>매트릭스 점</strong>을 눌러도 해당 자치구만 강조되고 상세 패널이 열립니다.</div>
 
     <div id="finance-combined-view" class="finance-combined-grid">
-      <div class="panel finance-map-card" style="padding:12px">
+      <div class="panel finance-map-card s21-style-map-panel" style="padding:12px">
         <div class="panel-title">주민부담률 지도 <span class="panel-badge" id="finance-map-badge">일반</span></div>
         <div style="position:relative">
           <div id="finance-burden-map" class="lmap"></div>
@@ -1552,7 +1549,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         </div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
           <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">낮음</span>
-          <div style="flex:1;height:6px;border-radius:3px;background:linear-gradient(to right,#dbeafe,#fee2e2,#dc2626)"></div>
+          <div style="flex:1;height:6px;border-radius:3px;background:linear-gradient(to right,#dbeafe,#fee2e2,#f87171)"></div>
           <span style="font-size:10px;font-family:var(--mono);color:var(--text3)">높음</span>
         </div>
         <div id="finance-selected-map-summary" class="finance-selected-summary empty">
@@ -1691,7 +1688,7 @@ function getDistName(props){
 <script>
 
 // anchor: 0=상업형, 1=주거형, 2=유동집중형, 3=혼합형  (cluster_result.csv 기준)
-const CLUSTER_COLORS=['#dc2626','#2563eb','#d97706','#7c3aed'];
+const CLUSTER_COLORS=['#f87171','#818cf8','#fbbf24','#a78bfa'];
 const CLUSTER_NAMES=['🏢 상업형','🏠 주거형','🚶 유동집중형','🔀 혼합형'];
 
 // 출처: rrf.seoul.go.kr — 2026년 실제 정비 일정
@@ -2271,7 +2268,7 @@ function initCapacityChart(){
     labels:MONTHS.map(m=>`${m}월`),
     datasets:[
       {label:'가용 소각 용량',data:supplyData,backgroundColor:supplyData.map(v=>v<incinerationDemand?'rgba(220,38,38,.55)':'rgba(37,99,235,.45)'),borderWidth:0,borderRadius:3},
-      {label:'소각 처리 대상 (2024기준)',data:Array(12).fill(incinerationDemand),type:'line',borderColor:'#dc2626',borderWidth:2,borderDash:[5,3],pointRadius:0,fill:false},
+      {label:'소각 처리 대상 (2024기준)',data:Array(12).fill(incinerationDemand),type:'line',borderColor:'#f87171',borderWidth:2,borderDash:[5,3],pointRadius:0,fill:false},
     ]
   },options:{responsive:true,maintainAspectRatio:false,plugins:{
     legend:{labels:{color:'#3a4252',font:{size:10},boxWidth:12}},
@@ -2344,12 +2341,12 @@ async function drawMap1(){
   const grad=document.getElementById('map1-gradient');
   const badge=document.getElementById('map-badge-label');
   if(grad && badge){
-    let bgCol='linear-gradient(to right,#d1eee3,#009975)';
+    let bgCol='linear-gradient(to right,#d1eee3,#10b981)';
     let badgeTxt='총량 기준';
-    if(currentMetric==='percap'){bgCol='linear-gradient(to right,#fef3c7,#d97706)'; badgeTxt='1인당 (kg/인일)';}
-    else if(currentMetric==='recycle'){bgCol='linear-gradient(to right,#dbeafe,#2563eb)'; badgeTxt='재활용률(%)';}
-    else if(currentMetric==='inc'){bgCol='linear-gradient(to right,#fadcdc,#dc2626)'; badgeTxt='소각률(%)';}
-    else if(currentMetric==='land'){bgCol='linear-gradient(to right,#e9d5ff,#7c3aed)'; badgeTxt='매립률(%)';}
+    if(currentMetric==='percap'){bgCol='linear-gradient(to right,#fef3c7,#fbbf24)'; badgeTxt='1인당 (kg/인일)';}
+    else if(currentMetric==='recycle'){bgCol='linear-gradient(to right,#dbeafe,#818cf8)'; badgeTxt='재활용률(%)';}
+    else if(currentMetric==='inc'){bgCol='linear-gradient(to right,#fadcdc,#f87171)'; badgeTxt='소각률(%)';}
+    else if(currentMetric==='land'){bgCol='linear-gradient(to right,#e9d5ff,#a78bfa)'; badgeTxt='매립률(%)';}
     grad.style.background=bgCol;
     badge.textContent=badgeTxt;
   }
@@ -2490,9 +2487,9 @@ function initTrend1(){
   const landData=years.map(y=>YEARLY[y].landfill);
   charts.trend1=new Chart(ctx,{type:'line',data:{labels:years,datasets:[
     {label:'총량',data:totalData,borderColor:'#1a2332',backgroundColor:'rgba(26,35,50,.05)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1a2332',fill:false,tension:.3},
-    {label:'재활용',data:recycleData,borderColor:'#009975',backgroundColor:'rgba(0,153,117,.08)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#009975',fill:false,tension:.3},
-    {label:'소각',data:incData,borderColor:'#dc2626',borderWidth:2,pointRadius:3,pointBackgroundColor:'#dc2626',fill:false,tension:.3},
-    {label:'매립',data:landData,borderColor:'#7c3aed',borderWidth:2,pointRadius:3,pointBackgroundColor:'#7c3aed',fill:false,tension:.3},
+    {label:'재활용',data:recycleData,borderColor:'#10b981',backgroundColor:'rgba(0,153,117,.08)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#10b981',fill:false,tension:.3},
+    {label:'소각',data:incData,borderColor:'#f87171',borderWidth:2,pointRadius:3,pointBackgroundColor:'#f87171',fill:false,tension:.3},
+    {label:'매립',data:landData,borderColor:'#a78bfa',borderWidth:2,pointRadius:3,pointBackgroundColor:'#a78bfa',fill:false,tension:.3},
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#3a4252',font:{size:11},padding:10}}},scales:{
     x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{color:'#5a6478',font:{size:11,family:'JetBrains Mono'}}},
     y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{color:'#5a6478',font:{size:10,family:'JetBrains Mono'},callback:v=>v+'만톤'}}
@@ -2504,7 +2501,7 @@ function initDonut1(){
   const y=YEARLY[2024];
   charts.donut1=new Chart(ctx,{type:'doughnut',data:{
     labels:['재활용','소각','매립','기타'],
-    datasets:[{data:[y.recycle_pct, y.incineration_pct, y.landfill_pct, y.etc_pct],backgroundColor:['#009975','#dc2626','#7c3aed','#94a3b8'],borderWidth:2,borderColor:'#fff',hoverOffset:4}]
+    datasets:[{data:[y.recycle_pct, y.incineration_pct, y.landfill_pct, y.etc_pct],backgroundColor:['#10b981','#f87171','#a78bfa','#94a3b8'],borderWidth:2,borderColor:'#fff',hoverOffset:4}]
   },options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{
     legend:{position:'bottom',labels:{color:'#3a4252',font:{size:11},padding:10,usePointStyle:true,boxWidth:8}},
     tooltip:{enabled:true}
@@ -2523,7 +2520,7 @@ function setBarMode(mode,el){
 }
 function initBarSingle(){renderBarSingle();}
 function renderBarSingle(){
-  const fieldMap={recycle:{name:'재활용',color:'#009975'},inc:{name:'소각',color:'#dc2626'},land:{name:'매립',color:'#7c3aed'}};
+  const fieldMap={recycle:{name:'재활용',color:'#10b981'},inc:{name:'소각',color:'#f87171'},land:{name:'매립',color:'#a78bfa'}};
   const field=currentBarItem;
   const cfg=fieldMap[field];
   const sorted=[...GU].sort((a,b)=>{
@@ -3021,7 +3018,7 @@ function initResidScatter(){
   const ctx=document.getElementById('resid-scatter');
   if(!ctx) return;
   const entries=Object.entries(RESID);
-  const clColors={'상업형':'#dc2626','주거형':'#2563eb','유동집중형':'#d97706','혼합형':'#7c3aed'};
+  const clColors={'상업형':'#f87171','주거형':'#818cf8','유동집중형':'#fbbf24','혼합형':'#a78bfa'};
   const data=entries.map(([gu,v])=>({x:v.pred/10000,y:v.actual/10000,label:gu,type:v.clusterType}));
   const maxVal=Math.max(...data.map(d=>Math.max(d.x,d.y)))*1.1;
   charts.residScatter=new Chart(ctx.getContext('2d'),{type:'scatter',data:{
@@ -3194,13 +3191,13 @@ function drawSimMap(gu,top3){
   if(!gu.lat || !gu.lng) return;
 
   const srcMarker=L.circleMarker([gu.lat,gu.lng],{
-    radius:11,fillColor:'#009975',color:'#fff',weight:2.5,fillOpacity:.95
+    radius:11,fillColor:'#10b981',color:'#fff',weight:2.5,fillOpacity:.95
   }).bindTooltip(`<strong>${gu.n}</strong><br>출발지 · ${document.getElementById('sim-tons').value}톤/일`,
     {className:'gu-tooltip',permanent:true,direction:'top',offset:[0,-12]}
   ).addTo(simMapInstance);
   simMapLayers.push(srcMarker);
 
-  const rankColors=['#009975','#2563eb','#7c3aed'];
+  const rankColors=['#10b981','#818cf8','#a78bfa'];
   top3.forEach((f,i)=>{
     const line=L.polyline([[gu.lat,gu.lng],[f.lat,f.lng]],{
       color:rankColors[i],weight:i===0?3:2,opacity:i===0?.85:.55,
@@ -3533,12 +3530,12 @@ function makeImpactCaseCard(d){
       </div>
       <div class="impact-case-metric">
         <div class="impact-case-metric-label">생활인구 기준</div>
-        <div class="impact-case-metric-val" style="color:${isTop5?'#5b44ff':'#2563eb'}">${d.livingPerCap.toFixed(2)}</div>
+        <div class="impact-case-metric-val" style="color:${isTop5?'#5b44ff':'#818cf8'}">${d.livingPerCap.toFixed(2)}</div>
         <div class="impact-case-metric-sub">kg/인/일</div>
       </div>
       <div class="impact-case-metric">
         <div class="impact-case-metric-label">변화율</div>
-        <div class="impact-case-metric-val" style="font-size:20px;color:${isTop5?'#5b44ff':'#2563eb'}">${d.changePct>0?'+':''}${d.changePct}%</div>
+        <div class="impact-case-metric-val" style="font-size:20px;color:${isTop5?'#5b44ff':'#818cf8'}">${d.changePct>0?'+':''}${d.changePct}%</div>
         <div class="impact-case-metric-sub">보정 효과</div>
       </div>
     </div>
@@ -3594,10 +3591,10 @@ function resid23Status(val){
 }
 function resid23Meta(status){
   return {
-    over:{label:'과다 배출', icon:'❗', color:'#dc2626', desc:'예상 대비 실제 배출량이 크게 높게 나타난 자치구입니다.'},
-    normal:{label:'예측 범위 내', icon:'✓', color:'#2563eb', desc:'예상과 실제 배출량이 도시 구조와 생활인구 특성 안에서 대체로 설명되는 자치구입니다.'},
+    over:{label:'과다 배출', icon:'❗', color:'#f87171', desc:'예상 대비 실제 배출량이 크게 높게 나타난 자치구입니다.'},
+    normal:{label:'예측 범위 내', icon:'✓', color:'#818cf8', desc:'예상과 실제 배출량이 도시 구조와 생활인구 특성 안에서 대체로 설명되는 자치구입니다.'},
     good:{label:'상대적으로 양호', icon:'🌿', color:'#15803d', desc:'예상 대비 실제 배출량이 낮아 상대적으로 효율적인 관리 특성이 나타날 가능성이 있습니다.'}
-  }[status] || {label:'예측 범위 내', icon:'✓', color:'#2563eb', desc:''};
+  }[status] || {label:'예측 범위 내', icon:'✓', color:'#818cf8', desc:''};
 }
 function resid23PctToPos(v,min=-30,max=40){
   return Math.max(0,Math.min(100,(v-min)/(max-min)*100));
@@ -3997,10 +3994,10 @@ const financeQuadrantPlugin = {
     const y=scales.y.getPixelForValue(opts.avgY);
     ctx.save();
     const rects=[
-      {x:left,y:top,w:x-left,h:y-top,c:'rgba(220,38,38,.045)',lines:['저수입','고비용'],tx:left+10,ty:top+15,col:'#dc2626'},
-      {x:x,y:top,w:right-x,h:y-top,c:'rgba(0,153,117,.045)',lines:['고수입','고비용'],tx:x+10,ty:top+15,col:'#009975'},
-      {x:left,y:y,w:x-left,h:bottom-y,c:'rgba(37,99,235,.045)',lines:['저수입','저비용'],tx:left+10,ty:y+17,col:'#2563eb'},
-      {x:x,y:y,w:right-x,h:bottom-y,c:'rgba(217,119,6,.045)',lines:['고수입','저비용'],tx:x+10,ty:y+17,col:'#d97706'}
+      {x:left,y:top,w:x-left,h:y-top,c:'rgba(220,38,38,.045)',lines:['저수입','고비용'],tx:left+10,ty:top+15,col:'#f87171'},
+      {x:x,y:top,w:right-x,h:y-top,c:'rgba(0,153,117,.045)',lines:['고수입','고비용'],tx:x+10,ty:top+15,col:'#10b981'},
+      {x:left,y:y,w:x-left,h:bottom-y,c:'rgba(37,99,235,.045)',lines:['저수입','저비용'],tx:left+10,ty:y+17,col:'#818cf8'},
+      {x:x,y:y,w:right-x,h:bottom-y,c:'rgba(217,119,6,.045)',lines:['고수입','저비용'],tx:x+10,ty:y+17,col:'#fbbf24'}
     ];
     rects.forEach(r=>{
       ctx.fillStyle=r.c;ctx.fillRect(r.x,r.y,r.w,r.h);
@@ -4021,7 +4018,7 @@ const financeSelectedLabelPlugin = {
     ctx.font='900 10px Noto Sans KR';
     ctx.textAlign='left';
     ctx.textBaseline='middle';
-    ctx.fillStyle='#dc2626';
+    ctx.fillStyle='#f87171';
     chart.data.datasets.forEach((ds,di)=>{
       const meta=chart.getDatasetMeta(di);
       if(ds.type==='line' || !meta || meta.hidden) return;
@@ -4031,7 +4028,7 @@ const financeSelectedLabelPlugin = {
         if(r && r.name===selectedFinanceGu){
           ctx.beginPath();
           ctx.arc(pt.x,pt.y,5.5,0,Math.PI*2);
-          ctx.strokeStyle='#dc2626';
+          ctx.strokeStyle='#f87171';
           ctx.lineWidth=2.5;
           ctx.stroke();
           ctx.fillText(r.name, pt.x+9, pt.y-9);
@@ -4183,19 +4180,19 @@ async function renderFinanceBurdenMap(){
       const r=byName[name];
       const isSel=selectedFinanceGu && name===selectedFinanceGu;
       const clr=r?financeRateColor(r.rate,min,max):'#e5e7eb';
-      return {fillColor:isSel?'#dc2626':clr,fillOpacity:isSel ? .88 : .72,color:isSel?'#7f1d1d':'rgba(0,0,0,.25)',weight:isSel?2.8:1};
+      return {fillColor:isSel?'#f87171':clr,fillOpacity:isSel ? .88 : .72,color:isSel?'#7f1d1d':'rgba(255,255,255,.98)',weight:isSel?2.4:1.5,opacity:1};
     },
     onEachFeature:(feature,layer)=>{
       const name=getDistName(feature.properties);
       const r=byName[name]; if(!r) return;
       layer.bindTooltip(`<strong>${r.name}</strong><br>${r.rateLabel}: ${pctTxt(r.rate)}<br>재정자립도 ${pctTxt(r.fiscal)}<br>수입 ${won(r.salesPerCap)} / 비용 ${won(r.costPerCap)}`,{className:'gu-tooltip',sticky:true,direction:'top'});
-      layer.on('mouseover',e=>e.target.setStyle({weight:3,color:'#111827',fillOpacity:.92}));
+      layer.on('mouseover',e=>e.target.setStyle({weight:2.4,color:'rgba(51,65,85,.85)',fillOpacity:.92}));
       layer.on('mouseout',e=>financeBurdenLayer.resetStyle(e.target));
       layer.on('click',()=>selectFinanceGu(name));
       const center=layer.getBounds().getCenter();
-      const labelColor=(selectedFinanceGu && name===selectedFinanceGu)?'#dc2626':'#1a2332';
+      const labelColor=(selectedFinanceGu && name===selectedFinanceGu)?'#f87171':'#1a2332';
       const labelWeight=(selectedFinanceGu && name===selectedFinanceGu)?900:600;
-      const labelIcon=L.divIcon({className:'gu-label',html:`<span style="color:${labelColor};font-weight:${labelWeight}">${name.replace('구','')}</span>`,iconSize:[40,12],iconAnchor:[20,6]});
+      const labelIcon=L.divIcon({className:'gu-label',html:`<span style="color:${labelColor};font-weight:${labelWeight}">${name}</span>`,iconSize:[44,14],iconAnchor:[22,7]});
       financeBurdenLabels.push(L.marker(center,{icon:labelIcon,interactive:false}).addTo(financeBurdenMapInstance));
     }
   }).addTo(financeBurdenMapInstance);
@@ -4226,7 +4223,7 @@ function renderFinanceScatter(){
     data:rows.filter(r=>r.cluster===ci).map(r=>({x:r.salesPerCap,y:r.costPerCap,r})),
     pointRadius:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 6.5 : 2.8) : pointRadiusByRate(rctx.raw?.r?.rate),
     pointHoverRadius:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 7.5 : 4.2) : pointRadiusByRate(rctx.raw?.r?.rate)+1.3,
-    backgroundColor:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? '#dc2626' : 'rgba(148,163,184,.48)') : CLUSTER_COLORS[ci],
+    backgroundColor:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? '#f87171' : 'rgba(148,163,184,.48)') : CLUSTER_COLORS[ci],
     borderColor:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? '#ffffff' : 'rgba(255,255,255,.8)') : '#fff',
     borderWidth:rctx=>selectedFinanceGu ? (rctx.raw?.r?.name===selectedFinanceGu ? 2 : 0.8) : 1.1
   })).filter(ds=>ds.data.length);
@@ -4301,7 +4298,7 @@ function renderFinanceMatrix(){
     const sample=rows.find(r=>r.clusterName===cluster);
     const cidx=sample?sample.cluster:CLUSTER_NAMES.findIndex(n=>n.includes(cluster));
     const ccol=CLUSTER_COLORS[cidx]||'#64748b';
-    html+=`<div class="matrix-row-head" style="color:${ccol};border-left:4px solid ${ccol}">${cluster}</div>`;
+    html+=`<div class="matrix-row-head" style="color:${ccol}">${cluster}</div>`;
     FINANCE_TYPE_ORDER.forEach(type=>{
       const meta=FINANCE_TYPE_META[type];
       const arr=rows.filter(r=>r.clusterName===cluster && r.type===type).sort((a,b)=>a.name.localeCompare(b.name,'ko'));
@@ -4314,7 +4311,7 @@ function renderFinanceMatrix(){
         const p=positions[i%positions.length];
         const isGuSelected=selectedFinanceGu && r.name===selectedFinanceGu;
         const muted=selectedFinanceGu && !isGuSelected;
-        const col=isGuSelected?'#dc2626':(muted?'#cbd5e1':(CLUSTER_COLORS[r.cluster]||meta.color));
+        const col=isGuSelected?'#f87171':(muted?'#cbd5e1':(CLUSTER_COLORS[r.cluster]||meta.color));
         const shape=clusterShape(r.clusterName);
         const size=selectedFinanceGu ? (isGuSelected?46:24) : matrixPointSize(r.rate);
         const cls=`matrix-point ${shape} ${muted?'finance-muted-point':''} ${isGuSelected?'finance-selected-point':''}`;
@@ -4622,7 +4619,7 @@ function renderPolicyPositionChart(row,after){
     plugins:[financeQuadrantPlugin,policyArrowPlugin],
     data:{datasets:[
       {type:'scatter',label:'현재',data:[before],pointRadius:2.8,pointHoverRadius:4,pointStyle:'circle',backgroundColor:'#111111',borderColor:'#111111',borderWidth:1},
-      {type:'scatter',label:'정책 후',data:[afterPt],pointRadius:3.2,pointHoverRadius:4.6,pointStyle:'circle',backgroundColor:'#7c3aed',borderColor:'#7c3aed',borderWidth:1},
+      {type:'scatter',label:'정책 후',data:[afterPt],pointRadius:3.2,pointHoverRadius:4.6,pointStyle:'circle',backgroundColor:'#a78bfa',borderColor:'#a78bfa',borderWidth:1},
       {type:'line',label:'이동 방향',data:[before,afterPt],borderColor:'rgba(220,38,38,.88)',borderDash:[],pointRadius:0,borderWidth:2.2},
       {type:'line',label:'평균 통합수입',data:[{x:avgX,y:minY},{x:avgX,y:maxY}],borderColor:'rgba(124,58,237,.45)',borderDash:[5,5],pointRadius:0,borderWidth:1},
       {type:'line',label:'평균 통합비용',data:[{x:minX,y:avgY},{x:maxX,y:avgY}],borderColor:'rgba(217,119,6,.45)',borderDash:[5,5],pointRadius:0,borderWidth:1}

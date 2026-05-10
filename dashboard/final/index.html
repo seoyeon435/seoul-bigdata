@@ -7,29 +7,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0a; --bg2:#141414; --bg3:#1a1a1a;
-  --border:#262626; --border2:#3a3a3a;
-  --text:#e5e5e5; --text2:#a8a8a8; --text3:#666;
-  --green:#16a34a; --amber:#d97706; --red:#dc2626;
-  --teal:#009975;
+  --bg:#f4f2fa; --bg2:#ffffff; --bg3:#efebf7;
+  --border:rgba(124,58,237,.08); --border2:rgba(124,58,237,.18);
+  --text:#2a2440; --text2:#5e587a; --text3:#9189a8;
+  --green:#34d399; --amber:#fbbf24; --red:#f87171;
+  --teal:#10b981;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
 body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:16px;padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
-.brand{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+header{display:flex;align-items:center;gap:16px;padding:14px 24px;background:linear-gradient(135deg,#fbfaff,#ffffff);border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,.05)}
+.brand{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.5px;display:flex;align-items:center;gap:12px}
 .brand .mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);font-weight:500}
+.brand-logo{width:38px;height:38px;background:linear-gradient(135deg,#a78bfa,#818cf8);color:#fff;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(167,139,250,.25)}
 nav.tabs{display:flex;gap:6px;margin-left:auto}
-.tab{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;user-select:none}
-.tab:hover{border-color:var(--border2);color:var(--text)}
-.tab .num{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--text3);background:var(--bg);padding:2px 6px;border-radius:3px}
-.tab.active{color:var(--text);font-weight:500}
-.tab.green.active{border-color:var(--green);background:rgba(22,163,74,.1)}
-.tab.green.active .num{color:var(--green);background:rgba(22,163,74,.18)}
-.tab.amber.active{border-color:var(--amber);background:rgba(217,119,6,.1)}
-.tab.amber.active .num{color:var(--amber);background:rgba(217,119,6,.18)}
-.tab.red.active{border-color:var(--red);background:rgba(220,38,38,.1)}
-.tab.red.active .num{color:var(--red);background:rgba(220,38,38,.18)}
+.tab{display:flex;align-items:center;gap:8px;padding:9px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;user-select:none;font-weight:500}
+.tab:hover{border-color:var(--border2);color:var(--text);background:#e8edf3}
+.tab .num{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--text3);background:var(--bg2);border:1px solid var(--border);padding:2px 7px;border-radius:4px}
+.tab.active{color:var(--text);font-weight:600}
+.tab.green.active{border-color:var(--green);background:rgba(52,211,153,.12);color:var(--green)}
+.tab.green.active .num{color:#fff;background:var(--green);border-color:var(--green)}
+.tab.amber.active{border-color:var(--amber);background:rgba(251,191,36,.15);color:var(--amber)}
+.tab.amber.active .num{color:#fff;background:var(--amber);border-color:var(--amber)}
+.tab.red.active{border-color:var(--red);background:rgba(248,113,113,.12);color:var(--red)}
+.tab.red.active .num{color:#fff;background:var(--red);border-color:var(--red)}
 .frames{flex:1;position:relative;overflow:hidden}
 iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:none}
 iframe.active{display:block}
@@ -37,7 +38,7 @@ iframe.active{display:block}
 </head>
 <body>
 <header>
-  <div class="brand">서울 폐기물 대시보드<span class="mono">2020 → 2024</span></div>
+  <div class="brand"><div class="brand-logo">🗂</div>서울시 자치구별 쓰레기 발생 구조 진단 대시보드</div>
   <nav class="tabs">
     <div class="tab green active" onclick="show(0)"><span class="num">CH.1</span>진단</div>
     <div class="tab amber" onclick="show(1)"><span class="num">CH.2</span>분석</div>
