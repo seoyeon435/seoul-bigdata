@@ -415,6 +415,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .finance-map-card .gu-label{font-size:8px}
 .finance-map-card .map-legend{display:none}
 @media(max-width:1280px){.finance-combined-grid{grid-template-columns:1fr}.finance-detail-wide{grid-column:1}.finance-map-card .lmap,.finance-combined-grid .chart-wrap.h400,.finance-combined-grid .scenario-matrix-scroll{height:280px}}
+
+
+/* ── policy effect cards: current(red) → simulation(green) ── */
+.policy-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.policy-compare-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;min-height:auto}
+.policy-compare-title{font-size:10px;font-family:var(--mono);font-weight:900;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.policy-compare-flow{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);gap:5px;align-items:center}
+.policy-compare-box{border-radius:8px;padding:8px 10px;background:#fff;min-width:0;overflow:hidden;display:flex;flex-direction:column;align-items:center}
+.policy-compare-box.current{border:1px solid rgba(248,113,113,.45);background:rgba(248,113,113,.075)}
+.policy-compare-box.after{border:1px solid rgba(16,185,129,.45);background:rgba(16,185,129,.09)}
+.policy-compare-label{font-size:9px;color:var(--text3);font-weight:700;margin-bottom:2px;white-space:normal;line-height:1.3;text-align:center}
+.policy-compare-val{font-size:20px;font-weight:900;font-family:var(--mono);letter-spacing:-.7px;line-height:1.1;white-space:normal;overflow-wrap:break-word;word-break:break-all;text-align:center}
+.policy-compare-box.current .policy-compare-val{color:var(--red)}
+.policy-compare-box.after .policy-compare-val{color:var(--teal)}
+.policy-compare-sub{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:3px;line-height:1.3;white-space:normal;text-align:center}
+.policy-compare-arrow{display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:15px;font-weight:900;font-family:var(--mono)}
+@media(max-width:1100px){.policy-compare-grid{grid-template-columns:1fr}.policy-compare-flow{grid-template-columns:1fr 18px 1fr}.policy-compare-val{font-size:17px}}
 </style>
 </head>
 <body>
@@ -2468,10 +2485,53 @@ function runPolicySim(){
   const wasteReduction=beforeWaste-afterWaste;
   const costSaving=beforeCost-afterCost;
 
+  const allPolicyRows=policyRows();
+  const seoulIncome=allPolicyRows.reduce((a,r)=>a+(Number(r.integratedIncome)||0),0);
+  const seoulCost=allPolicyRows.reduce((a,r)=>a+(Number(r.integratedCost)||0),0);
+  const seoulBurden=seoulCost>0?seoulIncome/seoulCost:0;
+  const seoulUnrecAvg=mean(allPolicyRows.map(r=>Number(r.integratedUnrecovered)||0));
+  const burdenDeltaP=(afterBurden-beforeBurden)*100;
+  const burdenDeltaText=`${burdenDeltaP>=0?'+':''}${burdenDeltaP.toFixed(1)}%p ${burdenDeltaP>=0?'상승':'하락'}`;
+  const unrecImprove=beforeUnrec-afterUnrec;
+  const unrecImproveText=unrecImprove>=0
+    ? `${Math.round(unrecImprove).toLocaleString()}백만원 개선`
+    : `${Math.round(Math.abs(unrecImprove)).toLocaleString()}백만원 악화`;
+
   document.getElementById('policy-kpis').innerHTML=`
-    <div class="policy-kpi"><div class="policy-kpi-label">일반·음식물 통합 주민부담률</div><div class="policy-kpi-val" style="color:var(--teal)">${pctTxt(afterBurden)}</div><div class="policy-kpi-sub">현재 ${pctTxt(beforeBurden)} · ${afterBurden-beforeBurden>=0?'+':''}${((afterBurden-beforeBurden)*100).toFixed(1)}%p</div></div>
-    <div class="policy-kpi"><div class="policy-kpi-label">통합 미회수액</div><div class="policy-kpi-val" style="color:var(--red)">${Math.round(afterUnrec).toLocaleString()}</div><div class="policy-kpi-sub">백만원 · ${Math.round(afterUnrec-beforeUnrec).toLocaleString()} 변화</div></div>
-    <div class="policy-kpi"><div class="policy-kpi-label">비용 절감액</div><div class="policy-kpi-val" style="color:var(--purple)">${Math.round(costSaving).toLocaleString()}</div><div class="policy-kpi-sub">백만원/년 · 배출량 연동+효율화</div></div>`;
+    <div class="policy-compare-grid" style="grid-column:1/-1;width:100%">
+      <div class="policy-compare-card">
+        <div class="policy-compare-title">일반·음식물 통합 주민부담률</div>
+        <div class="policy-compare-flow">
+          <div class="policy-compare-box current">
+            <div class="policy-compare-label">현재 상태 주민부담률</div>
+            <div class="policy-compare-val">${pctTxt(beforeBurden)}</div>
+            <div class="policy-compare-sub">서울시 평균 ${pctTxt(seoulBurden)}</div>
+          </div>
+          <div class="policy-compare-arrow">→</div>
+          <div class="policy-compare-box after">
+            <div class="policy-compare-label">시뮬레이션 결과</div>
+            <div class="policy-compare-val">${pctTxt(afterBurden)}</div>
+            <div class="policy-compare-sub">${burdenDeltaText}</div>
+          </div>
+        </div>
+      </div>
+      <div class="policy-compare-card">
+        <div class="policy-compare-title">통합 미회수액</div>
+        <div class="policy-compare-flow">
+          <div class="policy-compare-box current">
+            <div class="policy-compare-label">현재 상태 미회수액</div>
+            <div class="policy-compare-val">${Math.round(beforeUnrec).toLocaleString()}</div>
+            <div class="policy-compare-sub">백만원 · 서울시 평균 ${Math.round(seoulUnrecAvg).toLocaleString()}백만원</div>
+          </div>
+          <div class="policy-compare-arrow">→</div>
+          <div class="policy-compare-box after">
+            <div class="policy-compare-label">시뮬레이션 결과</div>
+            <div class="policy-compare-val">${Math.round(afterUnrec).toLocaleString()}</div>
+            <div class="policy-compare-sub">백만원 · ${unrecImproveText}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
 
   document.getElementById('policy-reco-title').textContent=`${row.name} 추천: ${reco.title}`;
   document.getElementById('policy-reco-text').innerHTML=`<span class="finance-type-pill">${row.clusterName}</span> <span class="finance-type-pill">${row.typeLabel||financeTypeLabel(row.type)}</span> <span class="finance-type-pill">탄력성 ${elasticity.toFixed(2)}</span><br>${reco.policies.map(p=>'• '+p).join(' ')}<br>${financeTypeText(row.type)} ${clusterPolicyText(row.clusterName)}`;
@@ -2538,7 +2598,7 @@ const policyWasteArrowPlugin={
     const angle=Math.atan2(0,x1-x0);
     ctx.save();
     ctx.strokeStyle='rgba(220,38,38,.95)';
-    ctx.fillStyle='rgba(220,38,38,.95)';
+    ctx.fillStyle='rgba(100,100,100,0.85)';
     ctx.lineWidth=3.2;
     ctx.lineCap='butt';
     ctx.beginPath();
@@ -2568,11 +2628,12 @@ const policyArrowPlugin={
     if(!p0 || !p1) return;
     const ctx=chart.ctx;
     const angle=Math.atan2(p1.y-p0.y,p1.x-p0.x);
-    const size=5;
+    const size=6;
+    const offset=9;
     ctx.save();
-    ctx.translate(p1.x,p1.y);
+    ctx.translate(p1.x-Math.cos(angle)*offset,p1.y-Math.sin(angle)*offset);
     ctx.rotate(angle);
-    ctx.fillStyle='rgba(220,38,38,.95)';
+    ctx.fillStyle='rgba(100,100,100,0.85)';
     ctx.beginPath();
     ctx.moveTo(0,0); ctx.lineTo(-size,-size/2); ctx.lineTo(-size,size/2); ctx.closePath();
     ctx.fill();
@@ -2592,15 +2653,29 @@ function renderPolicyPositionChart(row,after){
   const avgY=mean(rows.map(r=>r.integratedCost*1000000/r.pop));
   const before={x:beforeX,y:beforeY,label:'현재'};
   const afterPt={x:afterX,y:afterY,label:'정책 후'};
-  const xs=[...rows.map(r=>r.integratedIncome*1000000/r.pop),before.x,afterPt.x], ys=[...rows.map(r=>r.integratedCost*1000000/r.pop),before.y,afterPt.y];
-  const minX=Math.min(...xs)*0.85, maxX=Math.max(...xs)*1.12, minY=Math.min(...ys)*0.85, maxY=Math.max(...ys)*1.12;
+  const allXs=rows.map(r=>r.integratedIncome*1000000/r.pop);
+  const allYs=rows.map(r=>r.integratedCost*1000000/r.pop);
+  const fullMinX=Math.min(...allXs), fullMaxX=Math.max(...allXs), fullMinY=Math.min(...allYs), fullMaxY=Math.max(...allYs);
+  const focusXs=[before.x,afterPt.x,avgX];
+  const focusYs=[before.y,afterPt.y,avgY];
+  const moveX=Math.abs(afterPt.x-before.x), moveY=Math.abs(afterPt.y-before.y);
+  const fullSpanX=Math.max(fullMaxX-fullMinX,1), fullSpanY=Math.max(fullMaxY-fullMinY,1);
+  const focusSpanX=Math.max(Math.max(...focusXs)-Math.min(...focusXs), moveX*2.2, fullSpanX*0.28, 1);
+  const focusSpanY=Math.max(Math.max(...focusYs)-Math.min(...focusYs), moveY*2.2, fullSpanY*0.28, 1);
+  let minX=Math.min(...focusXs)-focusSpanX*0.22, maxX=Math.max(...focusXs)+focusSpanX*0.22;
+  let minY=Math.min(...focusYs)-focusSpanY*0.22, maxY=Math.max(...focusYs)+focusSpanY*0.22;
+  // 선택 자치구와 서울 평균선을 중심으로 줌인하되, 4분면 기준선은 항상 화면 안에 남긴다.
+  if(avgX<=minX) minX=avgX-focusSpanX*0.08;
+  if(avgX>=maxX) maxX=avgX+focusSpanX*0.08;
+  if(avgY<=minY) minY=avgY-focusSpanY*0.08;
+  if(avgY>=maxY) maxY=avgY+focusSpanY*0.08;
   if(charts.policyPosition) charts.policyPosition.destroy();
   charts.policyPosition=new Chart(canvas.getContext('2d'),{
     plugins:[financeQuadrantPlugin,policyArrowPlugin],
     data:{datasets:[
-      {type:'scatter',label:'현재',data:[before],pointRadius:2.8,pointHoverRadius:4,pointStyle:'circle',backgroundColor:'#111111',borderColor:'#111111',borderWidth:1},
-      {type:'scatter',label:'정책 후',data:[afterPt],pointRadius:3.2,pointHoverRadius:4.6,pointStyle:'circle',backgroundColor:'#a78bfa',borderColor:'#a78bfa',borderWidth:1},
-      {type:'line',label:'이동 방향',data:[before,afterPt],borderColor:'rgba(220,38,38,.88)',borderDash:[],pointRadius:0,borderWidth:2.2},
+      {type:'scatter',label:'현재',data:[before],pointRadius:3,pointHoverRadius:4.5,pointStyle:'circle',backgroundColor:'rgba(248,113,113,0.25)',borderColor:'#f87171',borderWidth:1.8},
+      {type:'scatter',label:'정책 후',data:[afterPt],pointRadius:3,pointHoverRadius:4.5,pointStyle:'star',backgroundColor:'rgba(16,185,129,0.25)',borderColor:'#10b981',borderWidth:1.8},
+      {type:'line',label:'이동 방향',data:[before,afterPt],borderColor:'rgba(100,100,100,0.85)',borderDash:[2,2],pointRadius:0,borderWidth:1.6},
       {type:'line',label:'평균 통합수입',data:[{x:avgX,y:minY},{x:avgX,y:maxY}],borderColor:'rgba(124,58,237,.45)',borderDash:[5,5],pointRadius:0,borderWidth:1},
       {type:'line',label:'평균 통합비용',data:[{x:minX,y:avgY},{x:maxX,y:avgY}],borderColor:'rgba(217,119,6,.45)',borderDash:[5,5],pointRadius:0,borderWidth:1}
     ]},
