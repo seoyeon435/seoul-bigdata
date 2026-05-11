@@ -1060,6 +1060,22 @@ function closeSidePanel() {
 // ══════════════════════════════════════════════════════
 //  1.1 — FACILITY TIMELINE & CAPACITY CHART
 // ══════════════════════════════════════════════════════
+
+// 정비 일정 기반으로 월별 정비 시설 목록 사전 생성
+// MAINT_MONTHS[월(1~12)] = [정비 중인 시설명, ...]
+const MAINT_MONTHS = (() => {
+  const map = {};
+  for (let m = 1; m <= 12; m++) map[m] = [];
+  MAINTENANCE_SCHEDULE.forEach(({ facility, start_date, end_date }) => {
+    const startMonth = new Date(start_date).getMonth() + 1;
+    const endMonth   = new Date(end_date).getMonth() + 1;
+    for (let m = startMonth; m <= endMonth; m++) {
+      if (!map[m].includes(facility)) map[m].push(facility);
+    }
+  });
+  return map;
+})();
+
 function init11() {
   const now = new Date();
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
@@ -1161,7 +1177,12 @@ function drawCapacityChart(incinerationDemand) {
   const monthlyVals = [];
   for (let m = 1; m <= 12; m++) {
     let total = 0;
-    facs.forEach(f => { total += FACILITY_MONTHLY[f]?.monthly?.[m]?.inc_avg || 0; });
+    facs.forEach(f => {
+      const isUnderMaintenance = MAINT_MONTHS[m]?.includes(f);
+      if (!isUnderMaintenance) {
+        total += FACILITY_MONTHLY[f]?.monthly?.[m]?.inc_avg || 0;
+      }
+    });
     monthlyVals.push(total);
   }
 
