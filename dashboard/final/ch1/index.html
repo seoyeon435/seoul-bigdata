@@ -221,7 +221,30 @@ input[type=range].year-range{flex:1;-webkit-appearance:none;height:3px;backgroun
 input[type=range].year-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
 /* SELECT */
-select{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:12px;padding:6px 10px;outline:none;width:100%}
+select{background:#fff;border:1.5px solid rgba(167,139,250,.35);border-radius:14px;color:var(--text);font-family:var(--sans);font-size:14px;font-weight:600;padding:11px 16px;outline:none;width:100%;cursor:pointer;box-shadow:0 2px 6px rgba(167,139,250,.08);transition:all .15s;appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23a78bfa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+select:hover{border-color:rgba(167,139,250,.6);box-shadow:0 4px 12px rgba(167,139,250,.18)}
+select:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.18)}
+select option{background:#fff;color:var(--text);font-family:var(--sans);padding:10px 14px;font-weight:500}
+select option:checked{background:linear-gradient(rgba(167,139,250,.18),rgba(167,139,250,.18));color:#5b44ff;font-weight:700}
+
+/* CUSTOM DROPDOWN (replaces native <select>) */
+.cs-wrap{position:relative;width:100%;font-family:var(--sans)}
+.cs-trigger{width:100%;background:#fff;border:1.5px solid rgba(167,139,250,.35);border-radius:14px;color:var(--text);font-size:14px;font-weight:600;padding:11px 16px;outline:none;cursor:pointer;box-shadow:0 2px 6px rgba(167,139,250,.08);transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;font-family:inherit}
+.cs-trigger:hover{border-color:rgba(167,139,250,.6);box-shadow:0 4px 12px rgba(167,139,250,.18)}
+.cs-trigger.open{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.18)}
+.cs-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-arrow{flex-shrink:0;transition:transform .2s}
+.cs-trigger.open .cs-arrow{transform:rotate(180deg)}
+.cs-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid rgba(167,139,250,.35);border-radius:14px;box-shadow:0 8px 24px rgba(167,139,250,.18);padding:6px;max-height:280px;overflow-y:auto;z-index:1000;display:none}
+.cs-panel.open{display:block}
+.cs-panel::-webkit-scrollbar{width:6px}
+.cs-panel::-webkit-scrollbar-thumb{background:rgba(167,139,250,.4);border-radius:3px}
+.cs-option{padding:9px 14px;font-size:14px;color:var(--text);border-radius:10px;cursor:pointer;transition:background .12s;font-weight:500}
+.cs-option:hover{background:rgba(167,139,250,.10)}
+.cs-option.active{background:rgba(167,139,250,.18);color:#5b44ff;font-weight:700}
+.cs-wrap.compact{display:inline-block;width:auto;min-width:120px}
+.cs-wrap.compact .cs-trigger{font-size:12px;padding:6px 12px;border-radius:10px}
+.cs-wrap.compact .cs-option{font-size:12px;padding:7px 12px}
 select:focus{border-color:var(--green)}
 
 /* INFO ICON TOOLTIP */
@@ -637,7 +660,7 @@ select:focus{border-color:var(--green)}
     </div>
     <div class="kpi amber">
       <span class="kpi-icon">⚖</span>
-      <div class="kpi-label">현재 부족분 / 정비 시 부족분</div>
+      <div class="kpi-label">평상시 부족분 / 정비시 부족분</div>
       <div class="kpi-val"><span id="kpi11-gap-val" style="color:var(--amber)">—</span><span class="kpi-unit">톤/일</span></div>
       <div class="kpi-sub" id="kpi11-gap-sub">—</div>
     </div>
@@ -1066,7 +1089,7 @@ function init11() {
   const gapMaint = gapCurrent + maintCapacity;
   const gapMaintTxt = gapMaint > 0 ? `-${fmt(gapMaint)}` : `+${fmt(-gapMaint)}`;
   document.getElementById('kpi11-gap-val').textContent = `${gapTxt} / ${gapMaintTxt}`;
-  document.getElementById('kpi11-gap-sub').textContent = '+ 여유, - 부족 (현재/정비 시)';
+  document.getElementById('kpi11-gap-sub').textContent = '+ 여유, - 부족 (평상시/정비시)';
 
   drawTimeline();
   drawCapacityChart(incinerationDemand);
@@ -2055,6 +2078,82 @@ window.addEventListener('resize', () => {
     if (typeof sw === 'function') sw(0);
     else if (typeof switchTab === 'function') switchTab(0);
   });
+</script>
+
+<!-- Custom dropdown enhancer -->
+<script>
+(function(){
+  function initCS(sel){
+    if(!sel || sel.dataset.csInit) return;
+    sel.dataset.csInit='1';
+    sel.style.display='none';
+    const wrap=document.createElement('div');
+    wrap.className='cs-wrap';
+    if(sel.classList.contains('drop-sort')||sel.getAttribute('style')?.includes('width:auto'))wrap.classList.add('compact');
+    sel.parentNode.insertBefore(wrap,sel);
+    wrap.appendChild(sel);
+    const trigger=document.createElement('button');
+    trigger.type='button';
+    trigger.className='cs-trigger';
+    trigger.innerHTML='<span class="cs-text"></span><svg class="cs-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"><path stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1l5 5 5-5"/></svg>';
+    wrap.appendChild(trigger);
+    const panel=document.createElement('div');
+    panel.className='cs-panel';
+    wrap.appendChild(panel);
+    function render(){
+      panel.innerHTML='';
+      Array.from(sel.options).forEach(opt=>{
+        const item=document.createElement('div');
+        item.className='cs-option'+(opt.value===sel.value?' active':'');
+        item.textContent=opt.text;
+        item.addEventListener('click',(e)=>{
+          e.stopPropagation();
+          sel.value=opt.value;
+          sel.dispatchEvent(new Event('change',{bubbles:true}));
+          close();
+          updateText();
+        });
+        panel.appendChild(item);
+      });
+    }
+    function updateText(){
+      const opt=sel.options[sel.selectedIndex];
+      trigger.querySelector('.cs-text').textContent=opt?opt.text:'선택하세요';
+    }
+    function open(){
+      document.querySelectorAll('.cs-panel.open').forEach(p=>p.classList.remove('open'));
+      document.querySelectorAll('.cs-trigger.open').forEach(t=>t.classList.remove('open'));
+      render();
+      panel.classList.add('open');
+      trigger.classList.add('open');
+    }
+    function close(){
+      panel.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+    trigger.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      if(panel.classList.contains('open'))close();
+      else open();
+    });
+    document.addEventListener('click',(e)=>{if(!wrap.contains(e.target))close();});
+    sel.addEventListener('change',updateText);
+    new MutationObserver(updateText).observe(sel,{childList:true,attributes:true,attributeFilter:['value']});
+    updateText();
+  }
+  function initAll(){document.querySelectorAll('select').forEach(initCS);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAll);
+  else initAll();
+  new MutationObserver(muts=>{
+    muts.forEach(m=>{
+      m.addedNodes.forEach(n=>{
+        if(n.nodeType!==1)return;
+        if(n.tagName==='SELECT')initCS(n);
+        if(n.querySelectorAll)n.querySelectorAll('select').forEach(initCS);
+      });
+    });
+  }).observe(document.body,{childList:true,subtree:true});
+})();
 </script>
 </body>
 </html>
