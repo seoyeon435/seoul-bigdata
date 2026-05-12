@@ -639,6 +639,8 @@ select:focus{border-color:var(--green)}
   </div>
 
   <!-- KPI 4개 -->
+  <div style="position:relative">
+  <span style="position:absolute;top:0;right:0;font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;z-index:1">총폐기물 기준</span>
   <div class="kpi-row k4 mb12">
     <div class="kpi green">
       <span class="kpi-icon">🗑</span>
@@ -665,6 +667,7 @@ select:focus{border-color:var(--green)}
       <div class="kpi-sub" id="kpi11-gap-sub">—</div>
     </div>
   </div>
+  </div><!-- /총폐기물 기준 wrapper -->
 
   <!-- 정비 타임라인 + 월별 + 사이드 스탯 -->
   <div style="display:grid;grid-template-columns:0.95fr 1.4fr 200px;gap:14px;margin-bottom:12px;align-items:stretch">
@@ -719,6 +722,8 @@ select:focus{border-color:var(--green)}
   </div>
 
   <!-- 1.2 KPI 3개 -->
+  <div style="position:relative">
+  <span style="position:absolute;top:0;right:0;font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;z-index:1">생활계 폐기물 기준</span>
   <div class="kpi-row k3 mb12">
     <div class="kpi green">
       <span class="kpi-icon">🗑</span>
@@ -742,6 +747,7 @@ select:focus{border-color:var(--green)}
       <div class="kpi-sub" id="kpi12-gap-sub">—</div>
     </div>
   </div>
+  </div><!-- /생활계 폐기물 기준 wrapper -->
 
   <!-- 연도 슬라이더 -->
   <div class="year-slider-wrap mb12">
@@ -862,6 +868,8 @@ select:focus{border-color:var(--green)}
   <div><!-- 1.3 컨텐츠 컨테이너 시작 -->
 
       <!-- 1.3 KPI 4개 -->
+      <div style="position:relative">
+      <span style="position:absolute;top:0;right:0;font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;z-index:1">최신 연도 기준</span>
       <div class="kpi-row k4 mb12" style="gap:14px">
         <div class="kpi green" style="padding:22px 24px">
           <span class="kpi-icon">♻</span>
@@ -888,6 +896,7 @@ select:focus{border-color:var(--green)}
           <div class="kpi-sub" id="kpi13-change-sub">전년 대비</div>
         </div>
       </div>
+      </div><!-- /최신 연도 기준 wrapper -->
 
       <!-- 1.3 2열 레이아웃 -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
@@ -899,6 +908,7 @@ select:focus{border-color:var(--green)}
               <span class="panel-badge">전체 연도</span>
             </div>
             <div class="chart-wrap" style="height:220px"><canvas id="trend13"></canvas></div>
+            <p class="note-text" style="margin-top:6px">※ 일부 구간이 확대된 축입니다</p>
           </div>
 
           <!-- 자치구별 총폐기물 처리 구조 -->
@@ -942,6 +952,7 @@ select:focus{border-color:var(--green)}
               <span class="info-icon" data-tip="생활계폐기물은 가정 및 소규모 사업장에서 발생하는 폐기물입니다.">ⓘ</span>
             </span>
             <span class="panel-badge">기준: 서울 평균 대비</span>
+            <span class="panel-badge" style="margin-left:4px;color:var(--text3)">최신 연도 기준</span>
           </div>
           <!-- 지표 토글 -->
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
@@ -986,6 +997,7 @@ let selectedMetric = 'total';
 let charts = {};
 let map12Instance = null, map12Layer = null, map12Labels = [];
 let sidePanelDonutChart = null;
+let currentOpenDistrict = null;
 
 // ══════════════════════════════════════════════════════
 //  UTILS
@@ -1029,6 +1041,7 @@ function switchTab(i) {
 //  [변경 3] DOCK PANEL OPEN/CLOSE
 // ══════════════════════════════════════════════════════
 function openSidePanel(district) {
+  currentOpenDistrict = district;
   const wrapper = document.getElementById('content-12-13-wrapper');
   const dock = document.getElementById('dock-panel');
   wrapper.classList.add('panel-open');
@@ -1045,6 +1058,7 @@ function openSidePanel(district) {
 }
 
 function closeSidePanel() {
+  currentOpenDistrict = null;
   const wrapper = document.getElementById('content-12-13-wrapper');
   const dock = document.getElementById('dock-panel');
   wrapper.classList.remove('panel-open');
@@ -1076,6 +1090,39 @@ const MAINT_MONTHS = (() => {
   return map;
 })();
 
+// 두 정비 일정의 날짜가 실제로 겹치는지 확인
+function doSchedulesOverlap(schedA, schedB) {
+  const aStart = new Date(schedA.start_date), aEnd = new Date(schedA.end_date);
+  const bStart = new Date(schedB.start_date), bEnd = new Date(schedB.end_date);
+  return aStart <= bEnd && bStart <= aEnd;
+}
+
+// 월 m에서 실제로 제외할 시설 목록 반환
+// - 겹치는 시설이 있으면 모두 제외
+// - 겹치지 않으면 처리량(inc_avg) 최대인 1개만 제외
+function getMaintExcludedFacs(m) {
+  const maintFacs = MAINT_MONTHS[m];
+  if (!maintFacs || maintFacs.length === 0) return [];
+  if (maintFacs.length === 1) return maintFacs;
+  const schedsInMonth = MAINTENANCE_SCHEDULE.filter(s => {
+    const sm = new Date(s.start_date).getMonth() + 1;
+    const em = new Date(s.end_date).getMonth() + 1;
+    return m >= sm && m <= em;
+  });
+  let hasOverlap = false;
+  for (let i = 0; i < schedsInMonth.length && !hasOverlap; i++)
+    for (let j = i + 1; j < schedsInMonth.length && !hasOverlap; j++)
+      if (doSchedulesOverlap(schedsInMonth[i], schedsInMonth[j])) hasOverlap = true;
+  if (hasOverlap) return maintFacs;
+  // 겹치지 않으면 처리량 최대 1개만 제외
+  let maxFac = maintFacs[0], maxAvg = FACILITY_MONTHLY[maxFac]?.monthly?.[m]?.inc_avg || 0;
+  maintFacs.forEach(f => {
+    const avg = FACILITY_MONTHLY[f]?.monthly?.[m]?.inc_avg || 0;
+    if (avg > maxAvg) { maxAvg = avg; maxFac = f; }
+  });
+  return [maxFac];
+}
+
 function init11() {
   const now = new Date();
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
@@ -1083,7 +1130,7 @@ function init11() {
 
   const ly = LATEST_YEAR;
   const seoulY = SEOUL_YEARLY[ly];
-  const incinerationDemand = Math.round(seoulY.living_incineration / 365);
+  const incinerationDemand = Math.round(seoulY.total_incineration / 365);
   const dailyLiving = Math.round(seoulY.living_waste / 365);
   const facs = ['강남','노원','마포','양천'];
   const annualAvgSum = facs.reduce((s,f) => s + (FACILITY_MONTHLY[f]?.annual?.inc_avg || 0), 0);
@@ -1176,10 +1223,10 @@ function drawCapacityChart(incinerationDemand) {
   const facs = ['강남','노원','마포','양천'];
   const monthlyVals = [];
   for (let m = 1; m <= 12; m++) {
+    const excludedFacs = getMaintExcludedFacs(m);
     let total = 0;
     facs.forEach(f => {
-      const isUnderMaintenance = MAINT_MONTHS[m]?.includes(f);
-      if (!isUnderMaintenance) {
+      if (!excludedFacs.includes(f)) {
         total += FACILITY_MONTHLY[f]?.monthly?.[m]?.inc_avg || 0;
       }
     });
@@ -1337,6 +1384,10 @@ function onSelectedYearChange() {
   renderCompositionChart();
   const compTypeLabel = document.getElementById('comp-type-label');
   if (compTypeLabel) compTypeLabel.textContent = `(${selectedType})`;
+  // 사이드 패널이 열려 있으면 현재 state 기준으로 즉시 재렌더
+  if (currentOpenDistrict) {
+    renderSidePanel(currentOpenDistrict);
+  }
 }
 
 function getDistrictValue(district, year, type, metric) {
@@ -1952,7 +2003,10 @@ function renderSidePanel(district) {
         <div><span class="sp2-kpi-tag ${pcDiff>=0?'above':'below'}">${pcDiff>=0?'평균 이상':'평균 이하'}</span></div>
       </div>
       <div class="sp2-kpi">
-        <div class="sp2-kpi-label">발생량<br>순위</div>
+        <div class="sp2-kpi-label" style="flex-direction:column;gap:2px;line-height:1.3;min-height:auto">
+          <span style="font-size:10px;font-weight:600;color:var(--text2);white-space:nowrap;display:block">발생량 순위</span>
+          <span style="font-size:9px;color:var(--text3);white-space:nowrap;display:block">(선택 유형 기준)</span>
+        </div>
         <div class="sp2-kpi-val" style="color:var(--text)">${totalRank}</div>
         <span class="sp2-kpi-unit">/ 25개 자치구</span>
       </div>
